@@ -1,0 +1,5 @@
+body, canvas, div {
+  display: block;
+  margin: 0;
+  border: 0;
+}
