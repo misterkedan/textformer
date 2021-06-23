@@ -1,15 +1,10 @@
 {
-    "name": "kedasapptemplate",
-    "version": "0.2.0",
-    "description": "",
+    "name": "textformer",
+    "version": "0.1.0",
+    "description": "Text data transformation utility",
     "author": "Pierre Keda",
     "license": "MIT",
-    "dependencies": {
-        "animejs": "^3.2.0",
-        "dat.gui": "^0.7.7",
-        "keda": "^1.3.0",
-        "three": "^0.120.1"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@babel/core": "^7.14.6",
         "@babel/preset-env": "^7.14.7",
@@ -22,8 +17,8 @@
     },
     "scripts": {
         "build": "webpack --mode production",
-        "start": "webpack-dev-server --open --mode development"
+        "start": "webpack serve --open --mode development"
     },
-	"main": "./src/main.js",
-	"private": true
+    "main": "./src/main.js",
+    "private": true
 }
