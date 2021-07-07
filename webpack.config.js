@@ -44,6 +44,11 @@ module.exports = ( env, argv ) => {
 			]
 		};
 
+		config.output = {
+			filename: 'main.js',
+			path: path.resolve( __dirname, './dist/js/' ),
+		};
+
 	}
 
 	return config;
