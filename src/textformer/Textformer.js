@@ -1,24 +1,21 @@
-// import { TextformCommand } from './TextformCommand.js';
-
-import { linear } from './transitions/linear.js';
+import { Textform } from './Textform.js';
+import { RandomLinear } from './modes/RandomLinear.js';
 
 class Textformer {
 
-	constructor(
+	constructor( {
 
-		//?// Parameter 1 - Array of key texts
 		texts = [ '', 'textformer' ],
+		charset = Textform.charsets.ALL,
+		steps = 5,
+		stagger = 3,
+		loop = false,
 
-		//?// Parameter 2 - Options
-		{
-			charset = Textformer.charsets.ALL,
-			transition = Textformer.transitions.linear,
-			steps = 5,
-			stagger = 1,
-			loop = false,
-		} = {}
+		mode = Textformer.modes.linear,
+		fps = 10,
+		auto = true,
 
-	) {
+	} = {} ) {
 
 		if ( ! texts || ! Array.isArray( texts ) || typeof ( texts[ 0 ] ) !== 'string'  ) {
 
@@ -26,89 +23,41 @@ class Textformer {
 
 		}
 
-		this.texts = texts;
+		const textform = new mode( { texts, charset, steps, stagger, loop } );
 
-		Object.assign( this, { charset, transition, steps, stagger, loop } );
+		if ( ! auto ) return textform;
 
-		this.build();
+		const FRAME_DURATION = 1000 / fps;
+		let currentTime = 0;
+		let lastTime = 0;
+		let delta = 0;
+		let diff = 0;
 
-	}
+		function animate( time = 0 ) {
 
-	build() {
+			currentTime = time;
 
-		this.maxLength = this.texts.reduce(
-			( a, b ) => a.length > b.length ? a.length : b.length
-		);
+			delta = currentTime - lastTime;
+			diff = FRAME_DURATION - delta;
+			if ( diff <= 0 ) {
 
-		this.frames = this.transition( this );
-		this.finalFrame = this.frames.length - 1;
+				textform.step();
+				lastTime = currentTime + diff;
 
-		this.currentFrame = 0;
-		this.chars = this.texts[ 0 ].split( '' );
+			}
 
-		console.log( this.text );
-
-	}
-
-	step() {
-
-		if ( this.currentFrame < this.finalFrame ) {
-
-			this.currentFrame ++;
-			this.update();
-			console.log( this.text );
-
-		} else if ( this.loop != 0 ) {
-
-			this.loop --;
-			this.currentFrame = 0;
-			this.update();
+			requestAnimationFrame( animate );
 
 		}
 
-	}
-
-	update() {
-
-		const commands = this.frames[ this.currentFrame ];
-
-		for ( let i in commands ) {
-
-			const command = commands[ i ];
-			this.chars[ command.i ] = command.char;
-			// console.log( command );
-
-		}
-
-		// console.log( commands );
-
-	}
-
-	getRandomChar() {
-
-		const charset = this.charset;
-		const randomIndex = Math.floor( Math.random() * charset.length );
-		return charset.charAt( randomIndex );
-
-	}
-
-	get text() {
-
-		return this.chars.join( '' );
+		animate();
 
 	}
 
 }
 
-Textformer.charsets = {
-
-	UPPERCASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-	DIGITS: '0123456789',
-	SPECIAL: '!@#$%&?',
-
+Textformer.modes = {
+	linear: RandomLinear
 };
-Textformer.charsets.ALL = Object.values( Textformer.charsets ).join( '' );
-
-Textformer.transitions = { linear };
 
 export { Textformer };
