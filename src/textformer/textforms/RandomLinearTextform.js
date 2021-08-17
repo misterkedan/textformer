@@ -1,6 +1,6 @@
-import { Textform } from '../Textform.js';
+import { Textform } from './Textform.js';
 
-class RandomLinear extends Textform {
+class RandomLinearTextform extends Textform {
 
 	constructor( options = {} ) {
 
@@ -52,4 +52,4 @@ class RandomLinear extends Textform {
 
 }
 
-export { RandomLinear };
+export { RandomLinearTextform };

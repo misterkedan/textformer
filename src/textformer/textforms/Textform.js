@@ -1,8 +1,8 @@
 class Textform {
 
-	constructor( { texts, charset, steps, stagger, loop, } = {} ) {
+	constructor( { texts, charset, steps, stagger } = {} ) {
 
-		Object.assign( this, { texts, charset, steps, stagger, loop } );
+		Object.assign( this, { texts, charset, steps, stagger } );
 
 		this.maxLength = this.texts.reduce(
 			( a, b ) => a.length > b.length ? a.length : b.length
@@ -30,15 +30,7 @@ class Textform {
 			this.currentFrame ++;
 			this.update();
 
-		} else if ( this.loop != 0 ) {
-
-			this.loop --;
-			this.currentFrame = 0;
-			this.update();
-
-		} else {
-
-			this.complete = true;
+			if ( this.currentFrame === this.finalFrame ) this.isComplete = true;
 
 		}
 
