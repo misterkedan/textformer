@@ -72,6 +72,7 @@ Textform.charsets = {
 	SPECIAL: '!@#$%&?',
 
 };
+Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();
 Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
 
 export { Textform };

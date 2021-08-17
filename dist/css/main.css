@@ -3,3 +3,11 @@ body, canvas, div {
   margin: 0;
   border: 0;
 }
+
+#demo {
+
+	margin: 5rem;
+	font-size: 4rem;
+	font-family: monospace;
+
+}

@@ -7,13 +7,17 @@ class Textformer {
 
 	constructor( {
 
-		texts = [ '', 'textformer' ],
+		texts = [ '', 'Textformer' ],
 		charset = Textform.charsets.ALL,
 		steps = 5,
 		stagger = 3,
 
+		onBegin = null,
+		onUpdate = null,
+		onComplete = null,
+
 		mode = Textformer.modes.linear,
-		fps = 15,
+		fps = 30,
 		auto = true,
 
 	} = {} ) {
@@ -28,7 +32,7 @@ class Textformer {
 		const textform = new mode( { texts, charset, steps, stagger } );
 		this.textform = textform;
 
-		this.fps = fps;
+		Object.assign( this, { fps, onBegin, onUpdate, onComplete } );
 
 		if ( auto ) this.autoPlay();
 
@@ -37,6 +41,10 @@ class Textformer {
 	autoPlay() {
 
 		const textform = this.textform;
+		const onBegin = this.onBegin;
+		const onUpdate = this.onUpdate;
+		const onComplete = this.onComplete;
+
 		const FRAME_DURATION = 1000 / this.fps;
 
 		let currentTime = 0;
@@ -54,17 +62,29 @@ class Textformer {
 
 			if ( diff <= 0 ) {
 
-				if ( textform.isComplete ) return cancelAnimationFrame( nextFrame );
+				if ( textform.isComplete ) {
+
+					if ( onComplete ) onComplete.call();
+					return cancelAnimationFrame( nextFrame );
+
+				}
 
 				textform.step();
-				console.log( textform.text );
+				if ( onUpdate ) onUpdate.call();
 				lastTime = currentTime + diff;
 
 			}
 
 		}
 
+		if ( onBegin ) onBegin.call();
 		requestAnimationFrame( animate );
+
+	}
+
+	get text() {
+
+		return this.textform.text;
 
 	}
 
