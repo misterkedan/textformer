@@ -1,6 +1,8 @@
 import { Textform } from './Textform.js';
 import { RandomLinear } from './modes/RandomLinear.js';
 
+//?// This is both a textform factory and barebones animation system
+
 class Textformer {
 
 	constructor( {
@@ -12,7 +14,7 @@ class Textformer {
 		loop = false,
 
 		mode = Textformer.modes.linear,
-		fps = 10,
+		fps = 15,
 		auto = true,
 
 	} = {} ) {
@@ -24,10 +26,19 @@ class Textformer {
 		}
 
 		const textform = new mode( { texts, charset, steps, stagger, loop } );
+		this.textform = textform;
 
-		if ( ! auto ) return textform;
+		this.fps = fps;
 
-		const FRAME_DURATION = 1000 / fps;
+		if ( auto ) this.autoPlay();
+
+	}
+
+	autoPlay() {
+
+		const textform = this.textform;
+		const FRAME_DURATION = 1000 / this.fps;
+
 		let currentTime = 0;
 		let lastTime = 0;
 		let delta = 0;
@@ -36,17 +47,18 @@ class Textformer {
 		function animate( time = 0 ) {
 
 			currentTime = time;
-
 			delta = currentTime - lastTime;
 			diff = FRAME_DURATION - delta;
+
 			if ( diff <= 0 ) {
 
 				textform.step();
+				console.log( textform.text );
 				lastTime = currentTime + diff;
 
 			}
 
-			requestAnimationFrame( animate );
+			if ( ! textform.complete ) requestAnimationFrame( animate );
 
 		}
 

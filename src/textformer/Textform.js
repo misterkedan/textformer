@@ -14,8 +14,6 @@ class Textform {
 		this.currentFrame = 0;
 		this.chars = this.texts[ 0 ].split( '' );
 
-		console.log( this.text );
-
 	}
 
 	build() {
@@ -31,13 +29,16 @@ class Textform {
 
 			this.currentFrame ++;
 			this.update();
-			console.log( this.text );
 
 		} else if ( this.loop != 0 ) {
 
 			this.loop --;
 			this.currentFrame = 0;
 			this.update();
+
+		} else {
+
+			this.complete = true;
 
 		}
 
