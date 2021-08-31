@@ -1,1 +1,334 @@
-(()=>{"use strict";function t(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function e(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var r=function(){function r(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},n=e.texts,o=e.charset,i=e.steps,a=e.stagger,s=e.loop;t(this,r),Object.assign(this,{texts:n,charset:o,steps:i,stagger:a,loop:s}),this.maxLength=this.texts.reduce((function(t,e){return t.length>e.length?t.length:e.length})),this.build(),this.finalFrame=this.frames.length-1,this.currentFrame=0,this.chars=this.texts[0].split(""),console.log(this.text)}var n,o;return n=r,(o=[{key:"build",value:function(){this.frames=[],console.warn("Abstract class")}},{key:"step",value:function(){this.currentFrame<this.finalFrame?(this.currentFrame++,this.update(),console.log(this.text)):0!=this.loop&&(this.loop--,this.currentFrame=0,this.update())}},{key:"update",value:function(){var t=this.frames[this.currentFrame];for(var e in t){var r=t[e];this.chars[r.i]=r.char}}},{key:"getRandomChar",value:function(){var t=this.charset,e=Math.floor(Math.random()*t.length);return t.charAt(e)}},{key:"text",get:function(){return this.chars.join("")}}])&&e(n.prototype,o),r}();function n(t){return(n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function o(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function i(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function a(t,e){return(a=Object.setPrototypeOf||function(t,e){return t.__proto__=e,t})(t,e)}function s(t,e){return!e||"object"!==n(e)&&"function"!=typeof e?function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t):e}function c(t){return(c=Object.setPrototypeOf?Object.getPrototypeOf:function(t){return t.__proto__||Object.getPrototypeOf(t)})(t)}function u(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}r.charsets={UPPERCASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZ",DIGITS:"0123456789",SPECIAL:"!@#$%&?"},r.charsets.ALL=Object.values(r.charsets).join("");var f=function t(){var e=this,n=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},o=n.texts,i=void 0===o?["","textformer"]:o,a=n.charset,s=void 0===a?r.charsets.ALL:a,c=n.steps,f=void 0===c?5:c,l=n.stagger,h=void 0===l?3:l,p=n.loop,y=void 0!==p&&p,v=n.mode,g=void 0===v?t.modes.linear:v,m=n.fps,b=void 0===m?10:m,d=n.auto,w=void 0===d||d;return function(){if(u(e,t),!i||!Array.isArray(i)||"string"!=typeof i[0])throw new TypeError('Parameter "texts" must be an array of strings');var r=new g({texts:i,charset:s,steps:f,stagger:h,loop:y});if(!w)return r;var n=1e3/b,o=0,a=0,c=0;!function t(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:0;(c=n-((o=e)-a))<=0&&(r.step(),a=o+c),requestAnimationFrame(t)}()}()};f.modes={linear:function(t){!function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),e&&a(t,e)}(l,t);var e,r,n,u,f=(n=l,u=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(t){return!1}}(),function(){var t,e=c(n);if(u){var r=c(this).constructor;t=Reflect.construct(e,arguments,r)}else t=e.apply(this,arguments);return s(this,t)});function l(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return o(this,l),f.call(this,t)}return e=l,(r=[{key:"build",value:function(){for(var t=[],e=this.texts,r=e.length-1,n=0;n<r;n++)for(var o=e[n],i=e[n+1]||e[i],a=0,s=this.maxLength;a<s;a++)for(var c=a*this.stagger,u=c+this.steps,f=o.charAt(a),l=i.charAt(a),h=c;h<=u;h++){t[h]||(t[h]=[]);var p=h-c,y=p===this.steps?l:0===p?f:this.getRandomChar();t[h].push({i:a,char:y})}this.frames=t}}])&&i(e.prototype,r),l}(r)},new f({})})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+var __webpack_exports__ = {};
+
+;// CONCATENATED MODULE: ./src/textformer/textforms/Textform.js
+class Textform {
+
+	constructor( { texts, charset, steps, stagger } = {} ) {
+
+		Object.assign( this, { texts, charset, steps, stagger } );
+
+		this.maxLength = this.texts.reduce(
+			( a, b ) => a.length > b.length ? a.length : b.length
+		);
+
+		this.build();
+		this.finalFrame = this.frames.length - 1;
+
+		this.reset();
+
+	}
+
+	build() {
+
+		this.frames = [];
+		console.warn( 'Abstract class' );
+
+	}
+
+	reset() {
+
+		this.currentFrame = 0;
+		this.chars = this.texts[ 0 ].split( '' );
+		this.isComplete = false;
+
+	}
+
+	step() {
+
+		if ( this.currentFrame < this.finalFrame ) {
+
+			this.currentFrame ++;
+			this.update();
+
+			if ( this.currentFrame === this.finalFrame ) this.isComplete = true;
+
+		}
+
+	}
+
+	update() {
+
+		const changes = this.frames[ this.currentFrame ];
+
+		for ( let i in changes ) {
+
+			const change = changes[ i ];
+			this.chars[ change.i ] = change.char;
+
+		}
+
+	}
+
+	getRandomChar() {
+
+		const charset = this.charset;
+		const randomIndex = Math.floor( Math.random() * charset.length );
+		return charset.charAt( randomIndex );
+
+	}
+
+	get text() {
+
+		return this.chars.join( '' );
+
+	}
+
+}
+
+Textform.charsets = {
+
+	UPPERCASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+	DIGITS: '0123456789',
+	SYMBOLS: '!@#$%&?',
+
+};
+Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();
+Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
+
+
+
+;// CONCATENATED MODULE: ./src/textformer/textforms/RandomLinearTextform.js
+
+
+class RandomLinearTextform extends Textform {
+
+	constructor( options = {} ) {
+
+		super( options );
+
+	}
+
+	build() {
+
+		const frames = [];
+		const texts = this.texts;
+		const lastText = texts.length - 1;
+
+		for ( let text = 0; text < lastText; text ++ ) {
+
+			const startText = texts[ text ];
+			const endText = texts[ text + 1 ] || texts[ endText ];
+
+			for ( let i = 0, l = this.maxLength; i < l; i ++ ) {
+
+				const startFrame = i * this.stagger;
+				const endFrame = startFrame + this.steps;
+				const startChar = startText.charAt( i );
+				const endChar = endText.charAt( i );
+
+				for ( let frame = startFrame; frame <= endFrame; frame ++ ) {
+
+					if ( ! frames[ frame ] ) frames[ frame ] = [];
+
+					const step = frame - startFrame;
+
+					const char = ( step === this.steps )
+						? endChar
+						: ( step === 0 )
+							? startChar
+							: this.getRandomChar();
+
+					frames[ frame ].push( { i, char } );
+
+				}
+
+			}
+
+		}
+
+		this.frames = frames;
+
+	}
+
+}
+
+
+
+;// CONCATENATED MODULE: ./src/textformer/Textformer.js
+
+
+
+//?// This is both a textform factory and barebones animation system
+
+class Textformer {
+
+	constructor( {
+
+		texts = [ '', 'Textformer' ],
+		charset = Textform.charsets.ALL,
+		steps = 5,
+		stagger = 3,
+
+		onBegin = null,
+		onUpdate = null,
+		onComplete = null,
+
+		mode = Textformer.modes.linear,
+		fps = 15,
+		auto = true,
+
+	} = {} ) {
+
+		if ( ! texts || ! Array.isArray( texts ) || typeof ( texts[ 0 ] ) !== 'string'  ) {
+
+			throw new TypeError( 'Parameter "texts" must be an array of strings' );
+
+		}
+
+		const options = { texts, charset, steps, stagger };
+		Object.assign( this, { mode, options, fps, onBegin, onUpdate, onComplete, auto } );
+
+		this.build();
+
+	}
+
+	build() {
+
+		if ( this.mode.prototype instanceof Textform === false ) throw new Error( 'Please select a mode from Texformer.modes' );
+		const textform = new this.mode( this.options );
+		this.textform = textform;
+
+
+		if ( this.auto ) this.autoPlay();
+
+	}
+
+	autoPlay() {
+
+		const onBegin = this.onBegin;
+
+		this.frameDuration = 1000 / this.fps;
+		this.time = 0;
+
+		if ( onBegin ) onBegin.call();
+		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
+
+	}
+
+	animate( time = 0 ) {
+
+		const textform = this.textform;
+		const onUpdate = this.onUpdate;
+		const onComplete = this.onComplete;
+
+		if ( ! this.time ) this.time = time;
+
+		const delta = time - this.time;
+		const diff = this.frameDuration - delta;
+
+		if ( diff <= 0 ) {
+
+			if ( textform.isComplete ) {
+
+				if ( onComplete ) onComplete.call();
+				return cancelAnimationFrame( this.animationFrame );
+
+			}
+
+			textform.step();
+			if ( onUpdate ) onUpdate.call();
+			this.time = time + diff;
+
+		}
+
+		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
+
+	}
+
+	replay() {
+
+		cancelAnimationFrame( this.animationFrame );
+		this.textform.reset();
+		this.autoPlay();
+
+	}
+
+	get text() {
+
+		return this.textform.text;
+
+	}
+
+}
+
+Textformer.modes = {
+
+	linear: RandomLinearTextform
+
+};
+
+
+
+;// CONCATENATED MODULE: external "dat.gui"
+const external_dat_gui_namespaceObject = dat.gui;
+;// CONCATENATED MODULE: ./src/main.js
+
+
+
+
+const demo = document.querySelector( '#demo' );
+
+const control = {
+
+	start: '',
+	end: 'Textformer',
+
+	fps: 15,
+	steps: 5,
+	stagger: 3,
+
+	charset: 'ALL',
+
+};
+
+const textformer = new Textformer( {
+	onUpdate: () => {
+
+		demo.innerHTML = textformer.text;
+
+	}
+} );
+
+function update() {
+
+	if ( ! control.start && ! control.end ) {
+
+		control.start = '';
+		control.end = ' ';
+
+	}
+
+	textformer.options.texts = [ control.start, control.end ];
+
+	textformer.options.charset = Textform.charsets[ control.charset ];
+	textformer.options.steps = control.steps;
+	textformer.options.stagger = control.stagger;
+
+	textformer.fps = control.fps;
+
+	textformer.build();
+
+}
+
+const gui = new external_dat_gui_namespaceObject.GUI();
+
+const texts = gui.addFolder( 'Texts' );
+texts.add( control, 'start' ).onChange( update );
+texts.add( control, 'end' ).onChange( update );
+texts.open();
+
+const tfr = gui.addFolder( 'Textformer' );
+tfr.add( control, 'charset', Object.keys( Textform.charsets ) ).onChange( update );
+tfr.add( control, 'steps', 1, 60 ).step( 1 ).onChange( update );
+tfr.add( control, 'stagger', 0, 30 ).step( 1 ).onChange( update );
+tfr.add( control, 'fps', 1, 30 ).step( 1 ).onChange( update );
+tfr.add( textformer, 'replay' );
+tfr.open();
+
+
+
+
+/******/ })()
+;

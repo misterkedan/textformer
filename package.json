@@ -1,10 +1,12 @@
 {
     "name": "textformer",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "Text data transformation utility",
     "author": "Pierre Keda",
     "license": "MIT",
-    "dependencies": {},
+    "dependencies": {
+        "dat.gui": "^0.7.7"
+    },
     "devDependencies": {
         "@babel/core": "^7.15.0",
         "@babel/preset-env": "^7.15.0",

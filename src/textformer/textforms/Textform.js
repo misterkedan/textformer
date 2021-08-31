@@ -11,8 +11,7 @@ class Textform {
 		this.build();
 		this.finalFrame = this.frames.length - 1;
 
-		this.currentFrame = 0;
-		this.chars = this.texts[ 0 ].split( '' );
+		this.reset();
 
 	}
 
@@ -20,6 +19,14 @@ class Textform {
 
 		this.frames = [];
 		console.warn( 'Abstract class' );
+
+	}
+
+	reset() {
+
+		this.currentFrame = 0;
+		this.chars = this.texts[ 0 ].split( '' );
+		this.isComplete = false;
 
 	}
 
@@ -69,7 +76,7 @@ Textform.charsets = {
 
 	UPPERCASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 	DIGITS: '0123456789',
-	SPECIAL: '!@#$%&?',
+	SYMBOLS: '!@#$%&?',
 
 };
 Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();

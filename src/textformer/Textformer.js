@@ -17,7 +17,7 @@ class Textformer {
 		onComplete = null,
 
 		mode = Textformer.modes.linear,
-		fps = 30,
+		fps = 15,
 		auto = true,
 
 	} = {} ) {
@@ -28,57 +28,71 @@ class Textformer {
 
 		}
 
-		if ( mode.prototype instanceof Textform === false ) throw new Error( 'Please select a mode from Texformer.modes' );
-		const textform = new mode( { texts, charset, steps, stagger } );
+		const options = { texts, charset, steps, stagger };
+		Object.assign( this, { mode, options, fps, onBegin, onUpdate, onComplete, auto } );
+
+		this.build();
+
+	}
+
+	build() {
+
+		if ( this.mode.prototype instanceof Textform === false ) throw new Error( 'Please select a mode from Texformer.modes' );
+		const textform = new this.mode( this.options );
 		this.textform = textform;
 
-		Object.assign( this, { fps, onBegin, onUpdate, onComplete } );
 
-		if ( auto ) this.autoPlay();
+		if ( this.auto ) this.autoPlay();
 
 	}
 
 	autoPlay() {
 
-		const textform = this.textform;
 		const onBegin = this.onBegin;
+
+		this.frameDuration = 1000 / this.fps;
+		this.time = 0;
+
+		if ( onBegin ) onBegin.call();
+		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
+
+	}
+
+	animate( time = 0 ) {
+
+		const textform = this.textform;
 		const onUpdate = this.onUpdate;
 		const onComplete = this.onComplete;
 
-		const FRAME_DURATION = 1000 / this.fps;
+		if ( ! this.time ) this.time = time;
 
-		let currentTime = 0;
-		let lastTime = 0;
-		let delta = 0;
-		let diff = 0;
+		const delta = time - this.time;
+		const diff = this.frameDuration - delta;
 
-		function animate( time = 0 ) {
+		if ( diff <= 0 ) {
 
-			const nextFrame = requestAnimationFrame( animate );
+			if ( textform.isComplete ) {
 
-			currentTime = time;
-			delta = currentTime - lastTime;
-			diff = FRAME_DURATION - delta;
-
-			if ( diff <= 0 ) {
-
-				if ( textform.isComplete ) {
-
-					if ( onComplete ) onComplete.call();
-					return cancelAnimationFrame( nextFrame );
-
-				}
-
-				textform.step();
-				if ( onUpdate ) onUpdate.call();
-				lastTime = currentTime + diff;
+				if ( onComplete ) onComplete.call();
+				return cancelAnimationFrame( this.animationFrame );
 
 			}
 
+			textform.step();
+			if ( onUpdate ) onUpdate.call();
+			this.time = time + diff;
+
 		}
 
-		if ( onBegin ) onBegin.call();
-		requestAnimationFrame( animate );
+		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
+
+	}
+
+	replay() {
+
+		cancelAnimationFrame( this.animationFrame );
+		this.textform.reset();
+		this.autoPlay();
 
 	}
 

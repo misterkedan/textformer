@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
 body, canvas, div {
   display: block;
   margin: 0;
@@ -8,6 +10,6 @@ body, canvas, div {
 
 	margin: 5rem;
 	font-size: 4rem;
-	font-family: monospace;
+	font-family: 'Share Tech Mono', monospace;
 
 }
