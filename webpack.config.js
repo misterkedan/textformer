@@ -31,21 +31,17 @@ module.exports = ( env, argv ) => {
 
 		config.mode = 'production';
 
-		// config.module = {
-		// 	rules: [
-		// 		{
-		// 			test: /\.js$/,
-		// 			exclude: [ /node_modules/ ],
-		// 			loader: 'babel-loader',
-		// 			options: {
-		// 				presets: [ '@babel/preset-env' ]
-		// 			}
-		// 		}
-		// 	]
-		// };
-
-		config.optimization = {
-			minimize: false
+		config.module = {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: [ /node_modules/ ],
+					loader: 'babel-loader',
+					options: {
+						presets: [ '@babel/preset-env' ]
+					}
+				}
+			]
 		};
 
 		config.externals = {

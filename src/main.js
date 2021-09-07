@@ -2,9 +2,17 @@ import { Textform } from './textformer/textforms/Textform.js';
 import { Textformer } from './textformer/Textformer.js';
 import * as dat from 'dat.gui';
 
-const demo = document.querySelector( '#demo' );
+const demoText = document.querySelector( '#demo-text' );
 
-const control = {
+const textformer = new Textformer( {
+	onUpdate: () => {
+
+		demoText.innerHTML = textformer.text;
+
+	}
+} );
+
+const settings = {
 
 	start: '',
 	end: 'Textformer',
@@ -17,30 +25,22 @@ const control = {
 
 };
 
-const textformer = new Textformer( {
-	onUpdate: () => {
-
-		demo.innerHTML = textformer.text;
-
-	}
-} );
-
 function update() {
 
-	if ( ! control.start && ! control.end ) {
+	if ( ! settings.start && ! settings.end ) {
 
-		control.start = '';
-		control.end = ' ';
+		settings.start = '';
+		settings.end = ' ';
 
 	}
 
-	textformer.options.texts = [ control.start, control.end ];
+	textformer.options.texts = [ settings.start, settings.end ];
 
-	textformer.options.charset = Textform.charsets[ control.charset ];
-	textformer.options.steps = control.steps;
-	textformer.options.stagger = control.stagger;
+	textformer.options.charset = Textform.charsets[ settings.charset ];
+	textformer.options.steps = settings.steps;
+	textformer.options.stagger = settings.stagger;
 
-	textformer.fps = control.fps;
+	textformer.fps = settings.fps;
 
 	textformer.build();
 
@@ -49,17 +49,14 @@ function update() {
 const gui = new dat.GUI();
 
 const texts = gui.addFolder( 'Texts' );
-texts.add( control, 'start' ).onChange( update );
-texts.add( control, 'end' ).onChange( update );
+texts.add( settings, 'start' ).onChange( update );
+texts.add( settings, 'end' ).onChange( update );
 texts.open();
 
 const tfr = gui.addFolder( 'Textformer' );
-tfr.add( control, 'charset', Object.keys( Textform.charsets ) ).onChange( update );
-tfr.add( control, 'steps', 1, 60 ).step( 1 ).onChange( update );
-tfr.add( control, 'stagger', 0, 30 ).step( 1 ).onChange( update );
-tfr.add( control, 'fps', 1, 30 ).step( 1 ).onChange( update );
+tfr.add( settings, 'charset', Object.keys( Textform.charsets ) ).onChange( update );
+tfr.add( settings, 'steps', 1, 60 ).step( 1 ).onChange( update );
+tfr.add( settings, 'stagger', 0, 30 ).step( 1 ).onChange( update );
+tfr.add( settings, 'fps', 1, 30 ).step( 1 ).onChange( update );
 tfr.add( textformer, 'replay' );
 tfr.open();
-
-
-

@@ -1,24 +1,32 @@
 import { Textform } from './textforms/Textform.js';
 import { RandomLinearTextform } from './textforms/RandomLinearTextform.js';
-
-//?// This is both a textform factory and barebones animation system
+import { TextformPlayer } from './TextformPlayer.js';
 
 class Textformer {
 
 	constructor( {
+
+		//?// Textform settings
 
 		texts = [ '', 'Textformer' ],
 		charset = Textform.charsets.ALL,
 		steps = 5,
 		stagger = 3,
 
+		//?// TextformPlayer settings
+
+		fps = 15,
 		onBegin = null,
 		onUpdate = null,
 		onComplete = null,
 
+		//?// Textform animation mode
+
 		mode = Textformer.modes.linear,
-		fps = 15,
-		auto = true,
+
+		//?// Textform animation mode
+
+		autoPlay = true,
 
 	} = {} ) {
 
@@ -29,7 +37,9 @@ class Textformer {
 		}
 
 		const options = { texts, charset, steps, stagger };
-		Object.assign( this, { mode, options, fps, onBegin, onUpdate, onComplete, auto } );
+		Object.assign( this, { mode, options, fps, onBegin, onUpdate, onComplete, autoPlay } );
+
+		if ( this.autoPlay ) this.player = new TextformPlayer( { fps, onBegin, onUpdate, onComplete } );
 
 		this.build();
 
@@ -41,58 +51,24 @@ class Textformer {
 		const textform = new this.mode( this.options );
 		this.textform = textform;
 
+		if ( this.autoPlay ) {
 
-		if ( this.auto ) this.autoPlay();
-
-	}
-
-	autoPlay() {
-
-		const onBegin = this.onBegin;
-
-		this.frameDuration = 1000 / this.fps;
-		this.time = 0;
-
-		if ( onBegin ) onBegin.call();
-		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
-
-	}
-
-	animate( time = 0 ) {
-
-		const textform = this.textform;
-		const onUpdate = this.onUpdate;
-		const onComplete = this.onComplete;
-
-		if ( ! this.time ) this.time = time;
-
-		const delta = time - this.time;
-		const diff = this.frameDuration - delta;
-
-		if ( diff <= 0 ) {
-
-			if ( textform.isComplete ) {
-
-				if ( onComplete ) onComplete.call();
-				return cancelAnimationFrame( this.animationFrame );
-
-			}
-
-			textform.step();
-			if ( onUpdate ) onUpdate.call();
-			this.time = time + diff;
+			this.player.textform = textform;
+			this.replay();
 
 		}
 
-		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
+	}
+
+	play() {
+
+		this.player.play();
 
 	}
 
 	replay() {
 
-		cancelAnimationFrame( this.animationFrame );
-		this.textform.reset();
-		this.autoPlay();
+		this.player.replay();
 
 	}
 

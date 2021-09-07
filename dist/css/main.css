@@ -6,10 +6,8 @@ body, canvas, div {
   border: 0;
 }
 
-#demo {
-
+#demo-text {
 	margin: 5rem;
 	font-size: 4rem;
 	font-family: 'Share Tech Mono', monospace;
-
 }
