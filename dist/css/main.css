@@ -7,7 +7,7 @@ body, canvas, div {
 }
 
 #demo-text {
-	margin: 5rem;
+	padding: 5rem;
 	font-size: 4rem;
 	font-family: 'Share Tech Mono', monospace;
 }

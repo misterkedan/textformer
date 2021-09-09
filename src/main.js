@@ -3,60 +3,32 @@ import { Textformer } from './textformer/Textformer.js';
 import * as dat from 'dat.gui';
 
 const demoText = document.querySelector( '#demo-text' );
+const textformer = new Textformer( { onChange: update } );
 
-const textformer = new Textformer( {
-	onUpdate: () => {
-
-		demoText.innerHTML = textformer.text;
-
-	}
-} );
-
-const settings = {
-
-	start: '',
-	end: 'Textformer',
-
-	fps: 15,
-	steps: 5,
-	stagger: 3,
-
-	charset: 'ALL',
-
-};
-
-function update() {
-
-	if ( ! settings.start && ! settings.end ) {
-
-		settings.start = '';
-		settings.end = ' ';
-
-	}
-
-	textformer.options.texts = [ settings.start, settings.end ];
-
-	textformer.options.charset = Textform.charsets[ settings.charset ];
-	textformer.options.steps = settings.steps;
-	textformer.options.stagger = settings.stagger;
-
-	textformer.fps = settings.fps;
+function rebuild() {
 
 	textformer.build();
 
 }
 
+function update() {
+
+	demoText.textContent = textformer.text;
+
+}
+
 const gui = new dat.GUI();
 
-const texts = gui.addFolder( 'Texts' );
-texts.add( settings, 'start' ).onChange( update );
-texts.add( settings, 'end' ).onChange( update );
-texts.open();
+const textform = gui.addFolder( 'Textform' );
+textform.add( textformer.options, 'charset', Textform.charsets ).onChange( rebuild );
+textform.add( textformer.options, 'from' ).onChange( rebuild );
+textform.add( textformer.options, 'to' ).onChange( rebuild );
+textform.add( textformer.options, 'steps', 1, 60 ).step( 1 ).onChange( rebuild );
+textform.add( textformer.options, 'stagger', 0, 30 ).step( 1 ).onChange( rebuild );
+textform.open();
 
-const tfr = gui.addFolder( 'Textformer' );
-tfr.add( settings, 'charset', Object.keys( Textform.charsets ) ).onChange( update );
-tfr.add( settings, 'steps', 1, 60 ).step( 1 ).onChange( update );
-tfr.add( settings, 'stagger', 0, 30 ).step( 1 ).onChange( update );
-tfr.add( settings, 'fps', 1, 30 ).step( 1 ).onChange( update );
-tfr.add( textformer, 'replay' );
-tfr.open();
+const player = gui.addFolder( 'Animation' );
+player.add( textformer.playerOptions, 'duration', 100, 5000 ).step( 50 ).onChange( rebuild );
+player.add( textformer, 'progress', 0, 1 ).step( 0.001 ).onChange( update ).listen();
+player.add( textformer, 'replay' );
+player.open();

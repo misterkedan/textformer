@@ -4,42 +4,48 @@ import { TextformPlayer } from './TextformPlayer.js';
 
 class Textformer {
 
+	/**
+	 * Easy text tranform animation, based on random character changes.
+	 * @constructor
+	 * @param { Object }	options
+	 * @param { Class }		options.mode		Animation mode, pick one from Textformer.modes.
+	 * @param { Boolean } 	options.autoPlay	Animates automatically using the built-in TextformPlayer.
+	 * @param { String } 	options.from		Initial text.
+	 * @param { String } 	options.to			Final text.
+	 * @param { Number } 	options.steps		Number of character changes between both texts.
+	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
+	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
+	 * @param { Function }	options.onBegin		Optional callback fired when the animation starts.
+	 * @param { Function }	options.onChange	Optional callback fired on each Textform character change.
+	 * @param { Function }	options.onComplet	Optional callback fired when the animation ends.
+	 */
 	constructor( {
 
-		//?// Textform settings
+		mode = Textformer.modes.linear,
+		autoPlay = true,
 
-		texts = [ '', 'Textformer' ],
-		charset = Textform.charsets.ALL,
+		//?// Textform settings
+		from = '',
+		to = 'Textformer',
 		steps = 5,
 		stagger = 3,
+		charset = Textform.charsets.ALL,
 
 		//?// TextformPlayer settings
-
-		fps = 15,
-		onBegin = null,
-		onUpdate = null,
-		onComplete = null,
-
-		//?// Textform animation mode
-
-		mode = Textformer.modes.linear,
-
-		//?// Textform animation mode
-
-		autoPlay = true,
+		duration = 3000,
+		onBegin,
+		onChange,
+		onComplete,
 
 	} = {} ) {
 
-		if ( ! texts || ! Array.isArray( texts ) || typeof ( texts[ 0 ] ) !== 'string'  ) {
-
-			throw new TypeError( 'Parameter "texts" must be an array of strings' );
-
-		}
-
-		const options = { texts, charset, steps, stagger };
-		Object.assign( this, { mode, options, fps, onBegin, onUpdate, onComplete, autoPlay } );
-
-		if ( this.autoPlay ) this.player = new TextformPlayer( { fps, onBegin, onUpdate, onComplete } );
+		Object.assign( this, {
+			mode,
+			autoPlay,
+			options: { from, to, steps, stagger, charset },
+			playerOptions: { duration, onBegin, onChange, onComplete }
+		} );
 
 		this.build();
 
@@ -48,13 +54,15 @@ class Textformer {
 	build() {
 
 		if ( this.mode.prototype instanceof Textform === false ) throw new Error( 'Please select a mode from Texformer.modes' );
+
 		const textform = new this.mode( this.options );
 		this.textform = textform;
 
 		if ( this.autoPlay ) {
 
-			this.player.textform = textform;
-			this.replay();
+			this.playerOptions.textform = textform;
+			this.player = new TextformPlayer( this.playerOptions );
+			this.play();
 
 		}
 
@@ -68,9 +76,35 @@ class Textformer {
 
 	replay() {
 
-		this.player.replay();
+		this.player.stop();
+		this.textform.reset();
+		this.player.play();
 
 	}
+
+	/*-----------------------------------------------------------------------------/
+
+		Getters / Setters
+
+	/-----------------------------------------------------------------------------*/
+
+	get progress() {
+
+		return this.textform.progress;
+
+	}
+
+	set progress( progress ) {
+
+		this.textform.progress = progress;
+
+	}
+
+	/*-----------------------------------------------------------------------------/
+
+		Read-only
+
+	/-----------------------------------------------------------------------------*/
 
 	get text() {
 
@@ -79,6 +113,12 @@ class Textformer {
 	}
 
 }
+
+/*-----------------------------------------------------------------------------/
+
+	Static
+
+/-----------------------------------------------------------------------------*/
 
 Textformer.modes = {
 

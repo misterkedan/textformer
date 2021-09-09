@@ -10,43 +10,40 @@ class RandomLinearTextform extends Textform {
 
 	build() {
 
-		const frames = [];
-		const texts = this.texts;
-		const lastText = texts.length - 1;
+		const changes = [];
 
-		for ( let text = 0; text < lastText; text ++ ) {
+		const length = this.length;
+		const from = this.from;
+		const to = this.to;
+		const steps = this.steps;
+		const stagger = this.stagger;
 
-			const startText = texts[ text ];
-			const endText = texts[ text + 1 ] || texts[ endText ];
+		for ( let i = 0; i < length; i ++ ) {
 
-			for ( let i = 0, l = this.maxLength; i < l; i ++ ) {
+			const charChanges = [];
 
-				const startFrame = i * this.stagger;
-				const endFrame = startFrame + this.steps;
-				const startChar = startText.charAt( i );
-				const endChar = endText.charAt( i );
+			const startFrame = i * stagger;
+			const endFrame = startFrame + steps;
+			const startChar = from.charAt( i );
+			const endChar = to.charAt( i );
 
-				for ( let frame = startFrame; frame <= endFrame; frame ++ ) {
+			charChanges.push( { frame: startFrame, char: startChar } );
 
-					if ( ! frames[ frame ] ) frames[ frame ] = [];
+			for ( let frame = startFrame + 1; frame < endFrame; frame ++ ) {
 
-					const step = frame - startFrame;
-
-					const char = ( step === this.steps )
-						? endChar
-						: ( step === 0 )
-							? startChar
-							: this.getRandomChar();
-
-					frames[ frame ].push( { i, char } );
-
-				}
+				const char = this.getRandomChar();
+				charChanges.push( { frame, char } );
 
 			}
 
+			charChanges.push( { frame: endFrame, char: endChar } );
+
+			changes[ i ] = charChanges;
+
 		}
 
-		this.frames = frames;
+		this.changes = changes;
+		this.totalFrames = ( this.length - 1 ) * this.stagger + this.steps;
 
 	}
 

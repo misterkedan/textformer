@@ -1,3 +1,3 @@
 # Textformer
 
-Text data transformation utility
+Easy text tranform animation, based on random character changes.

@@ -1,58 +1,30 @@
 class Textform {
 
-	constructor( { texts, charset, steps, stagger } = {} ) {
+	/**
+	 * Text transform between two texts, using multiple character changes to transition from one to the other.
+	 * @constructor
+	 * @param { Object } options
+	 * @param { String } options.from		Initial text.
+	 * @param { String } options.to			Final text.
+	 * @param { Number } options.steps		Number of character changes between both texts.
+	 * @param { Number } options.stagger	Stagger ( in steps ) between different characters.
+	 * @param { String } options.charset	Concatenated character pool for random character changes.
+	 */
+	constructor( { from, to, steps, stagger, charset } = {} ) {
 
-		Object.assign( this, { texts, charset, steps, stagger } );
+		Object.assign( this, { from, to, steps, stagger, charset } );
 
-		this.maxLength = this.texts.reduce(
-			( a, b ) => a.length > b.length ? a.length : b.length
-		);
+		this.length = ( from.length > to.length ) ? from.length : to.length;
 
 		this.build();
-		this.finalFrame = this.frames.length - 1;
-
 		this.reset();
 
 	}
 
 	build() {
 
-		this.frames = [];
+		this.changes = [];
 		console.warn( 'Abstract class' );
-
-	}
-
-	reset() {
-
-		this.currentFrame = 0;
-		this.chars = this.texts[ 0 ].split( '' );
-		this.isComplete = false;
-
-	}
-
-	step() {
-
-		if ( this.currentFrame < this.finalFrame ) {
-
-			this.currentFrame ++;
-			this.update();
-
-			if ( this.currentFrame === this.finalFrame ) this.isComplete = true;
-
-		}
-
-	}
-
-	update() {
-
-		const changes = this.frames[ this.currentFrame ];
-
-		for ( let i in changes ) {
-
-			const change = changes[ i ];
-			this.chars[ change.i ] = change.char;
-
-		}
 
 	}
 
@@ -64,13 +36,90 @@ class Textform {
 
 	}
 
-	get text() {
+	getCharAtFrame( i, frame ) {
 
-		return this.chars.join( '' );
+		const changes = this.changes[ i ];
+
+		let change = changes.filter( change => change.frame === frame )[ 0 ];
+
+		if ( ! change ) {
+
+			const startFrame = changes[ 0 ].frame;
+			const endFrame = changes[ changes.length - 1 ].frame;
+			const closestFrame = frame > endFrame ? endFrame : startFrame;
+			change = changes.filter( change => change.frame === closestFrame )[ 0 ];
+
+		}
+
+		return change.char;
+
+	}
+
+	reset() {
+
+		this.progress = 0;
+
+	}
+
+	update() {
+
+		const frame = this.frame;
+		const chars = [];
+
+		for ( let i = 0, l = this.length; i < l; i ++ ) {
+
+			chars.push( this.getCharAtFrame( i, frame ) );
+
+		}
+
+		this.text = chars.join( '' );
+
+	}
+
+	/*-----------------------------------------------------------------------------/
+
+		Getters / Setters
+
+	/-----------------------------------------------------------------------------*/
+
+	get frame() {
+
+		return this._frame;
+
+	}
+
+	set frame( frame ) {
+
+		if ( frame === this._frame ) return;
+
+		// if ( frame < 0 ) frame = 0;
+		// else if ( frame > this.totalFrames ) frame = this.totalFrames;
+
+		this._frame = frame;
+		this.update();
+
+	}
+
+	get progress() {
+
+		return this._progress;
+
+	}
+
+	set progress( progress ) {
+
+		this._progress = progress;
+		this.frame = Math.round( this.totalFrames * progress );
 
 	}
 
 }
+
+/*-----------------------------------------------------------------------------/
+
+	Static
+
+/-----------------------------------------------------------------------------*/
 
 Textform.charsets = {
 
