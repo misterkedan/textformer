@@ -26,11 +26,13 @@ class Textformer {
 		autoPlay = true,
 
 		//?// Textform settings
-		from = '',
+		from = 'Hello',
 		to = 'Textformer',
 		steps = 5,
 		stagger = 3,
 		charset = Textform.charsets.ALL,
+		align = Textform.aligns.NONE,
+		fill = ' ',
 
 		//?// TextformPlayer settings
 		duration = 3000,
@@ -43,7 +45,7 @@ class Textformer {
 		Object.assign( this, {
 			mode,
 			autoPlay,
-			options: { from, to, steps, stagger, charset },
+			options: { from, to, steps, stagger, charset, align, fill },
 			playerOptions: { duration, onBegin, onChange, onComplete }
 		} );
 

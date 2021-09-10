@@ -10,17 +10,58 @@ class Textform {
 	 * @param { Number } options.stagger	Stagger ( in steps ) between different characters.
 	 * @param { String } options.charset	Concatenated character pool for random character changes.
 	 */
-	constructor( { from, to, steps, stagger, charset } = {} ) {
+	constructor( { from, to, steps, stagger, charset, align, fill } = {} ) {
 
 		Object.assign( this, { from, to, steps, stagger, charset } );
 
-		this.length = ( from.length > to.length ) ? from.length : to.length;
+		this.length = Math.max( from.length, to.length );
 
+		this.align( align, fill );
 		this.build();
 		this.reset();
 
 	}
 
+	/**
+	 * Fills the shortest string to match the longer string's length ( between this.from and this.to ).
+	 * For example, aligning "A" with "Four" using Textform.aligns.RIGHT and "*" as a fill will replace "A" with "***A"
+	 * @param { Function }	method	A fill method from Textform.aligns
+	 * @param { String }	fillChar 	A character used to fill
+	 */
+	align( method, fillChar ) {
+
+		if ( ! method ) return;
+
+		const diff = this.to.length - this.from.length;
+		if ( diff === 0 ) return;
+
+		//?// Determine text to fill ( the shorter one )
+		const toIsLonger = ( diff > 0 );
+		const prop = toIsLonger ? 'from' : 'to';
+		const text = this[ prop ];
+
+		//?// Create filler string
+		const fill = [];
+		const absDiff = Math.abs( diff );
+		for ( let i = 0; i < absDiff; i ++ ) fill.push( fillChar || this.getRandomChar() );
+
+		//?// Fill using Textfrom.aligns method
+		this[ prop ] = method( text, fill.join( '' ) );
+
+	}
+
+	/**
+	 * Builds a character changes array, which acts like a storyboard for the transform.
+	 * Exact method to be determined in the subclass.
+	 *
+	 * Example :
+	 * [
+	 * 		[{frame:1, char:"H"}, {frame:3, char:"Z"}],
+	 * 		[{frame:5, char:"N"}],
+	 * ]
+	 * The first character will change to "H" on frame 1, and to "Z" on frame 3.
+	 * The second character will change to "N" on frame 5.
+	 */
 	build() {
 
 		this.changes = [];
@@ -127,5 +168,23 @@ Textform.charsets = {
 };
 Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();
 Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
+
+Textform.aligns = {
+
+	NONE: false,
+	LEFT: ( text, fill ) => text + fill,
+	CENTER: ( text, fill ) => {
+
+		const length = fill.length;
+		const half = Math.floor( length / 2 ); //?// Alignment will be slightly on the left in case of odd fill lenghts
+		const fill1 = fill.substring( 0, half );
+		const fill2 = fill.substring( half, length );
+		return fill1 + text + fill2;
+
+	},
+	RIGHT: ( text, fill ) => fill + text,
+
+
+};
 
 export { Textform };

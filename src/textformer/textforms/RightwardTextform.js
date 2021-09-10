@@ -21,7 +21,6 @@ class RightwardTextform extends Textform {
 		for ( let i = 0; i < length; i ++ ) {
 
 			const charChanges = [];
-
 			const startFrame = i * stagger;
 			const endFrame = startFrame + steps;
 			const startChar = from.charAt( i );

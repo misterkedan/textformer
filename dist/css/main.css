@@ -10,4 +10,5 @@ body, canvas, div {
 	padding: 5rem;
 	font-size: 4rem;
 	font-family: 'Share Tech Mono', monospace;
+	white-space: pre-wrap;
 }
