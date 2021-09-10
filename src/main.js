@@ -5,7 +5,16 @@ import * as dat from 'dat.gui';
 const demoText = document.querySelector( '#demo-text' );
 const textformer = new Textformer( { onChange: refresh } );
 
+//?// Hack needed because otherwise dat.GUI converts align methods to strings
+textformer.options.align = 'NONE';
+
 function rebuild() {
+
+	if ( typeof textformer.options.align === 'string' )
+		textformer.options.align = Textform.aligns[ textformer.options.align ];
+
+	if ( textformer.options.fill.length > 0 )
+		textformer.options.fill = textformer.options.fill.charAt( 0 );
 
 	textformer.build();
 
@@ -17,27 +26,13 @@ function refresh() {
 
 }
 
-//?// Hack needed because otherwise dat.GUI converts align methods to strings
-textformer.options.align = 'NONE';
-function align() {
-
-	if ( typeof textformer.options.align === 'string' )
-		textformer.options.align = Textform.aligns[ textformer.options.align ];
-
-	if ( textformer.options.fill.length > 0 )
-		textformer.options.fill = textformer.options.fill.charAt( 0 );
-
-	rebuild();
-
-}
-
 const gui = new dat.GUI();
 
 const texts = gui.addFolder( 'Texts' );
 texts.add( textformer.options, 'from' ).onChange( rebuild );
 texts.add( textformer.options, 'to' ).onChange( rebuild );
-texts.add( textformer.options, 'align', Object.keys( Textform.aligns ) ).onChange( align );
-texts.add( textformer.options, 'fill' ).onChange( align );
+texts.add( textformer.options, 'align', Object.keys( Textform.aligns ) ).onChange( rebuild );
+texts.add( textformer.options, 'fill' ).onChange( rebuild );
 texts.open();
 
 const textform = gui.addFolder( 'Textform' );
