@@ -92,9 +92,6 @@ class Textform {
 
 		if ( frame === this._frame ) return;
 
-		// if ( frame < 0 ) frame = 0;
-		// else if ( frame > this.totalFrames ) frame = this.totalFrames;
-
 		this._frame = frame;
 		this.update();
 

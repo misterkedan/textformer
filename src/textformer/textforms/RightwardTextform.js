@@ -1,6 +1,6 @@
 import { Textform } from './Textform.js';
 
-class RandomLinearTextform extends Textform {
+class RightwardTextform extends Textform {
 
 	constructor( options = {} ) {
 
@@ -43,10 +43,10 @@ class RandomLinearTextform extends Textform {
 		}
 
 		this.changes = changes;
-		this.totalFrames = ( this.length - 1 ) * this.stagger + this.steps;
+		this.totalFrames = ( length - 1 ) * stagger + steps;
 
 	}
 
 }
 
-export { RandomLinearTextform };
+export { RightwardTextform };

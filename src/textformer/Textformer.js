@@ -1,5 +1,5 @@
 import { Textform } from './textforms/Textform.js';
-import { RandomLinearTextform } from './textforms/RandomLinearTextform.js';
+import { RightwardTextform } from './textforms/RightwardTextform.js';
 import { TextformPlayer } from './TextformPlayer.js';
 
 class Textformer {
@@ -22,7 +22,7 @@ class Textformer {
 	 */
 	constructor( {
 
-		mode = Textformer.modes.linear,
+		mode = Textformer.modes.rightward,
 		autoPlay = true,
 
 		//?// Textform settings
@@ -122,7 +122,7 @@ class Textformer {
 
 Textformer.modes = {
 
-	linear: RandomLinearTextform
+	rightward: RightwardTextform
 
 };
 
