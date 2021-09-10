@@ -21,7 +21,12 @@ function refresh() {
 textformer.options.align = 'NONE';
 function align() {
 
-	textformer.options.align = Textform.aligns[ textformer.options.align ];
+	if ( typeof textformer.options.align === 'string' )
+		textformer.options.align = Textform.aligns[ textformer.options.align ];
+
+	if ( textformer.options.fill.length > 0 )
+		textformer.options.fill = textformer.options.fill.charAt( 0 );
+
 	rebuild();
 
 }
@@ -32,6 +37,7 @@ const texts = gui.addFolder( 'Texts' );
 texts.add( textformer.options, 'from' ).onChange( rebuild );
 texts.add( textformer.options, 'to' ).onChange( rebuild );
 texts.add( textformer.options, 'align', Object.keys( Textform.aligns ) ).onChange( align );
+texts.add( textformer.options, 'fill' ).onChange( align );
 texts.open();
 
 const textform = gui.addFolder( 'Textform' );
