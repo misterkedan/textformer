@@ -10,12 +10,13 @@ class Textformer {
 	 * @param { Object }	options
 	 * @param { Class }		options.mode		Animation mode, pick one from Textformer.modes.
 	 * @param { Boolean } 	options.autoPlay	Animates automatically using the built-in TextformPlayer.
+	 * @param { Number } 	options.speed		Number of character changes per second.
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
-	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
+	 * @param { Number } 	options.duration	Animation duration, in milliseconds ( overrides options.speed ).
 	 * @param { Function }	options.onBegin		Optional callback fired when the animation starts.
 	 * @param { Function }	options.onChange	Optional callback fired on each Textform character change.
 	 * @param { Function }	options.onComplet	Optional callback fired when the animation ends.
@@ -24,9 +25,10 @@ class Textformer {
 
 		mode = Textformer.modes.rightward,
 		autoPlay = true,
+		speed = 15,
 
 		//?// Textform settings
-		from = 'Hello',
+		from = 'Demo',
 		to = 'Textformer',
 		steps = 5,
 		stagger = 3,
@@ -35,7 +37,7 @@ class Textformer {
 		fill = ' ',
 
 		//?// TextformPlayer settings
-		duration = 3000,
+		duration,
 		onBegin,
 		onChange,
 		onComplete,
@@ -43,8 +45,7 @@ class Textformer {
 	} = {} ) {
 
 		Object.assign( this, {
-			mode,
-			autoPlay,
+			mode, autoPlay, speed,
 			options: { from, to, steps, stagger, charset, align, fill },
 			playerOptions: { duration, onBegin, onChange, onComplete }
 		} );
@@ -62,8 +63,17 @@ class Textformer {
 
 		if ( this.autoPlay ) {
 
-			this.playerOptions.textform = textform;
-			this.player = new TextformPlayer( this.playerOptions );
+			const playerOptions = this.playerOptions;
+
+			if ( ! playerOptions.duration ) {
+
+				const speed = Math.abs( this.speed ) || 1;
+				playerOptions.duration = this.textform.totalFrames * ( 1000 / speed );
+
+			}
+
+			playerOptions.textform = textform;
+			this.player = new TextformPlayer( playerOptions );
 			this.play();
 
 		}
