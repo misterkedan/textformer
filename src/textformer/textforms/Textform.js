@@ -2,6 +2,7 @@ class Textform {
 
 	/**
 	 * Text transform between two texts, using multiple character changes to transition from one to the other.
+	 *
 	 * @constructor
 	 * @param { Object } 	options
 	 * @param { Element }	options.output		DOM element the text will be output to.
@@ -24,6 +25,12 @@ class Textform {
 		this.reset();
 
 	}
+
+	/*-----------------------------------------------------------------------------/
+
+		Init
+
+	/-----------------------------------------------------------------------------*/
 
 	/**
 	 * Fills the shortest string to match the longer string's length ( between this.from and this.to ).
@@ -67,10 +74,79 @@ class Textform {
 	 */
 	build() {
 
-		this.changes = [];
-		console.warn( 'Abstract class' );
+		const changes = [];
+
+		const length = this.length;
+		const from = this.from;
+		const to = this.to;
+		const steps = this.steps;
+
+		const startFrames = this.computeStartFrames();
+
+		for ( let i = 0; i < length; i ++ ) {
+
+			const charChanges = [];
+			const startFrame = startFrames[ i ];
+			const endFrame = startFrame + steps;
+			const startChar = from.charAt( i );
+			const endChar = to.charAt( i );
+
+			charChanges.push( { frame: startFrame, char: startChar } );
+
+			for ( let frame = startFrame + 1; frame < endFrame; frame ++ ) {
+
+				const char = this.getRandomChar();
+				charChanges.push( { frame, char } );
+
+			}
+
+			charChanges.push( { frame: endFrame, char: endChar } );
+
+			changes[ i ] = charChanges;
+
+		}
+
+		this.changes = changes;
+
+		//?// Highest frame
+		this.totalFrames = ( Math.max.apply( Math,
+			changes.map( character =>
+				character.map( change => change.frame )
+			).flat() )
+		);
 
 	}
+
+	/**
+	 * Method used by the build() method to generate an array of staggered
+	 * starting frames. The default behavior is staggering rightward.
+	 *
+	 * Override this method in subclasses to change the animation.
+	 *
+	 * @returns { Array } Array of staggered starting frames
+	 */
+	computeStartFrames() {
+
+		const length = this.length;
+		const stagger = this.stagger;
+
+		const startFrames = [];
+
+		for ( let i = 0; i < length; i ++ ) {
+
+			startFrames.push( i * stagger );
+
+		}
+
+		return startFrames;
+
+	}
+
+	/*-----------------------------------------------------------------------------/
+
+		Update
+
+	/-----------------------------------------------------------------------------*/
 
 	getRandomChar() {
 
@@ -176,9 +252,9 @@ Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
 
 Textform.aligns = {
 
-	NONE: false,
-	LEFT: ( text, fill ) => text + fill,
-	CENTER: ( text, fill ) => {
+	none: false,
+	left: ( text, fill ) => text + fill,
+	center: ( text, fill ) => {
 
 		const length = fill.length;
 		const half = Math.floor( length / 2 ); //?// Alignment will be slightly on the left in case of odd fill lenghts
@@ -187,7 +263,7 @@ Textform.aligns = {
 		return fill1 + text + fill2;
 
 	},
-	RIGHT: ( text, fill ) => fill + text,
+	right: ( text, fill ) => fill + text,
 
 
 };

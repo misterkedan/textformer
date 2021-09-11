@@ -1,5 +1,7 @@
 import { Textform } from './textforms/Textform.js';
-import { RightwardTextform } from './textforms/RightwardTextform.js';
+import { RandomTextform } from './textforms/RandomTextform.js';
+import { ReversedTextform } from './textforms/ReversedTextform.js';
+import { ShuffledTextform } from './textforms/ShuffledTextform.js';
 import { TextformPlayer } from './TextformPlayer.js';
 
 class Textformer {
@@ -29,7 +31,7 @@ class Textformer {
 	 */
 	constructor( {
 
-		mode = Textformer.modes.rightward,
+		mode = Textformer.modes.default,
 		autoPlay = true,
 		speed = 15,
 
@@ -40,7 +42,7 @@ class Textformer {
 		steps = 5,
 		stagger = 3,
 		charset = Textform.charsets.ALL,
-		align = Textform.aligns.NONE,
+		align = Textform.aligns.none,
 		fill = ' ',
 
 		//?// TextformPlayer settings
@@ -64,6 +66,9 @@ class Textformer {
 
 	build() {
 
+		if ( this.mode.prototype instanceof Textform === false )
+			this.mode = Textformer.modes.default;
+
 		const textform = new this.mode( this.options );
 		this.textform = textform;
 
@@ -79,6 +84,8 @@ class Textformer {
 			}
 
 			playerOptions.textform = textform;
+
+			if ( this.player ) this.player.stop();
 			this.player = new TextformPlayer( playerOptions );
 			this.play();
 
@@ -97,7 +104,7 @@ class Textformer {
 
 		if ( ! this.player ) return;
 		this.player.stop();
-		this.build();
+		this.player.play();
 
 	}
 
@@ -141,7 +148,10 @@ class Textformer {
 
 Textformer.modes = {
 
-	rightward: RightwardTextform
+	default: Textform,
+	reversed: ReversedTextform,
+	shuffled: ShuffledTextform,
+	random: RandomTextform,
 
 };
 
