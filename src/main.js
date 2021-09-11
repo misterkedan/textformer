@@ -3,7 +3,7 @@ import { Textformer } from './textformer/Textformer.js';
 import * as dat from 'dat.gui';
 
 const demoText = document.querySelector( '#demo-text' );
-const textformer = new Textformer( { onChange: refresh } );
+const textformer = new Textformer( { onChange: refresh, delay: 500 } );
 
 function refresh() {
 
@@ -53,4 +53,7 @@ advanced.add( textformer.options, 'align', Object.keys( Textform.aligns ) ).onCh
 advanced.add( textformer.options, 'fill' ).onChange( rebuild );
 advanced.add( textformer.options, 'charset', Textform.charsets ).onChange( rebuild );
 advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( rebuild );
+advanced.add( textformer.playerOptions, 'delay', 0, 5000 ).step( 50 ).onChange( rebuild );
 // advanced.open();
+
+refresh();

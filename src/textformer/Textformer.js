@@ -37,6 +37,7 @@ class Textformer {
 		fill = ' ',
 
 		//?// TextformPlayer settings
+		delay = 0,
 		duration,
 		onBegin,
 		onChange,
@@ -47,7 +48,7 @@ class Textformer {
 		Object.assign( this, {
 			mode, autoPlay, speed,
 			options: { from, to, steps, stagger, charset, align, fill },
-			playerOptions: { duration, onBegin, onChange, onComplete }
+			playerOptions: { duration, delay, onBegin, onChange, onComplete }
 		} );
 
 		this.build();
@@ -88,9 +89,7 @@ class Textformer {
 
 	replay() {
 
-		this.player.stop();
-		this.textform.reset();
-		this.player.play();
+		this.build();
 
 	}
 
