@@ -3,13 +3,16 @@ import { Textformer } from './textformer/Textformer.js';
 import * as dat from 'dat.gui';
 
 const demoText = document.querySelector( '#demo-text' );
-const textformer = new Textformer( { onChange: refresh, delay: 500 } );
 
-function refresh() {
-
-	demoText.textContent = textformer.text;
-
-}
+const textformer = new Textformer( {
+	output: demoText,
+	from: 'Demo',
+	to: 'Textformer',
+	steps: 5,
+	stagger: 3,
+	speed: 15,
+	delay: 500,
+} );
 
 function rebuild() {
 
@@ -44,7 +47,7 @@ textform.open();
 
 const player = gui.addFolder( 'Animation' );
 player.add( textformer, 'speed', 1, 30 ).step( 1 ).onChange( rebuildFromSpeed );
-player.add( textformer, 'progress', 0, 1 ).step( 0.001 ).onChange( refresh ).listen();
+player.add( textformer, 'progress', 0, 1 ).step( 0.001 ).listen();
 player.add( textformer, 'replay' );
 player.open();
 
@@ -55,5 +58,3 @@ advanced.add( textformer.options, 'charset', Textform.charsets ).onChange( rebui
 advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( rebuild );
 advanced.add( textformer.playerOptions, 'delay', 0, 5000 ).step( 50 ).onChange( rebuild );
 // advanced.open();
-
-refresh();

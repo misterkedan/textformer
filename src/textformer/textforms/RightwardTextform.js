@@ -2,11 +2,7 @@ import { Textform } from './Textform.js';
 
 class RightwardTextform extends Textform {
 
-	constructor( options = {} ) {
-
-		super( options );
-
-	}
+	//?// Override
 
 	build() {
 

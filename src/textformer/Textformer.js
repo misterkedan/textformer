@@ -11,15 +11,21 @@ class Textformer {
 	 * @param { Class }		options.mode		Animation mode, pick one from Textformer.modes.
 	 * @param { Boolean } 	options.autoPlay	Animates automatically using the built-in TextformPlayer.
 	 * @param { Number } 	options.speed		Number of character changes per second.
+	 *
+	 * @param { Element } 	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
+	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
+	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
+	 *
+	 * @param { Number } 	options.delay		Delay before playing the animation, in milliseconds.
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds ( overrides options.speed ).
-	 * @param { Function }	options.onBegin		Optional callback fired when the animation starts.
-	 * @param { Function }	options.onChange	Optional callback fired on each Textform character change.
-	 * @param { Function }	options.onComplet	Optional callback fired when the animation ends.
+	 * @param { Function }	options.onBegin		Callback fired when the animation starts.
+	 * @param { Function }	options.onChange	Callback fired on each Textform character change.
+	 * @param { Function }	options.onComplet	Callback fired when the animation ends.
 	 */
 	constructor( {
 
@@ -28,6 +34,7 @@ class Textformer {
 		speed = 15,
 
 		//?// Textform settings
+		output,
 		from = 'Demo',
 		to = 'Textformer',
 		steps = 5,
@@ -47,7 +54,7 @@ class Textformer {
 
 		Object.assign( this, {
 			mode, autoPlay, speed,
-			options: { from, to, steps, stagger, charset, align, fill },
+			options: { output, from, to, steps, stagger, charset, align, fill },
 			playerOptions: { duration, delay, onBegin, onChange, onComplete }
 		} );
 
@@ -56,8 +63,6 @@ class Textformer {
 	}
 
 	build() {
-
-		if ( this.mode.prototype instanceof Textform === false ) throw new Error( 'Please select a mode from Texformer.modes' );
 
 		const textform = new this.mode( this.options );
 		this.textform = textform;
@@ -83,12 +88,15 @@ class Textformer {
 
 	play() {
 
+		if ( ! this.player ) return;
 		this.player.play();
 
 	}
 
 	replay() {
 
+		if ( ! this.player ) return;
+		this.player.stop();
 		this.build();
 
 	}

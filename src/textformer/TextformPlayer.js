@@ -6,7 +6,7 @@ class TextformPlayer {
 	 * @param { Object }	options
 	 * @param { Textform }	options.textform	Textform to animate.
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
-	 * @param { Number } 	options.delay		Animation delay before playing , in milliseconds.
+	 * @param { Number } 	options.delay		Delay before playing the animation, in milliseconds.
 	 * @param { Function }	options.onBegin		Optional callback fired when the animation starts.
 	 * @param { Function }	options.onChange	Optional callback fired on each Textform character change.
 	 * @param { Function }	options.onComplet	Optional callback fired when the animation ends.
@@ -32,7 +32,7 @@ class TextformPlayer {
 
 			textform.progress = 1;
 			if ( onComplete ) onComplete.call();
-			return cancelAnimationFrame( this.animationFrame );
+			return this.stop();
 
 		}
 
@@ -60,12 +60,13 @@ class TextformPlayer {
 		this.textform.progress = 0;
 
 		const delay = ( this.delay > 0 ) ? this.delay : 0;
-		setTimeout( this.requestAnimationFrame.bind( this ), delay );
+		this.timeout = setTimeout( this.requestAnimationFrame.bind( this ), delay );
 
 	}
 
 	stop() {
 
+		clearTimeout( this.timeout );
 		cancelAnimationFrame( this.animationFrame );
 
 	}

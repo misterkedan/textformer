@@ -3,16 +3,19 @@ class Textform {
 	/**
 	 * Text transform between two texts, using multiple character changes to transition from one to the other.
 	 * @constructor
-	 * @param { Object } options
-	 * @param { String } options.from		Initial text.
-	 * @param { String } options.to			Final text.
-	 * @param { Number } options.steps		Number of character changes between both texts.
-	 * @param { Number } options.stagger	Stagger ( in steps ) between different characters.
-	 * @param { String } options.charset	Concatenated character pool for random character changes.
+	 * @param { Object } 	options
+	 * @param { Element }	options.output		DOM element the text will be output to.
+	 * @param { String } 	options.from		Initial text.
+	 * @param { String } 	options.to			Final text.
+	 * @param { Number } 	options.steps		Number of character changes between both texts.
+	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
+	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
+	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 */
-	constructor( { from, to, steps, stagger, charset, align, fill } = {} ) {
+	constructor( { output, from, to, steps, stagger, charset, align, fill } = {} ) {
 
-		Object.assign( this, { from, to, steps, stagger, charset } );
+		Object.assign( this, { output, from, to, steps, stagger, charset } );
 
 		this.length = Math.max( from.length, to.length );
 
@@ -114,6 +117,8 @@ class Textform {
 		}
 
 		this.text = chars.join( '' );
+
+		if ( this.output ) this.output.textContent = this.text;
 
 	}
 
