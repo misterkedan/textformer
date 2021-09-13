@@ -36,11 +36,11 @@ class Textformer {
 		speed = 15,
 
 		//?// Textform settings
-		output,
 		from = 'Demo',
 		to = 'Textformer',
 		steps = 5,
 		stagger = 3,
+		output,
 		charset = Textform.charsets.ALL,
 		align = Textform.aligns.none,
 		fill = ' ',
@@ -66,26 +66,23 @@ class Textformer {
 
 	build() {
 
-		if ( this.mode.prototype instanceof Textform === false )
-			this.mode = Textformer.modes.default;
+		const { autoPlay, playerOptions, player } = this;
 
 		const textform = new this.mode( this.options );
 		this.textform = textform;
 
-		if ( this.autoPlay ) {
-
-			const playerOptions = this.playerOptions;
+		if ( autoPlay ) {
 
 			if ( ! playerOptions.duration ) {
 
 				const speed = Math.abs( this.speed ) || 1;
-				playerOptions.duration = this.textform.totalFrames * ( 1000 / speed );
+				playerOptions.duration = textform.totalFrames * ( 1000 / speed );
 
 			}
 
 			playerOptions.textform = textform;
 
-			if ( this.player ) this.player.stop();
+			if ( player ) player.stop();
 			this.player = new TextformPlayer( playerOptions );
 			this.play();
 
@@ -100,11 +97,17 @@ class Textformer {
 
 	}
 
-	replay() {
+	stop() {
 
 		if ( ! this.player ) return;
 		this.player.stop();
-		this.player.play();
+
+	}
+
+	replay() {
+
+		this.stop();
+		this.play();
 
 	}
 

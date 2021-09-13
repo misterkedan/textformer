@@ -5,22 +5,25 @@ class Textform {
 	 *
 	 * @constructor
 	 * @param { Object } 	options
-	 * @param { Element }	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Element }	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
 	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 */
-	constructor( { output, from, to, steps, stagger, charset, align, fill } = {} ) {
+	constructor( {
+		// steps, stagger, output, charset,
+		from, to, align, fill
+	} = {} ) {
 
-		Object.assign( this, { output, from, to, steps, stagger, charset } );
+		Object.assign( this, arguments[ 0 ] );
 
 		this.length = Math.max( from.length, to.length );
 
-		this.align( align, fill );
+		this.alignTexts( align, fill );
 		this.build();
 		this.reset();
 
@@ -38,7 +41,7 @@ class Textform {
 	 * @param { Function }	method	A fill method from Textform.aligns
 	 * @param { String }	fillChar 	A character used to fill
 	 */
-	align( method, fillChar ) {
+	alignTexts( method, fillChar ) {
 
 		if ( ! method ) return;
 
@@ -53,7 +56,7 @@ class Textform {
 		//?// Create filler string
 		const fill = [];
 		const absDiff = Math.abs( diff );
-		for ( let i = 0; i < absDiff; i ++ ) fill.push( fillChar || this.getRandomChar() );
+		for ( let i = 0; i < absDiff; i ++ ) fill.push( fillChar || this.generateRandomChar() );
 
 		//?// Fill using Textfrom.aligns method
 		this[ prop ] = method( text, fill.join( '' ) );
@@ -61,8 +64,10 @@ class Textform {
 	}
 
 	/**
-	 * Builds a character changes array, which acts like a storyboard for the transform.
-	 * Exact method to be determined in the subclass.
+	 * Builds a scenario array to prepare all character changes
+	 *
+	 * Contains one Array for each character of the text, which itself contains
+	 * Objects describing character changes using the structure { frame, char }
 	 *
 	 * Example :
 	 * [
@@ -74,45 +79,37 @@ class Textform {
 	 */
 	build() {
 
-		const changes = [];
-
-		const length = this.length;
-		const from = this.from;
-		const to = this.to;
-		const steps = this.steps;
-
+		const { length, from, to, steps } = this;
 		const startFrames = this.computeStartFrames();
+		const scenario = [];
 
 		for ( let i = 0; i < length; i ++ ) {
 
-			const charChanges = [];
+			const changes = [];
 			const startFrame = startFrames[ i ];
 			const endFrame = startFrame + steps;
 			const startChar = from.charAt( i );
 			const endChar = to.charAt( i );
 
-			charChanges.push( { frame: startFrame, char: startChar } );
+			changes.push( { frame: startFrame, char: startChar } );
 
 			for ( let frame = startFrame + 1; frame < endFrame; frame ++ ) {
 
-				const char = this.getRandomChar();
-				charChanges.push( { frame, char } );
+				const char = this.generateRandomChar();
+				changes.push( { frame, char } );
 
 			}
 
-			charChanges.push( { frame: endFrame, char: endChar } );
+			changes.push( { frame: endFrame, char: endChar } );
 
-			changes[ i ] = charChanges;
+			scenario[ i ] = changes;
 
 		}
 
-		this.changes = changes;
+		this.scenario = scenario;
 
-		//?// Highest frame
-		this.totalFrames = ( Math.max.apply( Math,
-			changes.map( character =>
-				character.map( change => change.frame )
-			).flat() )
+		this.totalFrames = Math.max.apply(
+			Math, scenario.map( ( char ) => char.map( change => change.frame ) ).flat()
 		);
 
 	}
@@ -127,18 +124,9 @@ class Textform {
 	 */
 	computeStartFrames() {
 
-		const length = this.length;
-		const stagger = this.stagger;
+		const { length, stagger } = this;
 
-		const startFrames = [];
-
-		for ( let i = 0; i < length; i ++ ) {
-
-			startFrames.push( i * stagger );
-
-		}
-
-		return startFrames;
+		return Array.from( { length } ).map( ( _, i ) => i * stagger );
 
 	}
 
@@ -148,7 +136,7 @@ class Textform {
 
 	/-----------------------------------------------------------------------------*/
 
-	getRandomChar() {
+	generateRandomChar() {
 
 		const charset = this.charset;
 		const randomIndex = Math.floor( Math.random() * charset.length );
@@ -156,18 +144,18 @@ class Textform {
 
 	}
 
-	getCharAtFrame( i, frame ) {
+	getCharAt( i, frame ) {
 
-		const changes = this.changes[ i ];
+		const scenario = this.scenario[ i ];
 
-		let change = changes.filter( change => change.frame === frame )[ 0 ];
+		let change = scenario.filter( change => change.frame === frame )[ 0 ];
 
 		if ( ! change ) {
 
-			const startFrame = changes[ 0 ].frame;
-			const endFrame = changes[ changes.length - 1 ].frame;
+			const startFrame = scenario[ 0 ].frame;
+			const endFrame = scenario[ scenario.length - 1 ].frame;
 			const closestFrame = frame > endFrame ? endFrame : startFrame;
-			change = changes.filter( change => change.frame === closestFrame )[ 0 ];
+			change = scenario.filter( change => change.frame === closestFrame )[ 0 ];
 
 		}
 
@@ -183,16 +171,12 @@ class Textform {
 
 	update() {
 
-		const frame = this.frame;
-		const chars = [];
+		const { frame, length } = this;
+		const getCharAt = this.getCharAt.bind( this );
 
-		for ( let i = 0, l = this.length; i < l; i ++ ) {
-
-			chars.push( this.getCharAtFrame( i, frame ) );
-
-		}
-
-		this.text = chars.join( '' );
+		this.text = Array.from( { length } )
+			.map( ( _, i ) => getCharAt( i, frame ) )
+			.join( '' );
 
 		if ( this.output ) this.output.textContent = this.text;
 
@@ -253,17 +237,20 @@ Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
 Textform.aligns = {
 
 	none: false,
-	left: ( text, fill ) => text + fill,
+	left: ( text, fill ) => `${text}${fill}`,
 	center: ( text, fill ) => {
 
 		const length = fill.length;
-		const half = Math.floor( length / 2 ); //?// Alignment will be slightly on the left in case of odd fill lenghts
-		const fill1 = fill.substring( 0, half );
-		const fill2 = fill.substring( half, length );
-		return fill1 + text + fill2;
+		const half = Math.floor( length / 2 );
+		//?// Alignment will be slightly on the left in case of odd fill lenghts
+
+		const leftFill = fill.substring( 0, half );
+		const rightFill = fill.substring( half, length );
+
+		return `${leftFill}${text}${rightFill}`;
 
 	},
-	right: ( text, fill ) => fill + text,
+	right: ( text, fill ) => `${fill}${text}`,
 
 
 };

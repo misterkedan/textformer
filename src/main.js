@@ -6,21 +6,21 @@ const demoText = document.querySelector( '#demo-text' );
 
 const options = {
 	output: demoText,
-
 	from: '',
 	to: 'Textformer',
 	steps: 5,
 	stagger: 3,
-	mode: Textformer.modes.default,
 	speed: 15,
 	delay: 500,
-	align: Textform.aligns.left,
+	mode: 'random',
+	align: 'left',
 };
 
-const textformer = new Textformer( options );
-
-options.mode = 'default';
-options.align = 'left';
+const textformer = new Textformer( {
+	...options,
+	mode: Textformer.modes[ options.mode ],
+	align: Textform.aligns[ options.align ],
+} );
 
 function update() {
 
@@ -32,13 +32,18 @@ function update() {
 	if ( textformer.options.fill.length > 0 )
 		textformer.options.fill = textformer.options.fill.charAt( 0 );
 
+	//?// Force duration recomputation
 	textformer.playerOptions.duration = 0;
+
+	//?// Rebuilds the textform
 	textformer.build();
+
+	//?// Update the display if speed changed
 	gui.updateDisplay();
 
 }
 
-function rebuild() {
+function build() {
 
 	textformer.build();
 
@@ -64,6 +69,6 @@ const advanced = gui.addFolder( 'Advanced' );
 advanced.add( options, 'align', Object.keys( Textform.aligns ) ).onChange( update );
 advanced.add( textformer.options, 'fill' ).onChange( update );
 advanced.add( textformer.options, 'charset', Textform.charsets ).onChange( update );
-advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( rebuild );
+advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( build );
 advanced.add( textformer.playerOptions, 'delay', 0, 5000 ).step( 50 ).onChange( update );
-advanced.open();
+// advanced.open();

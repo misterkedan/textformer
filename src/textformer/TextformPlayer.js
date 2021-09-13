@@ -11,22 +11,19 @@ class TextformPlayer {
 	 * @param { Function }	options.onChange	Optional callback fired on each Textform character change.
 	 * @param { Function }	options.onComplet	Optional callback fired when the animation ends.
 	 */
-	constructor( { textform, duration, delay, onBegin, onChange, onComplete } = {} ) {
+	constructor( options = {} ) {
 
-		Object.assign( this, { textform, duration, delay, onBegin, onChange, onComplete } );
+		Object.assign( this, options );
 
 	}
 
-	animate( time = 0 ) {
+	animate( animationTime = 0 ) {
 
-		const textform = this.textform;
-		const onChange = this.onChange;
-		const onComplete = this.onComplete;
-		const duration = this.duration;
+		if ( ! this.time && animationTime ) this.time = animationTime;
 
-		if ( ! this.time ) this.time = time;
+		const { textform, onChange, onComplete, duration, time } = this;
 
-		let elapsed = time - this.time;
+		const elapsed = animationTime - time;
 
 		if ( elapsed > duration ) {
 

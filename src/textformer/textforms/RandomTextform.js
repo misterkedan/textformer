@@ -6,26 +6,17 @@ class RandomTextform extends Textform {
 
 	computeStartFrames() {
 
-		const length = this.length;
-		const steps = this.steps;
-		const stagger = this.stagger;
+		const { length, steps, stagger } = this;
 
-		const startFrames = [];
-
-		const GOLDEN_RATIO = 0.382;
-		const min = 0;
-		const max = GOLDEN_RATIO * length * stagger + steps;
-		const randomFrame = () =>
+		const generateRandomInt = ( min, max ) =>
 			Math.floor( Math.random() * ( max - min + 1 ) + min );
 
+		const GOLDEN_RATIO = 0.382;
+		const minFrame = 0;
+		const maxFrame = GOLDEN_RATIO * length * stagger + steps;
+		const generateRandomFrame = () => generateRandomInt( minFrame, maxFrame );
 
-		for ( let i = 0; i < length; i ++ ) {
-
-			startFrames.push( randomFrame() );
-
-		}
-
-		return startFrames;
+		return Array.from( { length } ).map( () => generateRandomFrame() );
 
 	}
 
