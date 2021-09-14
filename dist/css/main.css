@@ -1,14 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-body, canvas, div {
-  display: block;
-  margin: 0;
-  border: 0;
+body {
+	margin: 0;
+	border: 0;
+	font-family: 'Share Tech Mono', monospace;
 }
 
 #demo-text {
-	padding: 5rem;
-	font-size: 4rem;
-	font-family: 'Share Tech Mono', monospace;
-	white-space: pre-wrap;
+	margin: 0;
+	overflow-wrap: break-word;
+	padding: 4rem 2rem 2rem;
+	font-size: 3rem;
+}
+
+@media screen and (min-width: 30rem) {
+
+	#demo-text {
+		padding: 5rem;
+		font-size: 4rem;
+	}
+
 }
