@@ -12,25 +12,19 @@ class ExpandTextform extends Textform {
 			: Math.floor( ( length - 1 ) / 2 );
 
 		//?// To avoid asymetrical animations on auto center + even lengths
-		if ( ! hasValidOrigin && length % 2 === 0 ) {
-
-			const aboveCenter = center + 1;
-
-			return Array.from( { length } )
-				.map( ( _, i ) => {
-
-					const diff = ( i < aboveCenter )
-						? center - i
-						: i - aboveCenter;
-
-					return diff * stagger;
-
-				} );
-
-		}
+		const aboveCenter = ( ! hasValidOrigin && length % 2 === 0 ) ?
+			center + 1 : center;
 
 		return Array.from( { length } )
-			.map( ( _, i ) => Math.abs( center - i ) * stagger );
+			.map( ( _, i ) => {
+
+				const diff = ( i < aboveCenter )
+					? center - i
+					: i - aboveCenter;
+
+				return this.randomize( diff * stagger );
+
+			} );
 
 	}
 

@@ -5,20 +5,20 @@ const options = {
 
 	output: document.querySelector( '#demo-text' ),
 
-	from: '0123456789',
-	// from: '',
+	// from: '0123456789',
+	from: '',
 	to: 'Textformer',
 
-	mode: 'expand',
-	steps: 10,
-	stagger: 3,
+	mode: 'shuffle',
+	steps: 8,
+	stagger: 2,
+	randomness: 5,
 	speed: 15,
 
 	align: 'left',
 	fill: ' ',
 	delay: 500,
-
-	// origin: 7
+	origin: - 1,
 
 };
 
@@ -34,17 +34,17 @@ function update() {
 	textformer.mode = Textformer.modes[ options.mode ];
 	textformer.options.align = Textformer.aligns[ options.align ];
 
-	//?// Verify the fill is a single character
+	//?// Multiple characters fills won't work
 	if ( textformer.options.fill.length > 0 )
 		textformer.options.fill = textformer.options.fill.charAt( 0 );
 
-	//?// Force duration recomputation
+	//?// Force duration recomputation based on speed
 	textformer.playerOptions.duration = 0;
 
 	//?// Rebuilds the textform
 	textformer.build();
 
-	//?// Update the display if speed changed
+	//?// Update the duration gui display
 	gui.updateDisplay();
 
 }
@@ -63,6 +63,7 @@ textform.add( textformer.options, 'to' ).onChange( update );
 textform.add( options, 'mode', Object.keys( Textformer.modes ) ).onChange( update );
 textform.add( textformer.options, 'steps', 1, 60 ).step( 1 ).onChange( update );
 textform.add( textformer.options, 'stagger', 0, 30 ).step( 1 ).onChange( update );
+textform.add( textformer.options, 'randomness', 0, 30 ).step( 1 ).onChange( update );
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
@@ -77,6 +78,7 @@ advanced.add( textformer.options, 'fill' ).onChange( update );
 advanced.add( textformer.options, 'charset', Textformer.charsets ).onChange( update );
 advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( build );
 advanced.add( textformer.playerOptions, 'delay', 0, 5000 ).step( 50 ).onChange( update );
+advanced.add( textformer.options, 'origin', - 1, 10 ).step( 1 ).onChange( update );
 // advanced.open();
 
 const device = navigator.userAgent || navigator.vendor || window.opera;

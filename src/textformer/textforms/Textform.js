@@ -9,6 +9,7 @@ class Textform {
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element }	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
@@ -16,7 +17,7 @@ class Textform {
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 */
 	constructor( {
-		// steps, stagger, origin, output, charset,
+		// steps, stagger, randomness, origin, output, charset,
 		from, to, align, fill
 	} = {} ) {
 
@@ -84,10 +85,12 @@ class Textform {
 	 */
 	build() {
 
-		const { length, from, to, steps } = this;
+		const { length, from, to } = this;
 		const startFrames = this.computeStartFrames();
 
 		const buildCharAt = ( i ) => {
+
+			const steps = this.randomize( this.steps );
 
 			const startFrame = startFrames[ i ];
 			const endFrame = startFrame + steps;
@@ -109,15 +112,10 @@ class Textform {
 
 		};
 
-		const scenario = Array.from( { length } )
+		this.scenario = Array.from( { length } )
 			.map( ( _, i ) => buildCharAt( i ) );
-		this.scenario = scenario;
 
-		this.totalFrames = Math.max.apply(
-			Math,
-			scenario.map( ( char ) => char.map( change => change.frame ) )
-				.flat()
-		);
+		this.computeTotalFrames();
 
 	}
 
@@ -137,12 +135,43 @@ class Textform {
 			.map( ( _, i )=> {
 
 				const offset = i - origin;
-				return ( offset >= 0 ) ? offset * stagger
+				const offsetStartFrame = ( offset >= 0 )
+					? offset * stagger
 					: ( length + offset ) * stagger;
+
+				return this.randomize( offsetStartFrame );
 
 			} );
 
-		return Array.from( { length } ).map( ( _, i ) => i * stagger );
+		return Array.from( { length } ).map( ( _, i ) => {
+
+			const startFrame = i * stagger;
+			return this.randomize( startFrame );
+
+		} );
+
+	}
+
+	computeTotalFrames() {
+
+		this.totalFrames = Math.max.apply(
+			Math,
+			this.scenario.map( ( char ) => char.map( change => change.frame ) )
+				.flat()
+		);
+
+	}
+
+	randomize( value, minMultiplier = 0, maxMultiplier = 1 ) {
+
+		const { randomness } = this;
+
+		if ( ! randomness ) return value;
+
+		const min = value - minMultiplier * randomness;
+		const max = value + maxMultiplier * randomness;
+
+		return Textform.generateRandomInt( min, max );
 
 	}
 
@@ -154,8 +183,8 @@ class Textform {
 
 	generateRandomChar() {
 
-		const charset = this.charset;
-		const randomIndex = Math.floor( Math.random() * charset.length );
+		const { charset } = this;
+		const randomIndex = Textform.generateRandomInt( 0, charset.length - 1 );
 		return charset.charAt( randomIndex );
 
 	}
@@ -188,13 +217,16 @@ class Textform {
 	update() {
 
 		const { frame, length } = this;
-		const getCharAt = this.getCharAt.bind( this );
 
-		this.text = Array.from( { length } )
-			.map( ( _, i ) => getCharAt( i, frame ) )
-			.join( '' );
+		const chars = Array.from( { length } )
+			.map( ( _, i ) => this.getCharAt( i, frame ) );
 
-		if ( this.output ) this.output.innerHTML = this.text.replace( / /g, '&nbsp;' );
+		// console.log( chars );
+
+		this.text = chars.join( '' );
+
+		if ( this.output )
+			this.output.innerHTML = this.text.replace( / /g, '&nbsp;' );
 
 	}
 
@@ -241,7 +273,8 @@ class Textform {
 	get hasValidOrigin() {
 
 		const { origin, length } = this;
-		return ( origin >= 0 && origin < length );
+
+		return ( origin !== undefined && origin >= 0 && origin < length );
 
 	}
 
@@ -252,6 +285,9 @@ class Textform {
 	Static
 
 /-----------------------------------------------------------------------------*/
+
+Textform.generateRandomInt = ( min, max ) =>
+	Math.floor( Math.random() * ( max - min + 1 ) + min );
 
 Textform.charsets = {
 	UPPERCASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',

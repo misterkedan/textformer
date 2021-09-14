@@ -1,5 +1,4 @@
 import { Textform } from './textforms/Textform.js';
-import { RandomTextform } from './textforms/RandomTextform.js';
 import { ReversedTextform } from './textforms/ReversedTextform.js';
 import { ShuffledTextform } from './textforms/ShuffledTextform.js';
 import { TextformPlayer } from './TextformPlayer.js';
@@ -19,6 +18,7 @@ class Textformer {
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element } 	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
@@ -42,6 +42,7 @@ class Textformer {
 		to = 'Textformer',
 		steps = 5,
 		stagger = 3,
+		randomness = 0,
 		origin,
 		output,
 		charset = Textform.charsets.ALL,
@@ -59,7 +60,10 @@ class Textformer {
 
 		Object.assign( this, {
 			mode, autoPlay, speed,
-			options: { from, to, steps, stagger, origin, output, charset, align, fill },
+			options: {
+				from, to, steps, stagger, randomness,
+				origin, output, charset, align, fill
+			},
 			playerOptions: { duration, delay, onBegin, onChange, onComplete }
 		} );
 
@@ -159,7 +163,6 @@ Textformer.modes = {
 	reverse: ReversedTextform,
 	expand: ExpandTextform,
 	shuffle: ShuffledTextform,
-	random: RandomTextform,
 };
 
 export { Textformer };
