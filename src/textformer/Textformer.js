@@ -3,6 +3,7 @@ import { ReversedTextform } from './textforms/ReversedTextform.js';
 import { ShuffledTextform } from './textforms/ShuffledTextform.js';
 import { TextformPlayer } from './TextformPlayer.js';
 import { ExpandTextform } from './textforms/ExpandTextform.js';
+import { TextformAligner } from './TextformAligner.js';
 
 class Textformer {
 
@@ -22,7 +23,7 @@ class Textformer {
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element } 	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
-	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
+	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length. Can use a number to align both text at this index instead.
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 *
 	 * @param { Number } 	options.delay		Delay before playing the animation, in milliseconds.
@@ -45,8 +46,8 @@ class Textformer {
 		randomness = 0,
 		origin,
 		output,
-		charset = Textform.charsets.ALL,
-		align = Textform.aligns.none,
+		charset = Textformer.charsets.ALL,
+		align = Textformer.aligns.none,
 		fill = ' ',
 
 		//?// TextformPlayer settings
@@ -156,7 +157,7 @@ class Textformer {
 
 /-----------------------------------------------------------------------------*/
 
-Textformer.aligns = Textform.aligns;
+Textformer.aligns = TextformAligner.modes;
 Textformer.charsets = Textform.charsets;
 Textformer.modes = {
 	default: Textform,

@@ -1,3 +1,5 @@
+import { TextformAligner } from '../TextformAligner';
+
 class Textform {
 
 	/**
@@ -10,22 +12,25 @@ class Textform {
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
 	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
+	 *
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element }	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
-	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
+	 *
+	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length. Can use a number to align both text at this index instead.
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 */
 	constructor( {
+		from, to,
 		// steps, stagger, randomness, origin, output, charset,
-		from, to, align, fill
+		// align, fill
 	} = {} ) {
 
 		Object.assign( this, arguments[ 0 ] );
 
 		this.length = Math.max( from.length, to.length );
+		TextformAligner.align( this );
 
-		this.alignTexts( align, fill );
 		this.build();
 		this.reset();
 
@@ -36,36 +41,6 @@ class Textform {
 		Init
 
 	/-----------------------------------------------------------------------------*/
-
-	/**
-	 * Fills the shortest string to match the longer string's length ( between this.from and this.to ).
-	 * For example, aligning "A" with "Four" using Textform.aligns.RIGHT and "*" as a fill will replace "A" with "***A"
-	 * @param { Function }	method	A fill method from Textform.aligns
-	 * @param { String }	fillChar 	A character used to fill
-	 */
-	alignTexts( method, fillChar ) {
-
-		if ( ! method ) return;
-
-		const diff = this.to.length - this.from.length;
-		if ( diff === 0 ) return;
-
-		//?// Determine text to fill ( the shorter one )
-		const toIsLonger = ( diff > 0 );
-		const prop = toIsLonger ? 'from' : 'to';
-		const text = this[ prop ];
-
-		//?// Create filler string
-		const length = Math.abs( diff );
-		const generateFillChar = ( fillChar )
-			? () => fillChar
-			: () => this.generateRandomChar();
-		const fill = Array.from( { length }, generateFillChar ).join( '' );
-
-		//?// Fill using Textfrom.aligns method
-		this[ prop ] = method( text, fill );
-
-	}
 
 	/**
 	 * Builds a scenario array to prepare all character changes
@@ -85,8 +60,6 @@ class Textform {
 
 		const { length, from, to } = this;
 		const startFrames = this.computeStartFrames();
-
-		console.log( startFrames );
 
 		let finalFrame = 0;
 
@@ -118,7 +91,6 @@ class Textform {
 		};
 
 		this.scenario = Array.from( { length }, ( _, i ) => buildCharAt( i ) );
-
 		this.totalFrames = finalFrame + 1;
 
 	}
@@ -289,24 +261,5 @@ Textform.charsets = {
 };
 Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();
 Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
-
-Textform.aligns = {
-	none: false,
-	left: ( text, fill ) => `${text}${fill}`,
-	center: ( text, fill ) => {
-
-		const length = fill.length;
-
-		//?// Slightly on the left on odd fill lengths
-		const center = Math.floor( length / 2 );
-
-		const leftFill = fill.substring( 0, center );
-		const rightFill = fill.substring( center, length );
-
-		return `${leftFill}${text}${rightFill}`;
-
-	},
-	right: ( text, fill ) => `${fill}${text}`,
-};
 
 export { Textform };

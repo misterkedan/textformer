@@ -5,7 +5,6 @@ const options = {
 
 	output: document.querySelector( '#demo-text' ),
 
-	// from: '0123456789',
 	from: '',
 	to: 'Textformer',
 
@@ -16,7 +15,7 @@ const options = {
 	speed: 15,
 
 	align: 'left',
-	fill: ' ',
+	// fill: ' ',
 	delay: 500,
 	origin: - 1,
 
@@ -28,7 +27,7 @@ const textformer = new Textformer( {
 	align: Textformer.aligns[ options.align ],
 } );
 
-function update() {
+function rebuild() {
 
 	//?// Hacks needed because otherwise dat.GUI converts objects into strings
 	textformer.mode = Textformer.modes[ options.mode ];
@@ -49,36 +48,52 @@ function update() {
 
 }
 
-function build() {
-
-	textformer.build();
-
-}
-
 const gui = new dat.GUI();
 
 const textform = gui.addFolder( 'Textform' );
-textform.add( textformer.options, 'from' ).onChange( update );
-textform.add( textformer.options, 'to' ).onChange( update );
-textform.add( options, 'mode', Object.keys( Textformer.modes ) ).onChange( update );
-textform.add( textformer.options, 'steps', 1, 60 ).step( 1 ).onChange( update );
-textform.add( textformer.options, 'stagger', 0, 30 ).step( 1 ).onChange( update );
-textform.add( textformer.options, 'randomness', 0, 30 ).step( 1 ).onChange( update );
+textform.add( textformer.options, 'from' )
+	.onChange( rebuild );
+textform.add( textformer.options, 'to' )
+	.onChange( rebuild );
+textform.add( options, 'mode', Object.keys( Textformer.modes ) )
+	.onChange( rebuild );
+textform.add( textformer.options, 'steps', 1, 60 )
+	.step( 1 )
+	.onChange( rebuild );
+textform.add( textformer.options, 'stagger', 0, 30 )
+	.step( 1 )
+	.onChange( rebuild );
+textform.add( textformer.options, 'randomness', 0, 30 )
+	.step( 1 )
+	.onChange( rebuild );
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
-player.add( textformer, 'speed', 1, 30 ).step( 1 ).onChange( update );
-player.add( textformer, 'progress', 0, 1 ).step( 0.001 ).listen();
+player.add( textformer, 'speed', 1, 30 )
+	.step( 1 )
+	.onChange( rebuild );
+player.add( textformer, 'progress', 0, 1 )
+	.step( 0.001 )
+	.listen();
 player.add( textformer, 'replay' );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( options, 'align', Object.keys( Textformer.aligns ) ).onChange( update );
-advanced.add( textformer.options, 'fill' ).onChange( update );
-advanced.add( textformer.options, 'charset', Textformer.charsets ).onChange( update );
-advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( build );
-advanced.add( textformer.playerOptions, 'delay', 0, 5000 ).step( 50 ).onChange( update );
-advanced.add( textformer.options, 'origin', - 1, 10 ).step( 1 ).onChange( update );
+advanced.add( options, 'align', Object.keys( Textformer.aligns ).slice( 0, - 1 ) )
+	.onChange( rebuild );
+advanced.add( textformer.options, 'fill' )
+	.onChange( rebuild );
+advanced.add( textformer.options, 'charset', Textformer.charsets )
+	.onChange( rebuild );
+advanced.add( textformer.playerOptions, 'duration', 150, 10000 )
+	.step( 50 )
+	.onChange( () => textformer.build() );
+advanced.add( textformer.playerOptions, 'delay', 0, 5000 )
+	.step( 50 )
+	.onChange( rebuild );
+advanced.add( textformer.options, 'origin', - 1, 10 )
+	.step( 1 )
+	.onChange( rebuild );
 // advanced.open();
 
 const device = navigator.userAgent || navigator.vendor || window.opera;
