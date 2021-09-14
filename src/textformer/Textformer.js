@@ -3,6 +3,7 @@ import { RandomTextform } from './textforms/RandomTextform.js';
 import { ReversedTextform } from './textforms/ReversedTextform.js';
 import { ShuffledTextform } from './textforms/ShuffledTextform.js';
 import { TextformPlayer } from './TextformPlayer.js';
+import { ExpandTextform } from './textforms/ExpandTextform.js';
 
 class Textformer {
 
@@ -156,6 +157,7 @@ Textformer.charsets = Textform.charsets;
 Textformer.modes = {
 	default: Textform,
 	reverse: ReversedTextform,
+	expand: ExpandTextform,
 	shuffle: ShuffledTextform,
 	random: RandomTextform,
 };

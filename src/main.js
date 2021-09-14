@@ -5,10 +5,11 @@ const options = {
 
 	output: document.querySelector( '#demo-text' ),
 
-	from: '',
+	from: '0123456789',
+	// from: '',
 	to: 'Textformer',
 
-	mode: 'random',
+	mode: 'expand',
 	steps: 10,
 	stagger: 3,
 	speed: 15,
@@ -16,7 +17,8 @@ const options = {
 	align: 'left',
 	fill: ' ',
 	delay: 500,
-	// origin: 4
+
+	// origin: 7
 
 };
 
