@@ -14,11 +14,12 @@ class Textformer {
 	 * @param { Boolean } 	options.autoPlay	Animates automatically using the built-in TextformPlayer.
 	 * @param { Number } 	options.speed		Number of character changes per second.
 	 *
-	 * @param { Element } 	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Number } 	options.origin		Character index the animation starts from.
+	 * @param { Element } 	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
 	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
@@ -40,6 +41,7 @@ class Textformer {
 		to = 'Textformer',
 		steps = 5,
 		stagger = 3,
+		origin,
 		output,
 		charset = Textform.charsets.ALL,
 		align = Textform.aligns.none,
@@ -56,7 +58,7 @@ class Textformer {
 
 		Object.assign( this, {
 			mode, autoPlay, speed,
-			options: { output, from, to, steps, stagger, charset, align, fill },
+			options: { from, to, steps, stagger, origin, output, charset, align, fill },
 			playerOptions: { duration, delay, onBegin, onChange, onComplete }
 		} );
 
@@ -153,8 +155,8 @@ Textformer.aligns = Textform.aligns;
 Textformer.charsets = Textform.charsets;
 Textformer.modes = {
 	default: Textform,
-	reversed: ReversedTextform,
-	shuffled: ShuffledTextform,
+	reverse: ReversedTextform,
+	shuffle: ShuffledTextform,
 	random: RandomTextform,
 };
 

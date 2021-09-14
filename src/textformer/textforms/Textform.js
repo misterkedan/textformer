@@ -9,13 +9,14 @@ class Textform {
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element }	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
 	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length.
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 */
 	constructor( {
-		// steps, stagger, output, charset,
+		// steps, stagger, origin, output, charset,
 		from, to, align, fill
 	} = {} ) {
 
@@ -130,7 +131,16 @@ class Textform {
 	 */
 	computeStartFrames() {
 
-		const { length, stagger } = this;
+		const { length, stagger, origin } = this;
+
+		if ( origin ) return Array.from( { length } )
+			.map( ( _, i )=> {
+
+				const offset = i - origin;
+				return ( offset >= 0 ) ? offset * stagger
+					: ( length + offset ) * stagger;
+
+			} );
 
 		return Array.from( { length } ).map( ( _, i ) => i * stagger );
 
@@ -222,6 +232,19 @@ class Textform {
 
 	}
 
+	/*-----------------------------------------------------------------------------/
+
+		Read-only
+
+	/-----------------------------------------------------------------------------*/
+
+	get hasValidOrigin() {
+
+		const { origin, length } = this;
+		return ( origin >= 0 && origin < length );
+
+	}
+
 }
 
 /*-----------------------------------------------------------------------------/
@@ -244,11 +267,12 @@ Textform.aligns = {
 	center: ( text, fill ) => {
 
 		const length = fill.length;
-		const half = Math.floor( length / 2 );
-		//?// Alignment will be slightly on the left in case of odd fill lenghts
 
-		const leftFill = fill.substring( 0, half );
-		const rightFill = fill.substring( half, length );
+		//?// Slightly on the left on odd fill lengths
+		const center = Math.floor( length / 2 );
+
+		const leftFill = fill.substring( 0, center );
+		const rightFill = fill.substring( center, length );
 
 		return `${leftFill}${text}${rightFill}`;
 

@@ -20,7 +20,6 @@ class TextformPlayer {
 	animate( animationTime = 0 ) {
 
 		if ( ! this.time && animationTime ) this.time = animationTime;
-
 		const { textform, onChange, onComplete, duration, time } = this;
 
 		const elapsed = animationTime - time;

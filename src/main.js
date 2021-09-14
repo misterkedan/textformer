@@ -1,18 +1,23 @@
 import { Textformer } from './textformer/Textformer.js';
 import * as dat from 'dat.gui';
 
-const demoText = document.querySelector( '#demo-text' );
-
 const options = {
-	output: demoText,
+
+	output: document.querySelector( '#demo-text' ),
+
 	from: '',
 	to: 'Textformer',
-	steps: 5,
+
+	mode: 'random',
+	steps: 10,
 	stagger: 3,
 	speed: 15,
-	delay: 500,
-	mode: 'random',
+
 	align: 'left',
+	fill: ' ',
+	delay: 500,
+	// origin: 4
+
 };
 
 const textformer = new Textformer( {
