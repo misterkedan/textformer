@@ -5,7 +5,7 @@ const demoText = document.querySelector( '#demo-text' );
 
 const options = {
 	output: demoText,
-	from: 'Hello',
+	from: '',
 	to: 'Textformer',
 	steps: 5,
 	stagger: 3,

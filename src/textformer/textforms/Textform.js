@@ -85,31 +85,31 @@ class Textform {
 
 		const { length, from, to, steps } = this;
 		const startFrames = this.computeStartFrames();
-		const scenario = [];
 
-		for ( let i = 0; i < length; i ++ ) {
+		const buildCharAt = ( i ) => {
 
-			const changes = [];
 			const startFrame = startFrames[ i ];
 			const endFrame = startFrame + steps;
 			const startChar = from.charAt( i );
 			const endChar = to.charAt( i );
 
-			changes.push( { frame: startFrame, char: startChar } );
+			const buildStep = ( step ) => {
 
-			for ( let frame = startFrame + 1; frame < endFrame; frame ++ ) {
+				const frame = startFrame + step;
+				const char = ( frame === startFrame ) ? startChar
+					: ( frame === endFrame ) ? endChar
+						: this.generateRandomChar();
+				return { frame, char };
 
-				const char = this.generateRandomChar();
-				changes.push( { frame, char } );
+			};
 
-			}
+			return Array.from( { length: steps + 1 } )
+				.map( ( _, step ) => buildStep( step ) );
 
-			changes.push( { frame: endFrame, char: endChar } );
+		};
 
-			scenario[ i ] = changes;
-
-		}
-
+		const scenario = Array.from( { length } )
+			.map( ( _, i ) => buildCharAt( i ) );
 		this.scenario = scenario;
 
 		this.totalFrames = Math.max.apply(
