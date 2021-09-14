@@ -54,12 +54,16 @@ class Textform {
 		const text = this[ prop ];
 
 		//?// Create filler string
-		const fill = [];
-		const absDiff = Math.abs( diff );
-		for ( let i = 0; i < absDiff; i ++ ) fill.push( fillChar || this.generateRandomChar() );
+		const length = Math.abs( diff );
+		const generateFillChar = ( fillChar )
+			? () => fillChar
+			: () => this.generateRandomChar();
+		const fill = Array.from( { length } )
+			.map( generateFillChar )
+			.join( '' );
 
 		//?// Fill using Textfrom.aligns method
-		this[ prop ] = method( text, fill.join( '' ) );
+		this[ prop ] = method( text, fill );
 
 	}
 
@@ -109,7 +113,9 @@ class Textform {
 		this.scenario = scenario;
 
 		this.totalFrames = Math.max.apply(
-			Math, scenario.map( ( char ) => char.map( change => change.frame ) ).flat()
+			Math,
+			scenario.map( ( char ) => char.map( change => change.frame ) )
+				.flat()
 		);
 
 	}
@@ -178,7 +184,7 @@ class Textform {
 			.map( ( _, i ) => getCharAt( i, frame ) )
 			.join( '' );
 
-		if ( this.output ) this.output.textContent = this.text;
+		if ( this.output ) this.output.innerHTML = this.text.replace( / /g, '&nbsp;' );
 
 	}
 

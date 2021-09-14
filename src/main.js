@@ -1,4 +1,3 @@
-import { Textform } from './textformer/textforms/Textform.js';
 import { Textformer } from './textformer/Textformer.js';
 import * as dat from 'dat.gui';
 
@@ -6,7 +5,7 @@ const demoText = document.querySelector( '#demo-text' );
 
 const options = {
 	output: demoText,
-	from: '',
+	from: 'Hello',
 	to: 'Textformer',
 	steps: 5,
 	stagger: 3,
@@ -19,14 +18,14 @@ const options = {
 const textformer = new Textformer( {
 	...options,
 	mode: Textformer.modes[ options.mode ],
-	align: Textform.aligns[ options.align ],
+	align: Textformer.aligns[ options.align ],
 } );
 
 function update() {
 
 	//?// Hacks needed because otherwise dat.GUI converts objects into strings
 	textformer.mode = Textformer.modes[ options.mode ];
-	textformer.options.align = Textform.aligns[ options.align ];
+	textformer.options.align = Textformer.aligns[ options.align ];
 
 	//?// Verify the fill is a single character
 	if ( textformer.options.fill.length > 0 )
@@ -66,9 +65,9 @@ player.add( textformer, 'replay' );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( options, 'align', Object.keys( Textform.aligns ) ).onChange( update );
+advanced.add( options, 'align', Object.keys( Textformer.aligns ) ).onChange( update );
 advanced.add( textformer.options, 'fill' ).onChange( update );
-advanced.add( textformer.options, 'charset', Textform.charsets ).onChange( update );
+advanced.add( textformer.options, 'charset', Textformer.charsets ).onChange( update );
 advanced.add( textformer.playerOptions, 'duration', 150, 10000 ).step( 50 ).onChange( build );
 advanced.add( textformer.playerOptions, 'delay', 0, 5000 ).step( 50 ).onChange( update );
 // advanced.open();
