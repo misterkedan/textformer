@@ -9,10 +9,10 @@ const options = {
 	from: '',
 	to: 'Textformer',
 
-	mode: 'shuffle',
-	steps: 8,
-	stagger: 2,
-	randomness: 5,
+	mode: 'expand',
+	steps: 10,
+	stagger: 3,
+	randomness: 2,
 	speed: 15,
 
 	align: 'left',

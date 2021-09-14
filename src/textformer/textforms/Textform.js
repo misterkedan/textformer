@@ -60,9 +60,7 @@ class Textform {
 		const generateFillChar = ( fillChar )
 			? () => fillChar
 			: () => this.generateRandomChar();
-		const fill = Array.from( { length } )
-			.map( generateFillChar )
-			.join( '' );
+		const fill = Array.from( { length }, generateFillChar ).join( '' );
 
 		//?// Fill using Textfrom.aligns method
 		this[ prop ] = method( text, fill );
@@ -88,6 +86,10 @@ class Textform {
 		const { length, from, to } = this;
 		const startFrames = this.computeStartFrames();
 
+		console.log( startFrames );
+
+		let finalFrame = 0;
+
 		const buildCharAt = ( i ) => {
 
 			const steps = this.randomize( this.steps );
@@ -100,6 +102,7 @@ class Textform {
 			const buildStep = ( step ) => {
 
 				const frame = startFrame + step;
+				if ( frame > finalFrame ) finalFrame = frame;
 				const char = ( frame === startFrame ) ? startChar
 					: ( frame === endFrame ) ? endChar
 						: this.generateRandomChar();
@@ -107,15 +110,16 @@ class Textform {
 
 			};
 
-			return Array.from( { length: steps + 1 } )
-				.map( ( _, step ) => buildStep( step ) );
+			return Array.from(
+				{ length: steps + 1 },
+				( _, step ) => buildStep( step )
+			);
 
 		};
 
-		this.scenario = Array.from( { length } )
-			.map( ( _, i ) => buildCharAt( i ) );
+		this.scenario = Array.from( { length }, ( _, i ) => buildCharAt( i ) );
 
-		this.computeTotalFrames();
+		this.totalFrames = finalFrame + 1;
 
 	}
 
@@ -131,34 +135,23 @@ class Textform {
 
 		const { length, stagger, origin } = this;
 
-		if ( origin ) return Array.from( { length } )
-			.map( ( _, i )=> {
+		if ( origin ) return Array.from( { length }, ( _, i )=> {
 
-				const offset = i - origin;
-				const offsetStartFrame = ( offset >= 0 )
-					? offset * stagger
-					: ( length + offset ) * stagger;
+			const offset = i - origin;
+			const offsetStartFrame = ( offset >= 0 )
+				? offset * stagger
+				: ( length + offset ) * stagger;
 
-				return this.randomize( offsetStartFrame );
+			return this.randomize( offsetStartFrame );
 
-			} );
+		} );
 
-		return Array.from( { length } ).map( ( _, i ) => {
+		return Array.from( { length }, ( _, i ) => {
 
 			const startFrame = i * stagger;
 			return this.randomize( startFrame );
 
 		} );
-
-	}
-
-	computeTotalFrames() {
-
-		this.totalFrames = Math.max.apply(
-			Math,
-			this.scenario.map( ( char ) => char.map( change => change.frame ) )
-				.flat()
-		);
 
 	}
 
@@ -218,12 +211,12 @@ class Textform {
 
 		const { frame, length } = this;
 
-		const chars = Array.from( { length } )
-			.map( ( _, i ) => this.getCharAt( i, frame ) );
+		this.chars = Array.from(
+			{ length },
+			( _, i ) => this.getCharAt( i, frame )
+		);
 
-		// console.log( chars );
-
-		this.text = chars.join( '' );
+		this.text = this.chars.join( '' );
 
 		if ( this.output )
 			this.output.innerHTML = this.text.replace( / /g, '&nbsp;' );

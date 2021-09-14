@@ -15,16 +15,15 @@ class ExpandTextform extends Textform {
 		const aboveCenter = ( ! hasValidOrigin && length % 2 === 0 ) ?
 			center + 1 : center;
 
-		return Array.from( { length } )
-			.map( ( _, i ) => {
+		return Array.from( { length }, ( _, i ) => {
 
-				const diff = ( i < aboveCenter )
-					? center - i
-					: i - aboveCenter;
+			const diff = ( i < aboveCenter )
+				? center - i
+				: i - aboveCenter;
 
-				return this.randomize( diff * stagger );
+			return this.randomize( diff * stagger );
 
-			} );
+		} );
 
 	}
 
