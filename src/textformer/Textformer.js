@@ -152,12 +152,10 @@ class Textformer {
 Textformer.aligns = Textform.aligns;
 Textformer.charsets = Textform.charsets;
 Textformer.modes = {
-
 	default: Textform,
 	reversed: ReversedTextform,
 	shuffled: ShuffledTextform,
 	random: RandomTextform,
-
 };
 
 export { Textformer };

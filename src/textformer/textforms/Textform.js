@@ -231,17 +231,14 @@ class Textform {
 /-----------------------------------------------------------------------------*/
 
 Textform.charsets = {
-
 	UPPERCASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 	DIGITS: '0123456789',
 	SYMBOLS: '!@#$%&?',
-
 };
 Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();
 Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
 
 Textform.aligns = {
-
 	none: false,
 	left: ( text, fill ) => `${text}${fill}`,
 	center: ( text, fill ) => {
@@ -257,8 +254,6 @@ Textform.aligns = {
 
 	},
 	right: ( text, fill ) => `${fill}${text}`,
-
-
 };
 
 export { Textform };
