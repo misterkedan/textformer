@@ -7,7 +7,6 @@ let config = {
 	output: {
 		filename: 'main.js',
 		path: path.resolve( __dirname, './dist' ),
-		publicPath: '/js/'
 	}
 
 };
@@ -50,7 +49,7 @@ module.exports = ( env, argv ) => {
 
 		config.output = {
 			filename: 'main.js',
-			path: path.resolve( __dirname, './dist/js/' ),
+			path: path.resolve( __dirname, './dist/' ),
 		};
 
 	}
