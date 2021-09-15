@@ -130,7 +130,7 @@ advanced.add( title.playerOptions, 'delay', 0, 5000 )
 advanced.add( title.options, 'origin', - 1, 10 )
 	.step( 1 )
 	.onChange( rebuild );
-advanced.open();
+// advanced.open();
 
 const device = navigator.userAgent || navigator.vendor || window.opera;
 /*eslint-disable*/
