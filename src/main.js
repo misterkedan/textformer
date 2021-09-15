@@ -5,7 +5,7 @@ const options = {
 
 	output: document.querySelector( '#demo-text' ),
 
-	from: '',
+	from: '1337',
 	to: 'Textformer',
 
 	mode: 'expand',
@@ -14,8 +14,8 @@ const options = {
 	randomness: 2,
 	speed: 15,
 
-	align: 'left',
-	// fill: ' ',
+	align: 'center',
+	fill: '.',
 	delay: 500,
 	origin: - 1,
 
@@ -29,7 +29,7 @@ const textformer = new Textformer( {
 
 function rebuild() {
 
-	//?// Hacks needed because otherwise dat.GUI converts objects into strings
+	//?// Hacks needed because dat.GUI converts objects into strings
 	textformer.mode = Textformer.modes[ options.mode ];
 	textformer.options.align = Textformer.aligns[ options.align ];
 
@@ -40,10 +40,10 @@ function rebuild() {
 	//?// Force duration recomputation based on speed
 	textformer.playerOptions.duration = 0;
 
-	//?// Rebuilds the textform
+	//?// Rebuild
 	textformer.build();
 
-	//?// Update the duration gui display
+	//?// To update the duration on the gui, if speed changed
 	gui.updateDisplay();
 
 }
@@ -94,7 +94,7 @@ advanced.add( textformer.playerOptions, 'delay', 0, 5000 )
 advanced.add( textformer.options, 'origin', - 1, 10 )
 	.step( 1 )
 	.onChange( rebuild );
-// advanced.open();
+advanced.open();
 
 const device = navigator.userAgent || navigator.vendor || window.opera;
 /*eslint-disable*/

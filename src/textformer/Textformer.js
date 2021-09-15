@@ -1,8 +1,9 @@
 import { Textform } from './textforms/Textform.js';
 import { ReversedTextform } from './textforms/ReversedTextform.js';
+import { ExpandTextform } from './textforms/ExpandTextform.js';
+import { CollapseTextform } from './textforms/CollapseTextform.js';
 import { ShuffledTextform } from './textforms/ShuffledTextform.js';
 import { TextformPlayer } from './TextformPlayer.js';
-import { ExpandTextform } from './textforms/ExpandTextform.js';
 import { TextformAligner } from './TextformAligner.js';
 
 class Textformer {
@@ -47,7 +48,7 @@ class Textformer {
 		origin,
 		output,
 		charset = Textformer.charsets.ALL,
-		align = Textformer.aligns.none,
+		align = Textformer.aligns.left,
 		fill = ' ',
 
 		//?// TextformPlayer settings
@@ -163,6 +164,7 @@ Textformer.modes = {
 	default: Textform,
 	reverse: ReversedTextform,
 	expand: ExpandTextform,
+	collapse: CollapseTextform,
 	shuffle: ShuffledTextform,
 };
 
