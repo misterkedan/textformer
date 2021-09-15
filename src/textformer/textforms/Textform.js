@@ -47,6 +47,7 @@ class Textform {
 	 *
 	 * Contains one Array for each character of the text, which itself contains
 	 * Objects describing character changes using the structure { frame, char }
+	 * for each step of each character.
 	 *
 	 * Example :
 	 * [
@@ -65,13 +66,19 @@ class Textform {
 
 		const buildCharAt = ( i ) => {
 
-			const steps = this.randomize( this.steps );
-
-			const startFrame = startFrames[ i ];
-			const endFrame = startFrame + steps;
 			const startChar = from.charAt( i );
 			const endChar = to.charAt( i );
 
+			//?// Avoid tabs and returns, looks very messy on multilines
+			const isFormatting = ( char ) => char.match( /\r|\n|\t/ );
+			if ( isFormatting( startChar ) )
+				return [ { frame: 0, char: startChar } ];
+			if ( isFormatting( endChar ) )
+				return [ { frame: 0, char: endChar } ];
+
+			const steps = this.randomize( this.steps );
+			const startFrame = startFrames[ i ];
+			const endFrame = startFrame + steps;
 			const buildStep = ( step ) => {
 
 				const frame = startFrame + step;
@@ -191,7 +198,11 @@ class Textform {
 		this.text = this.chars.join( '' );
 
 		if ( this.output )
-			this.output.innerHTML = this.text.replace( / /g, '&nbsp;' );
+			this.output.innerHTML = this.text
+				.replace( / /g, '&nbsp;' )
+				.replace( /\t/g, '&emsp;' )
+				.replace( /\n/g, '<br>' )
+				.replace( /\r/g, '<br>' );
 
 	}
 

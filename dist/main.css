@@ -1,24 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-body {
+body, h1, p {
 	margin: 0;
 	border: 0;
 	font-family: 'Share Tech Mono', monospace;
+	color: rgba(0,0,0,0.8);
 }
 
-#demo-text {
-	margin: 0;
-	white-space: pre-wrap;
-	overflow-wrap: break-word;
-	padding: 4rem 2rem 2rem;
+body {
+	background: rgb(212,225,230);
+	background: linear-gradient(
+		0deg, 
+		rgba(210,210,210,1) 0%, 
+		rgba(255,255,255,1) 100%
+	);
+}
+
+#demo-title {
+	padding: 4rem 1.2rem 1.2rem;
 	font-size: 3rem;
+}
+
+#demo-paragraph {
+	overflow-wrap: break-word;
+	padding: 1rem 1.5rem;
+	display: none;
 }
 
 @media screen and (min-width: 30rem) {
 
-	#demo-text {
-		padding: 5rem;
+	#demo-title {
+		padding: 5rem 5rem 0.5rem;
 		font-size: 4rem;
+	}
+
+	#demo-paragraph {
+		padding-left: 5.5rem;
 	}
 
 }

@@ -3,9 +3,9 @@ import * as dat from 'dat.gui';
 
 const options = {
 
-	output: document.querySelector( '#demo-text' ),
+	output: document.querySelector( '#demo-title' ),
 
-	from: '1337',
+	from: '',
 	to: 'Textformer',
 
 	mode: 'expand',
@@ -14,34 +14,69 @@ const options = {
 	randomness: 2,
 	speed: 15,
 
-	align: 'center',
+	align: 'left',
 	fill: '.',
 	delay: 500,
 	origin: - 1,
 
 };
 
-const textformer = new Textformer( {
+const title = new Textformer( {
 	...options,
 	mode: Textformer.modes[ options.mode ],
 	align: Textformer.aligns[ options.align ],
 } );
 
+const demoParagraph = document.querySelector( '#demo-paragraph' );
+const paragraph = new Textformer( {
+	output: demoParagraph,
+	from: '',
+	to: demoParagraph.innerHTML,
+} );
+
+function updateParagraph() {
+
+	paragraph.progress = title.progress;
+
+}
+
+function rebuildParagraph() {
+
+	const factor = paragraph.textform.length / title.textform.length * 0.25 || 10;
+
+	paragraph.mode = title.mode;
+	paragraph.options = {
+		...title.options,
+		output: demoParagraph,
+		from: paragraph.options.from,
+		to: paragraph.options.to,
+		stagger: Math.ceil( title.options.stagger / factor ),
+		randomness: ( title.options.randomness === 0 )
+			? 0 : title.options.randomness * factor
+	};
+	paragraph.playerOptions = title.playerOptions;
+	paragraph.playerOptions.duration = 0;
+	paragraph.speed = title.speed * factor;
+	paragraph.build();
+
+}
+
 function rebuild() {
 
 	//?// Hacks needed because dat.GUI converts objects into strings
-	textformer.mode = Textformer.modes[ options.mode ];
-	textformer.options.align = Textformer.aligns[ options.align ];
+	title.mode = Textformer.modes[ options.mode ];
+	title.options.align = Textformer.aligns[ options.align ];
 
 	//?// Multiple characters fills won't work
-	if ( textformer.options.fill.length > 0 )
-		textformer.options.fill = textformer.options.fill.charAt( 0 );
+	if ( title.options.fill.length > 0 )
+		title.options.fill = title.options.fill.charAt( 0 );
 
 	//?// Force duration recomputation based on speed
-	textformer.playerOptions.duration = 0;
+	title.playerOptions.duration = 0;
 
 	//?// Rebuild
-	textformer.build();
+	title.build();
+	rebuildParagraph();
 
 	//?// To update the duration on the gui, if speed changed
 	gui.updateDisplay();
@@ -51,47 +86,48 @@ function rebuild() {
 const gui = new dat.GUI();
 
 const textform = gui.addFolder( 'Textform' );
-textform.add( textformer.options, 'from' )
+textform.add( title.options, 'from' )
 	.onChange( rebuild );
-textform.add( textformer.options, 'to' )
+textform.add( title.options, 'to' )
 	.onChange( rebuild );
 textform.add( options, 'mode', Object.keys( Textformer.modes ) )
 	.onChange( rebuild );
-textform.add( textformer.options, 'steps', 1, 60 )
+textform.add( title.options, 'steps', 1, 60 )
 	.step( 1 )
 	.onChange( rebuild );
-textform.add( textformer.options, 'stagger', 0, 30 )
+textform.add( title.options, 'stagger', 0, 30 )
 	.step( 1 )
 	.onChange( rebuild );
-textform.add( textformer.options, 'randomness', 0, 30 )
+textform.add( title.options, 'randomness', 0, 30 )
 	.step( 1 )
 	.onChange( rebuild );
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
-player.add( textformer, 'speed', 1, 30 )
+player.add( title, 'speed', 1, 30 )
 	.step( 1 )
 	.onChange( rebuild );
-player.add( textformer, 'progress', 0, 1 )
+player.add( title, 'progress', 0, 1 )
 	.step( 0.001 )
-	.listen();
-player.add( textformer, 'replay' );
+	.listen()
+	.onChange( updateParagraph );
+player.add( title, 'replay' ).onFinishChange( () => paragraph.replay() );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
 advanced.add( options, 'align', Object.keys( Textformer.aligns ).slice( 0, - 1 ) )
 	.onChange( rebuild );
-advanced.add( textformer.options, 'fill' )
+advanced.add( title.options, 'fill' )
 	.onChange( rebuild );
-advanced.add( textformer.options, 'charset', Textformer.charsets )
+advanced.add( title.options, 'charset', Textformer.charsets )
 	.onChange( rebuild );
-advanced.add( textformer.playerOptions, 'duration', 150, 10000 )
+advanced.add( title.playerOptions, 'duration', 150, 10000 )
 	.step( 50 )
-	.onChange( () => textformer.build() );
-advanced.add( textformer.playerOptions, 'delay', 0, 5000 )
+	.onChange( () => title.build() );
+advanced.add( title.playerOptions, 'delay', 0, 5000 )
 	.step( 50 )
 	.onChange( rebuild );
-advanced.add( textformer.options, 'origin', - 1, 10 )
+advanced.add( title.options, 'origin', - 1, 10 )
 	.step( 1 )
 	.onChange( rebuild );
 advanced.open();
@@ -102,3 +138,6 @@ const deviceIsMobile = (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry
 /*eslint-enable*/
 const windowIsNarrow = ( window.innerWidth < 640 );
 if ( deviceIsMobile || windowIsNarrow ) gui.close();
+
+rebuildParagraph();
+demoParagraph.style[ 'display' ] = 'block';

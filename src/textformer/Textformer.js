@@ -13,7 +13,7 @@ class Textformer {
 	 * @constructor
 	 * @param { Object }	options
 	 * @param { Class }		options.mode		Animation mode, pick one from Textformer.modes.
-	 * @param { Boolean } 	options.autoPlay	Animates automatically using the built-in TextformPlayer.
+	 * @param { Boolean } 	options.autoplay	Animates automatically using the built-in TextformPlayer.
 	 * @param { Number } 	options.speed		Number of character changes per second.
 	 *
 	 * @param { String } 	options.from		Initial text.
@@ -36,7 +36,7 @@ class Textformer {
 	constructor( {
 
 		mode = Textformer.modes.default,
-		autoPlay = true,
+		autoplay = true,
 		speed = 15,
 
 		//?// Textform settings
@@ -61,7 +61,7 @@ class Textformer {
 	} = {} ) {
 
 		Object.assign( this, {
-			mode, autoPlay, speed,
+			mode, autoplay, speed,
 			options: {
 				from, to, steps, stagger, randomness,
 				origin, output, charset, align, fill
@@ -75,12 +75,12 @@ class Textformer {
 
 	build() {
 
-		const { autoPlay, playerOptions, player } = this;
+		const { autoplay, playerOptions, player } = this;
 
 		const textform = new this.mode( this.options );
 		this.textform = textform;
 
-		if ( autoPlay ) {
+		if ( autoplay ) {
 
 			if ( ! playerOptions.duration ) {
 
