@@ -1,10 +1,10 @@
-import { Textform } from './textforms/Textform.js';
-import { ReversedTextform } from './textforms/ReversedTextform.js';
-import { ExpandTextform } from './textforms/ExpandTextform.js';
-import { CollapseTextform } from './textforms/CollapseTextform.js';
-import { ShuffledTextform } from './textforms/ShuffledTextform.js';
-import { TextformPlayer } from './TextformPlayer.js';
-import { TextformAligner } from './TextformAligner.js';
+import { Textform } from './core/Textform';
+import { TextformPlayer } from './core/TextformPlayer';
+import { TextformAligner } from './core/TextformAligner';
+import { ReversedTextform } from './modes/ReversedTextform';
+import { ExpandTextform } from './modes/ExpandTextform';
+import { CollapseTextform } from './modes/CollapseTextform';
+import { ShuffledTextform } from './modes/ShuffledTextform';
 
 class Textformer {
 
@@ -168,4 +168,4 @@ Textformer.modes = {
 	shuffle: ShuffledTextform,
 };
 
-export { Textformer };
+export default Textformer;

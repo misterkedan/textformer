@@ -1,5 +1,49 @@
-import { Textformer } from './textformer/Textformer.js';
-import * as dat from 'dat.gui';
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+
+;// CONCATENATED MODULE: external "KEDA.Textformer"
+const external_KEDA_Textformer_namespaceObject = KEDA.Textformer;
+var external_KEDA_Textformer_default = /*#__PURE__*/__webpack_require__.n(external_KEDA_Textformer_namespaceObject);
+;// CONCATENATED MODULE: external "dat.gui"
+const external_dat_gui_namespaceObject = dat.gui;
+;// CONCATENATED MODULE: ./src/demo.js
+
+
 
 const options = {
 	//Target HTML Element
@@ -26,15 +70,15 @@ const options = {
 	origin: - 1,
 };
 
-const demo = new Textformer( {
+const demo = new (external_KEDA_Textformer_default())( {
 	...options,
-	mode: Textformer.modes[ options.mode ],
-	align: Textformer.aligns[ options.align ],
+	mode: (external_KEDA_Textformer_default()).modes[ options.mode ],
+	align: (external_KEDA_Textformer_default()).aligns[ options.align ],
 } );
 
 const paragraph = {
 	element: document.querySelector( '#demo-paragraph' ),
-	textformer: new Textformer(),
+	textformer: new (external_KEDA_Textformer_default())(),
 	build: () => {
 
 		const factor = paragraph.text.length / demo.textform.length * 0.25 || 10;
@@ -59,7 +103,6 @@ const paragraph = {
 paragraph.text = `
 Easy text transition animations
 using random character changes.
-Autowords assemble!
 
 Example usage :
 
@@ -92,11 +135,18 @@ paragraph.build();
 
 /-----------------------------------------------------------------------------*/
 
-function rebuild() {
+function build() {
+
+	demo.build();
+	paragraph.build();
+
+}
+
+function onGUIChange() {
 
 	//Hacks needed because dat.GUI converts objects into strings
-	demo.mode = Textformer.modes[ options.mode ];
-	demo.options.align = Textformer.aligns[ options.align ];
+	demo.mode = (external_KEDA_Textformer_default()).modes[ options.mode ];
+	demo.options.align = (external_KEDA_Textformer_default()).aligns[ options.align ];
 
 	//Multiple characters fills won't work
 	if ( demo.options.fill.length > 0 )
@@ -105,39 +155,38 @@ function rebuild() {
 	//Force duration recomputation based on speed
 	demo.playerOptions.duration = 0;
 
-	//Rebuild
-	demo.build();
-	paragraph.build();
+	//Rebuild both Textformers
+	build();
 
 	//To update the duration on the gui, if speed changed
 	gui.updateDisplay();
 
 }
 
-const gui = new dat.GUI();
+const gui = new external_dat_gui_namespaceObject.GUI();
 
 const textform = gui.addFolder( 'Textform' );
 textform.add( demo.options, 'from' )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 textform.add( demo.options, 'to' )
-	.onChange( rebuild );
-textform.add( options, 'mode', Object.keys( Textformer.modes ) )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
+textform.add( options, 'mode', Object.keys( (external_KEDA_Textformer_default()).modes ) )
+	.onChange( onGUIChange );
 textform.add( demo.options, 'steps', 1, 60 )
 	.step( 1 )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 textform.add( demo.options, 'stagger', 0, 30 )
 	.step( 1 )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 textform.add( demo.options, 'randomness', 0, 30 )
 	.step( 1 )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
 player.add( demo, 'speed', 1, 30 )
 	.step( 1 )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 player.add( demo, 'progress', 0, 1 )
 	.step( 0.001 )
 	.listen()
@@ -147,26 +196,21 @@ player.add( demo, 'replay' )
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( options, 'align', Object.keys( Textformer.aligns ).slice( 0, - 1 ) )
-	.onChange( rebuild );
+advanced.add( options, 'align', Object.keys( (external_KEDA_Textformer_default()).aligns ).slice( 0, - 1 ) )
+	.onChange( onGUIChange );
 advanced.add( demo.options, 'fill' )
-	.onChange( rebuild );
-advanced.add( demo.options, 'charset', Textformer.charsets )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
+advanced.add( demo.options, 'charset', (external_KEDA_Textformer_default()).charsets )
+	.onChange( onGUIChange );
 advanced.add( demo.playerOptions, 'duration', 150, 10000 )
 	.step( 50 )
-	.onChange( () => {
-
-		demo.build();
-		paragraph.build();
-
-	} );
+	.onChange( build );
 advanced.add( demo.playerOptions, 'delay', 0, 5000 )
 	.step( 50 )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 advanced.add( demo.options, 'origin', - 1, 10 )
 	.step( 1 )
-	.onChange( rebuild );
+	.onChange( onGUIChange );
 // advanced.open();
 
 //Close GUI on mobile & small screens to avoid overlap
@@ -176,3 +220,6 @@ const deviceIsMobile = (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry
 /*eslint-enable*/
 const windowIsNarrow = ( window.innerWidth < 640 );
 if ( deviceIsMobile || windowIsNarrow ) gui.close();
+
+/******/ })()
+;

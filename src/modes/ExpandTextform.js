@@ -1,4 +1,4 @@
-import { Textform } from './Textform.js';
+import { Textform } from '../core/Textform.js';
 
 class ExpandTextform extends Textform {
 

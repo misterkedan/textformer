@@ -1,4 +1,4 @@
-import { TextformAligner } from '../TextformAligner';
+import { TextformAligner } from './TextformAligner';
 
 class Textform {
 
