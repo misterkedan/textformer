@@ -1,4 +1,4 @@
-import Textformer from '../src/Textformer';
+import * as KEDA from './main';
 import * as dat from 'dat.gui';
 
 const options = {
@@ -26,15 +26,15 @@ const options = {
 	origin: - 1,
 };
 
-const demo = new Textformer( {
+const demo = new KEDA.Textformer( {
 	...options,
-	mode: Textformer.modes[ options.mode ],
-	align: Textformer.aligns[ options.align ],
+	mode: KEDA.Textformer.modes[ options.mode ],
+	align: KEDA.Textformer.aligns[ options.align ],
 } );
 
 const paragraph = {
 	element: document.querySelector( '#demo-paragraph' ),
-	textformer: new Textformer(),
+	textformer: new KEDA.Textformer(),
 	build: () => {
 
 		const factor = paragraph.text.length / demo.textform.length * 0.25 || 10;
@@ -62,7 +62,7 @@ using random character changes.
 
 Example usage :
 
-const textformer = new Textformer( {
+const textformer = new KEDA.Textformer( {
 	//Target HTML Element
 	output: "demo-title",
 
@@ -71,7 +71,7 @@ const textformer = new Textformer( {
 	to: 'Texformer',
 
 	//Core
-	mode: Textformer.modes.expand,
+	mode: KEDA.Textformer.modes.expand,
 	steps: 10,
 	stagger: 3,
 	randomness: 2,
@@ -101,8 +101,8 @@ function build() {
 function onGUIChange() {
 
 	//Hacks needed because dat.GUI converts objects into strings
-	demo.mode = Textformer.modes[ options.mode ];
-	demo.options.align = Textformer.aligns[ options.align ];
+	demo.mode = KEDA.Textformer.modes[ options.mode ];
+	demo.options.align = KEDA.Textformer.aligns[ options.align ];
 
 	//Multiple characters fills won't work
 	if ( demo.options.fill.length > 0 )
@@ -111,7 +111,7 @@ function onGUIChange() {
 	//Force duration recomputation based on speed
 	demo.playerOptions.duration = 0;
 
-	//Rebuild both Textformers
+	//Rebuild both KEDA.Textformers
 	build();
 
 	//To update the duration on the gui, if speed changed
@@ -126,7 +126,7 @@ textform.add( demo.options, 'from' )
 	.onChange( onGUIChange );
 textform.add( demo.options, 'to' )
 	.onChange( onGUIChange );
-textform.add( options, 'mode', Object.keys( Textformer.modes ) )
+textform.add( options, 'mode', Object.keys( KEDA.Textformer.modes ) )
 	.onChange( onGUIChange );
 textform.add( demo.options, 'steps', 1, 60 )
 	.step( 1 )
@@ -152,11 +152,11 @@ player.add( demo, 'replay' )
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( options, 'align', Object.keys( Textformer.aligns ).slice( 0, - 1 ) )
+advanced.add( options, 'align', Object.keys( KEDA.Textformer.aligns ).slice( 0, - 1 ) )
 	.onChange( onGUIChange );
 advanced.add( demo.options, 'fill' )
 	.onChange( onGUIChange );
-advanced.add( demo.options, 'charset', Textformer.charsets )
+advanced.add( demo.options, 'charset', KEDA.Textformer.charsets )
 	.onChange( onGUIChange );
 advanced.add( demo.playerOptions, 'duration', 150, 10000 )
 	.step( 50 )

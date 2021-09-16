@@ -1,6 +1,6 @@
 {
     "name": "textformer",
-    "version": "0.15.0",
+    "version": "0.15.2",
     "description": "Text data transformation utility",
     "author": "Pierre Keda",
     "license": "MIT",
@@ -11,15 +11,15 @@
         "dat.gui": "^0.7.7",
         "eslint": "^7.32.0",
         "eslint-config-mdcs": "^5.0.0",
+        "terser-webpack-plugin": "^5.2.4",
         "webpack": "^5.52.0",
         "webpack-cli": "^4.8.0",
         "webpack-dev-server": "^3.11.2"
     },
     "scripts": {
         "build": "webpack --mode production",
-		"build-demo": "webpack --mode production --env demo=true",
         "start": "webpack serve --open --mode development"
     },
-    "main": "./src/Textformer.js",
+    "main": "./src/main.js",
     "private": true
 }

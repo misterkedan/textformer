@@ -1,8 +1,5 @@
 const path = require( 'path' );
-
-const externals = {
-	'dat.gui': 'dat.gui'
-};
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const config = {
 
@@ -13,13 +10,27 @@ const config = {
 			filename: 'main.js',
 			path: path.resolve( __dirname, 'demo' ),
 		},
-		optimization: { minimize: false },
-		externals: externals,
+		externals: {
+			'dat.gui': 'dat.gui',
+			'./main': 'KEDA'
+		},
+		// optimization: { minimize: false }
+	},
+
+	dev: {
+		mode: 'development',
+		devtool: 'inline-source-map',
+		devServer: {
+			contentBase: './demo/',
+			host: '192.168.1.10',
+			port: 8080,
+			disableHostCheck: true,
+		},
 	},
 
 	build: {
 		mode: 'production',
-		entry: './src/Textformer.js',
+		entry: './src/build.js',
 		output: {
 			path: path.resolve( __dirname, 'build' ),
 			filename: 'keda.textformer.min.js',
@@ -41,41 +52,39 @@ const config = {
 				}
 			]
 		},
-		externals: externals
+		optimization: {
+			minimize: true,
+			minimizer: [ new TerserPlugin( {
+				terserOptions:{
+					mangle: {
+						reserved: [
+							'Textformer',
+							'Textform',
+							'TextformPlayer'
+						]
+					},
+				}
+			} ) ]
+		},
 	}
 
 };
 
 module.exports = ( env, argv ) => {
 
-	if ( env.demo ) return [ {
-		...config.demo,
-		externals: {
-			...config.demo.externals,
-			'../src/Textformer'  : 'KEDA.Textformer'
-		}
-	}, {
-		...config.build,
-		output: {
-			...config.build.output,
-			path: path.resolve( __dirname, 'demo' ),
-			filename: 'lib/keda.textformer.min.js',
-		}
-	} ];
+	if ( argv.mode === 'development' ) return { ...config.demo, ...config.dev };
 
-	if ( argv.mode === 'development' ) return {
-		...config.demo,
-		mode: 'development',
-		devtool: 'inline-source-map',
-		devServer: {
-			contentBase: './demo/',
-			host: '192.168.1.10',
-			port: 8080,
-			disableHostCheck: true,
+	return [
+		config.demo,
+		{
+			...config.build,
+			output: {
+				...config.build.output,
+				path: path.resolve( __dirname, 'demo/lib/' ),
+			}
 		},
-	};
-
-	return config.build;
+		config.build
+	];
 
 };
 
