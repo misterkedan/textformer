@@ -39,7 +39,7 @@ class Textformer {
 		autoplay = true,
 		speed = 15,
 
-		//?// Textform settings
+		// Textform settings
 		from = 'Demo',
 		to = 'Textformer',
 		steps = 5,
@@ -51,7 +51,7 @@ class Textformer {
 		align = Textformer.aligns.left,
 		fill = ' ',
 
-		//?// TextformPlayer settings
+		// TextformPlayer settings
 		delay = 0,
 		duration,
 		onBegin,

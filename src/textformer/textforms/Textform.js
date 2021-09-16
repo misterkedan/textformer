@@ -69,7 +69,7 @@ class Textform {
 			const startChar = from.charAt( i );
 			const endChar = to.charAt( i );
 
-			//?// Avoid tabs and returns, looks very messy on multilines
+			// Avoid tabs and returns, looks very messy on multilines
 			const isFormatting = ( char ) => char.match( /\r|\n|\t/ );
 			if ( isFormatting( startChar ) )
 				return [ { frame: 0, char: startChar } ];
