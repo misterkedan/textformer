@@ -6,7 +6,7 @@ const options = {
 	output: document.querySelector( '#demo-title' ),
 
 	//Texts
-	from: '',
+	from: 'KEDA',
 	to: 'Textformer',
 
 	//Core
@@ -14,14 +14,14 @@ const options = {
 	steps: 10,
 	stagger: 3,
 	randomness: 2,
-
-	//Autoplay
-	autoplay: true,
-	speed: 15,
-	delay: 500,
+	autoplay: {
+		speed: 15,
+		delay: 500,
+		duration: 0,
+	},
 
 	//Advanced
-	align: 'left',
+	align: 'center',
 	fill: '.',
 	origin: - 1,
 };
@@ -50,7 +50,7 @@ const paragraph = {
 			randomness: ( demo.options.randomness === 0 )
 				? 0 : demo.options.randomness * factor
 		};
-		p.playerOptions = demo.playerOptions;
+		p.autoplay = demo.autoplay;
 		p.build();
 
 	},
@@ -109,7 +109,7 @@ function onGUIChange() {
 		demo.options.fill = demo.options.fill.charAt( 0 );
 
 	//Force duration recomputation based on speed
-	demo.playerOptions.duration = 0;
+	demo.autoplay.duration = 0;
 
 	//Rebuild both KEDA.Textformers
 	build();
@@ -158,10 +158,10 @@ advanced.add( demo.options, 'fill' )
 	.onChange( onGUIChange );
 advanced.add( demo.options, 'charset', KEDA.Textformer.charsets )
 	.onChange( onGUIChange );
-advanced.add( demo.playerOptions, 'duration', 150, 10000 )
+advanced.add( demo.autoplay, 'duration', 150, 10000 )
 	.step( 50 )
 	.onChange( build );
-advanced.add( demo.playerOptions, 'delay', 0, 5000 )
+advanced.add( demo.autoplay, 'delay', 0, 5000 )
 	.step( 50 )
 	.onChange( onGUIChange );
 advanced.add( demo.options, 'origin', - 1, 10 )

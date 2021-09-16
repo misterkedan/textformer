@@ -13,9 +13,7 @@ class Textformer {
 	 * @constructor
 	 * @param { Object }	options
 	 * @param { Class }		options.mode		Animation mode, pick one from Textformer.modes.
-	 * @param { Boolean } 	options.autoplay	Animates automatically using the built-in TextformPlayer.
-	 * @param { Number } 	options.speed		Number of character changes per second.
-	 *
+
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
@@ -24,11 +22,14 @@ class Textformer {
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element } 	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
+
 	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length. Can use a number to align both text at this index instead.
 	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 *
+	 * @param { Object } 	options.autoplay	Automatic animation settings. Set to false for no automatic animation
+	 * @param { Number } 	options.speed		Number of changes per second.
 	 * @param { Number } 	options.delay		Delay before playing the animation, in milliseconds.
-	 * @param { Number } 	options.duration	Animation duration, in milliseconds ( overrides options.speed ).
+	 * @param { Number } 	options.duration	Animation duration, in milliseconds. Overrides options.speed.
 	 * @param { Function }	options.onBegin		Callback fired when the animation starts.
 	 * @param { Function }	options.onChange	Callback fired on each Textform character change.
 	 * @param { Function }	options.onComplet	Callback fired when the animation ends.
@@ -36,37 +37,37 @@ class Textformer {
 	constructor( {
 
 		mode = Textformer.modes.default,
-		autoplay = true,
-		speed = 15,
 
-		// Textform settings
-		from = 'Demo',
-		to = 'Textformer',
+		//Textform settings
+		from = '',
+		to = '',
 		steps = 5,
 		stagger = 3,
 		randomness = 0,
 		origin,
 		output,
 		charset = Textformer.charsets.ALL,
+
 		align = Textformer.aligns.left,
 		fill = ' ',
 
-		// TextformPlayer settings
-		delay = 0,
-		duration,
-		onBegin,
-		onChange,
-		onComplete,
+		//TextformPlayer settings
+		autoplay = {
+			speed: 15,
+			delay: 0,
+			// duration, onBegin, onChange, onComplete,
+		}
+
 
 	} = {} ) {
 
 		Object.assign( this, {
-			mode, autoplay, speed,
+			mode,
+			autoplay,
 			options: {
 				from, to, steps, stagger, randomness,
 				origin, output, charset, align, fill
 			},
-			playerOptions: { duration, delay, onBegin, onChange, onComplete }
 		} );
 
 		this.build();
@@ -75,41 +76,55 @@ class Textformer {
 
 	build() {
 
-		const { autoplay, playerOptions, player } = this;
+		this.destroy();
 
 		const textform = new this.mode( this.options );
 		this.textform = textform;
 
-		if ( autoplay ) {
+		//Autoplay
 
-			if ( ! playerOptions.duration ) {
+		const { autoplay } = this;
 
-				const speed = Math.abs( this.speed ) || 1;
-				playerOptions.duration = textform.totalFrames * ( 1000 / speed );
+		if ( ! autoplay ) return;
+		const convertSpeedToDuration = () => {
 
-			}
+			const speed = Math.abs( this.speed ) || 1;
+			return textform.totalFrames * ( 1000 / speed );
 
-			playerOptions.textform = textform;
+		};
 
-			if ( player ) player.stop();
-			this.player = new TextformPlayer( playerOptions );
-			this.play();
+		autoplay.textform = textform;
+		if ( ! autoplay.duration ) autoplay.duration = convertSpeedToDuration();
 
-		}
+		this.player = new TextformPlayer( autoplay );
+		this.play();
 
 	}
 
+	destroy() {
+
+		delete this.textform;
+		this.stop();
+		delete this.player;
+		//Remove Event Listeners
+
+	}
+
+	/*-------------------------------------------------------------------------/
+
+		Playback
+
+	/-------------------------------------------------------------------------*/
+
 	play() {
 
-		if ( ! this.player ) return;
-		this.player.play();
+		if ( this.player ) this.player.play();
 
 	}
 
 	stop() {
 
-		if ( ! this.player ) return;
-		this.player.stop();
+		if ( this.player ) this.player.stop();
 
 	}
 
@@ -120,11 +135,11 @@ class Textformer {
 
 	}
 
-	/*-----------------------------------------------------------------------------/
+	/*-------------------------------------------------------------------------/
 
 		Getters / Setters
 
-	/-----------------------------------------------------------------------------*/
+	/-------------------------------------------------------------------------*/
 
 	get progress() {
 
@@ -138,11 +153,11 @@ class Textformer {
 
 	}
 
-	/*-----------------------------------------------------------------------------/
+	/*-------------------------------------------------------------------------/
 
 		Read-only
 
-	/-----------------------------------------------------------------------------*/
+	/-------------------------------------------------------------------------*/
 
 	get text() {
 
