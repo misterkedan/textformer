@@ -20,7 +20,7 @@ class Textformer {
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different
 	 * 											characters.
-	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
+	 * @param { Number } 	options.noise		Maximum random noise for steps and staggers.
 	 * @param { String } 	options.charset		Concatenated character pool for random
 	 * 											character changes.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
@@ -57,7 +57,7 @@ class Textformer {
 		to = '',
 		steps = 5,
 		stagger = 3,
-		randomness = 0,
+		noise = 0,
 		origin,
 		output,
 		charset = Textformer.charsets.ALL,
@@ -68,7 +68,7 @@ class Textformer {
 			autoplay,
 			options: {
 				align,
-				from, to, steps, stagger, randomness, origin, output, charset
+				from, to, steps, stagger, noise, origin, output, charset
 			},
 		} );
 

@@ -13,7 +13,7 @@ const options = {
 	mode: 'expand',
 	steps: 10,
 	stagger: 3,
-	randomness: 2,
+	noise: 2,
 	origin: - 1,
 	autoplay: {
 		speed: 15,
@@ -46,8 +46,8 @@ const paragraph = {
 			from: '',
 			to: paragraph.text,
 			stagger: Math.ceil( demo.options.stagger / factor ),
-			randomness: ( demo.options.randomness === 0 )
-				? 0 : demo.options.randomness * factor
+			noise: ( demo.options.noise === 0 )
+				? 0 : demo.options.noise * factor
 		};
 		p.autoplay = demo.autoplay;
 		p.build();
@@ -73,7 +73,7 @@ const textformer = new KEDA.Textformer( {
 	mode: KEDA.Textformer.modes.expand,
 	steps: 10,
 	stagger: 3,
-	randomness: 2,
+	noise: 2,
 
 	//Autoplay
 	autoplay: true,
@@ -128,7 +128,7 @@ textform.add( demo.options, 'steps', 1, 60 )
 textform.add( demo.options, 'stagger', 0, 30 )
 	.step( 1 )
 	.onChange( onGUIChange );
-textform.add( demo.options, 'randomness', 0, 30 )
+textform.add( demo.options, 'noise', 0, 30 )
 	.step( 1 )
 	.onChange( onGUIChange );
 textform.open();

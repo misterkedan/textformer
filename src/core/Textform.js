@@ -12,7 +12,7 @@ class Textform {
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
 	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different
 	 * 											characters.
-	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
+	 * @param { Number } 	options.noise		Maximum random noise for steps and staggers.
 	 *
 	 * @param { String } 	options.charset		Concatenated character pool for random
 	 * 											character changes.
@@ -21,7 +21,7 @@ class Textform {
 	 */
 	constructor( options = {
 		// from, to,
-		// steps, stagger, randomness,
+		// steps, stagger, noise,
 		// origin, output, charset,
 	} ) {
 
@@ -135,12 +135,12 @@ class Textform {
 
 	randomize( value, minMultiplier = 0, maxMultiplier = 1 ) {
 
-		const { randomness } = this;
+		const { noise } = this;
 
-		if ( ! randomness ) return value;
+		if ( ! noise ) return value;
 
-		const min = value - minMultiplier * randomness;
-		const max = value + maxMultiplier * randomness;
+		const min = value - minMultiplier * noise;
+		const max = value + maxMultiplier * noise;
 
 		return Textform.generateRandomInt( min, max );
 
