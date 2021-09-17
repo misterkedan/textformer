@@ -10,7 +10,7 @@ const options = {
 	to: 'Textformer',
 
 	//Options
-	mode: 'expand',
+	mode: KEDA.Textformer.modes.EXPAND,
 	steps: 10,
 	stagger: 3,
 	noise: 2,
@@ -26,10 +26,7 @@ const options = {
 	},
 };
 
-const demo = new KEDA.Textformer( {
-	...options,
-	mode: KEDA.Textformer.modes[ options.mode ],
-} );
+const demo = new KEDA.Textformer( options );
 
 const paragraph = {
 	element: document.querySelector( '#demo-paragraph' ),
@@ -99,9 +96,6 @@ function build() {
 
 function onGUIChange() {
 
-	//Hacks needed because dat.GUI converts objects into strings
-	demo.mode = KEDA.Textformer.modes[ options.mode ];
-
 	//Force duration recomputation based on speed
 	demo.autoplay.duration = 0;
 
@@ -120,7 +114,7 @@ textform.add( demo.options, 'from' )
 	.onChange( onGUIChange );
 textform.add( demo.options, 'to' )
 	.onChange( onGUIChange );
-textform.add( options, 'mode', Object.keys( KEDA.Textformer.modes ) )
+textform.add( demo, 'mode', KEDA.Textformer.modes )
 	.onChange( onGUIChange );
 textform.add( demo.options, 'steps', 1, 60 )
 	.step( 1 )
@@ -161,7 +155,7 @@ advanced.add( demo.autoplay, 'delay', 0, 5000 )
 advanced.add( demo.options, 'origin', - 1, 10 )
 	.step( 1 )
 	.onChange( onGUIChange );
-// advanced.open();
+advanced.open();
 
 //Close GUI on mobile & small screens to avoid overlap
 const device = navigator.userAgent || navigator.vendor || window.opera;

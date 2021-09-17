@@ -43,7 +43,7 @@ class Textformer {
 	 * @param { Function }	options.autoplay.onComplete	Callback fired on animation end.
 	 */
 	constructor( {
-		mode = Textformer.modes.default,
+		mode = Textformer.modes.BASIC,
 		align = {
 			to: Textformer.align.NONE,
 			fill: '',
@@ -68,7 +68,9 @@ class Textformer {
 			autoplay,
 			options: {
 				align,
-				from, to, steps, stagger, noise, origin, output, charset
+				from, to,
+				steps, stagger, noise,
+				origin, output, charset
 			},
 		} );
 
@@ -78,22 +80,21 @@ class Textformer {
 
 	build() {
 
-		this.destroy();
+		const { mode, autoplay } = this;
 
-		const options = { ...this.options };
+		//Clear current animations & event listeners
+
+		this.destroy();
 
 		//Align texts
 
+		const options = { ...this.options };
+
 		if ( options.align ) {
 
-			const align = options.align.to;
-			this.align = align;
+			const { to, fill } = options.align;
 
-			const aligner = new StringAligner(
-				[ options.from, options.to ],
-				align,
-				options.align.fill
-			);
+			const aligner = new StringAligner( [ options.from, options.to ], to, fill );
 			const output = aligner.output;
 			options.from = output[ 0 ];
 			options.to = output[ 1 ];
@@ -102,12 +103,20 @@ class Textformer {
 
 		//Build textform
 
-		const textform = new this.mode( options );
+		const textformClasses = {
+			default: 	Textform,
+			basic: 		Textform,
+			reverse: 	ReversedTextform,
+			expand: 	ExpandTextform,
+			collapse: 	CollapseTextform,
+			shuffle: 	ShuffledTextform,
+		};
+		const TextformClass = textformClasses[ mode ] || textformClasses.default;
+		const textform = new TextformClass( options );
 		this.textform = textform;
 
 		//Autoplay
 
-		const { autoplay } = this;
 		if ( ! autoplay ) return;
 		const convertSpeedToDuration = () => {
 
@@ -129,7 +138,7 @@ class Textformer {
 		delete this.textform;
 		this.stop();
 		delete this.player;
-		//Remove Event Listeners
+		//Remove event listeners
 
 	}
 
@@ -176,6 +185,18 @@ class Textformer {
 
 	}
 
+	get align() {
+
+		return this.options.align.to;
+
+	}
+
+	set align( align ) {
+
+		this.options.align.to = align;
+
+	}
+
 	/*-------------------------------------------------------------------------/
 
 		Read-only
@@ -197,13 +218,15 @@ class Textformer {
 /-----------------------------------------------------------------------------*/
 
 Textformer.align = StringAligner.to;
+
 Textformer.charsets = Textform.charsets;
+
 Textformer.modes = {
-	default: Textform,
-	reverse: ReversedTextform,
-	expand: ExpandTextform,
-	collapse: CollapseTextform,
-	shuffle: ShuffledTextform,
+	BASIC: 		'basic',
+	REVERSE: 	'reverse',
+	EXPAND: 	'expand',
+	COLLAPSE: 	'collapse',
+	SHUFFLE: 	'shuffle',
 };
 
 export { Textformer };
