@@ -24,7 +24,7 @@ class Textform {
 	constructor( options = {
 		// from, to,
 		// steps, stagger, noise,
-		// origin, output, charset,
+		// charset, origin, output
 	} ) {
 
 		Object.assign( this, options );

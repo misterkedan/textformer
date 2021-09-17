@@ -1,58 +1,7 @@
 import * as KEDA from './main';
 import * as dat from 'dat.gui';
 
-const options = {
-	//Target HTML Element
-	output: document.querySelector( '#demo-title' ),
-
-	//Texts
-	from: 'KEDA',
-	to: 'Textformer',
-
-	//Options
-	mode: KEDA.Textformer.modes.EXPAND,
-	steps: 10,
-	stagger: 3,
-	noise: 2,
-	origin: - 1,
-	autoplay: {
-		speed: 15,
-		delay: 500,
-		duration: 0,
-	},
-	align: {
-		to: KEDA.Textformer.align.CENTER,
-		fill: '.',
-	},
-};
-
-const demo = new KEDA.Textformer( options );
-
-const paragraph = {
-	element: document.querySelector( '#demo-paragraph' ),
-	textformer: new KEDA.Textformer(),
-	build: () => {
-
-		const factor = paragraph.text.length / demo.textform.length * 0.25 || 10;
-
-		const p = paragraph.textformer;
-		p.mode = demo.mode;
-		p.options = {
-			...demo.options,
-			output: paragraph.element,
-			from: '',
-			to: paragraph.text,
-			stagger: Math.ceil( demo.options.stagger / factor ),
-			noise: ( demo.options.noise === 0 )
-				? 0 : demo.options.noise * factor
-		};
-		p.autoplay = demo.autoplay;
-		p.build();
-
-	},
-};
-
-paragraph.text = `
+const DESCRIPTION = `
 Easy text transition animations
 using random character changes.
 
@@ -79,7 +28,58 @@ const textformer = new KEDA.Textformer( {
 } );
 `;
 
-paragraph.build();
+const options = {
+	//Target HTML Element
+	output: document.querySelector( '#demo-title' ),
+
+	//Texts
+	from: 'KEDA',
+	to: 'Textformer',
+
+	//Options
+	mode: KEDA.Textformer.modes.EXPAND,
+	steps: 10,
+	stagger: 3,
+	noise: 2,
+	origin: - 1,
+	autoplay: {
+		speed: 15,
+		delay: 500,
+		duration: 0,
+	},
+	align: {
+		to: KEDA.Textformer.align.CENTER,
+		fill: '.',
+	},
+};
+
+const title = new KEDA.Textformer( options );
+
+const paragraph = {
+	element: document.querySelector( '#demo-paragraph' ),
+	build: () => {
+
+		paragraph.textformer.build( {
+			...title.options,
+			...paragraph.getOverrides(),
+		} );
+
+	},
+	getOverrides: () => {
+
+		const factor = DESCRIPTION.length / title.textform.length * 0.25 || 10;
+
+		return {
+			output: paragraph.element,
+			from: '',
+			to: DESCRIPTION,
+			stagger: Math.ceil( title.options.stagger / factor ),
+			noise: ( title.options.noise === 0 ) ? 0 : title.options.noise * factor
+		};
+
+	}
+};
+paragraph.textformer = title.clone( paragraph.getOverrides() );
 
 /*-----------------------------------------------------------------------------/
 
@@ -89,7 +89,7 @@ paragraph.build();
 
 function build() {
 
-	demo.build();
+	title.build();
 	paragraph.build();
 
 }
@@ -97,7 +97,7 @@ function build() {
 function onGUIChange() {
 
 	//Force duration recomputation based on speed
-	demo.autoplay.duration = 0;
+	title.options.autoplay.duration = 0;
 
 	//Rebuild both KEDA.Textformers
 	build();
@@ -110,49 +110,49 @@ function onGUIChange() {
 const gui = new dat.GUI();
 
 const textform = gui.addFolder( 'Textform' );
-textform.add( demo.options, 'from' )
+textform.add( title.options, 'from' )
 	.onChange( onGUIChange );
-textform.add( demo.options, 'to' )
+textform.add( title.options, 'to' )
 	.onChange( onGUIChange );
-textform.add( demo, 'mode', KEDA.Textformer.modes )
+textform.add( title.options, 'mode', KEDA.Textformer.modes )
 	.onChange( onGUIChange );
-textform.add( demo.options, 'steps', 1, 60 )
+textform.add( title.options, 'steps', 1, 60 )
 	.step( 1 )
 	.onChange( onGUIChange );
-textform.add( demo.options, 'stagger', 0, 30 )
+textform.add( title.options, 'stagger', 0, 30 )
 	.step( 1 )
 	.onChange( onGUIChange );
-textform.add( demo.options, 'noise', 0, 30 )
+textform.add( title.options, 'noise', 0, 30 )
 	.step( 1 )
 	.onChange( onGUIChange );
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
-player.add( demo.autoplay, 'speed', 1, 30 )
+player.add( title.options.autoplay, 'speed', 1, 30 )
 	.step( 1 )
 	.onChange( onGUIChange );
-player.add( demo, 'progress', 0, 1 )
+player.add( title, 'progress', 0, 1 )
 	.step( 0.001 )
 	.listen()
-	.onChange( ()=> paragraph.textformer.progress = demo.progress );
-player.add( demo, 'replay' )
+	.onChange( ()=> paragraph.textformer.progress = title.progress );
+player.add( title, 'replay' )
 	.onFinishChange( () => paragraph.textformer.replay() );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( demo, 'align', KEDA.Textformer.align )
+advanced.add( title, 'align', KEDA.Textformer.align )
 	.onChange( onGUIChange );
-advanced.add( demo.options.align, 'fill' )
+advanced.add( title.options.align, 'fill' )
 	.onChange( onGUIChange );
-advanced.add( demo.options, 'charset', KEDA.Textformer.charsets )
+advanced.add( title.options, 'charset', KEDA.Textformer.charsets )
 	.onChange( onGUIChange );
-advanced.add( demo.autoplay, 'duration', 150, 10000 )
+advanced.add( title.options.autoplay, 'duration', 150, 10000 )
 	.step( 50 )
 	.onChange( build );
-advanced.add( demo.autoplay, 'delay', 0, 5000 )
+advanced.add( title.options.autoplay, 'delay', 0, 5000 )
 	.step( 50 )
 	.onChange( onGUIChange );
-advanced.add( demo.options, 'origin', - 1, 10 )
+advanced.add( title.options, 'origin', - 1, 10 )
 	.step( 1 )
 	.onChange( onGUIChange );
 advanced.open();

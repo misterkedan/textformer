@@ -59,42 +59,29 @@ class Textformer {
 		steps = 5,
 		stagger = 3,
 		noise = 0,
+		charset = Textformer.charsets.ALL,
 		origin,
 		output,
-		charset = Textformer.charsets.ALL,
 	} = {} ) {
 
-		Object.assign( this, {
-			mode,
-			autoplay,
-			options: {
-				align,
-				from, to,
-				steps, stagger, noise,
-				origin, output, charset
-			},
+		this.build( {
+			mode, align, autoplay,
+			from, to, steps, stagger, noise, charset, origin, output
 		} );
-
-		this.build();
 
 	}
 
-	build() {
+	build( options = this.options ) {
 
-		const { mode, autoplay } = this;
+		this.options = options;
 
 		//Clear current animations & event listeners
-
 		this.destroy();
 
 		//Align texts
-
-		const options = { ...this.options };
-
 		if ( options.align ) {
 
 			const { to, fill } = options.align;
-
 			const alignedTexts = align.strings( [ options.from, options.to ], to, fill );
 			options.from = alignedTexts[ 0 ];
 			options.to = alignedTexts[ 1 ];
@@ -102,7 +89,7 @@ class Textformer {
 		}
 
 		//Build textform
-
+		const mode = options.mode;
 		const textformClasses = {
 			default: 	Textform,
 			basic: 		Textform,
@@ -116,8 +103,9 @@ class Textformer {
 		this.textform = textform;
 
 		//Autoplay
-
+		const autoplay = options.autoplay;
 		if ( ! autoplay ) return;
+
 		const convertSpeedToDuration = () => {
 
 			const speed = Math.abs( autoplay.speed ) || 1;
@@ -130,6 +118,13 @@ class Textformer {
 
 		this.player = new TextformPlayer( autoplay );
 		this.play();
+
+	}
+
+	clone( overrides ) {
+
+		const options = { ...this.options, ...overrides };
+		return new Textformer( options );
 
 	}
 
