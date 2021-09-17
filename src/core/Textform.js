@@ -1,5 +1,3 @@
-import { TextformAligner } from './TextformAligner';
-
 class Textform {
 
 	/**
@@ -16,9 +14,6 @@ class Textform {
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element }	options.output		DOM element the text will be output to.
 	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
-	 *
-	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length. Can use a number to align both text at this index instead.
-	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
 	 */
 	constructor( {
 		from, to,
@@ -29,7 +24,6 @@ class Textform {
 		Object.assign( this, arguments[ 0 ] );
 
 		this.length = Math.max( from.length, to.length );
-		TextformAligner.align( this );
 
 		this.build();
 		this.reset();
@@ -62,8 +56,6 @@ class Textform {
 		const { length, from, to } = this;
 		const startFrames = this.computeStartFrames();
 
-		let finalFrame = 0;
-
 		const buildCharAt = ( i ) => {
 
 			const startChar = from.charAt( i );
@@ -82,7 +74,6 @@ class Textform {
 			const buildStep = ( step ) => {
 
 				const frame = startFrame + step;
-				if ( frame > finalFrame ) finalFrame = frame;
 				const char = ( frame === startFrame ) ? startChar
 					: ( frame === endFrame ) ? endChar
 						: this.generateRandomChar();
@@ -97,8 +88,11 @@ class Textform {
 
 		};
 
-		this.scenario = Array.from( { length }, ( _, i ) => buildCharAt( i ) );
-		this.totalFrames = finalFrame + 1;
+		const scenario = Array.from( { length }, ( _, i ) => buildCharAt( i ) );
+		this.finalFrame = scenario
+			.flat()
+			.reduce( ( a, b ) => Math.max( a, b.frame ), 0 );
+		this.scenario = scenario;
 
 	}
 
@@ -221,7 +215,6 @@ class Textform {
 	set frame( frame ) {
 
 		if ( frame === this._frame ) return;
-
 		this._frame = frame;
 		this.update();
 
@@ -236,7 +229,7 @@ class Textform {
 	set progress( progress ) {
 
 		this._progress = progress;
-		this.frame = Math.round( this.totalFrames * progress );
+		this.frame = Math.round( this.finalFrame * progress );
 
 	}
 

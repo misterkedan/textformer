@@ -12,9 +12,7 @@ const config = {
 		},
 		externals: {
 			'dat.gui': 'dat.gui',
-			'./main': 'KEDA'
 		},
-		// optimization: { minimize: false }
 	},
 
 	dev: {
@@ -72,10 +70,19 @@ const config = {
 
 module.exports = ( env, argv ) => {
 
-	if ( argv.mode === 'development' ) return { ...config.demo, ...config.dev };
+	if ( argv.mode === 'development' ) return {
+		...config.demo,
+		...config.dev
+	};
 
 	return [
-		config.demo,
+		{
+			...config.demo,
+			externals: {
+				...config.demo.externals,
+				'./main': 'KEDA'
+			},
+		},
 		{
 			...config.build,
 			output: {

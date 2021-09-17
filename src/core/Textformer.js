@@ -1,10 +1,10 @@
 import { Textform } from './Textform';
 import { TextformPlayer } from './TextformPlayer';
-import { TextformAligner } from './TextformAligner';
 import { ReversedTextform } from '../modes/ReversedTextform';
 import { ExpandTextform } from '../modes/ExpandTextform';
 import { CollapseTextform } from '../modes/CollapseTextform';
 import { ShuffledTextform } from '../modes/ShuffledTextform';
+import { StringAligner } from '../utils/StringAligner';
 
 class Textformer {
 
@@ -48,8 +48,10 @@ class Textformer {
 		output,
 		charset = Textformer.charsets.ALL,
 
-		align = Textformer.aligns.left,
-		fill = ' ',
+		align = {
+			to: Textformer.align.NONE,
+			fill: ' ',
+		},
 
 		//TextformPlayer settings
 		autoplay = {
@@ -65,8 +67,8 @@ class Textformer {
 			mode,
 			autoplay,
 			options: {
-				from, to, steps, stagger, randomness,
-				origin, output, charset, align, fill
+				align,
+				from, to, steps, stagger, randomness, origin, output, charset
 			},
 		} );
 
@@ -78,18 +80,39 @@ class Textformer {
 
 		this.destroy();
 
-		const textform = new this.mode( this.options );
+		const options = { ...this.options };
+
+		//Align texts
+
+		if ( options.align ) {
+
+			const align = options.align.to;
+			this.align = align;
+
+			const aligner = new StringAligner(
+				[ options.from, options.to ],
+				align,
+				options.align.fill
+			);
+			const output = aligner.output;
+			options.from = output[ 0 ];
+			options.to = output[ 1 ];
+
+		}
+
+		//Build textform
+
+		const textform = new this.mode( options );
 		this.textform = textform;
 
 		//Autoplay
 
 		const { autoplay } = this;
-
 		if ( ! autoplay ) return;
 		const convertSpeedToDuration = () => {
 
-			const speed = Math.abs( this.speed ) || 1;
-			return textform.totalFrames * ( 1000 / speed );
+			const speed = Math.abs( autoplay.speed ) || 1;
+			return textform.finalFrame * ( 1000 / speed );
 
 		};
 
@@ -173,7 +196,7 @@ class Textformer {
 
 /-----------------------------------------------------------------------------*/
 
-Textformer.aligns = TextformAligner.modes;
+Textformer.align = StringAligner.to;
 Textformer.charsets = Textform.charsets;
 Textformer.modes = {
 	default: Textform,

@@ -9,27 +9,26 @@ const options = {
 	from: 'KEDA',
 	to: 'Textformer',
 
-	//Core
+	//Options
 	mode: 'expand',
 	steps: 10,
 	stagger: 3,
 	randomness: 2,
+	origin: - 1,
 	autoplay: {
 		speed: 15,
 		delay: 500,
 		duration: 0,
 	},
-
-	//Advanced
-	align: 'center',
-	fill: '.',
-	origin: - 1,
+	align: {
+		to: KEDA.Textformer.align.CENTER,
+		fill: '.',
+	},
 };
 
 const demo = new KEDA.Textformer( {
 	...options,
 	mode: KEDA.Textformer.modes[ options.mode ],
-	align: KEDA.Textformer.aligns[ options.align ],
 } );
 
 const paragraph = {
@@ -102,11 +101,6 @@ function onGUIChange() {
 
 	//Hacks needed because dat.GUI converts objects into strings
 	demo.mode = KEDA.Textformer.modes[ options.mode ];
-	demo.options.align = KEDA.Textformer.aligns[ options.align ];
-
-	//Multiple characters fills won't work
-	if ( demo.options.fill.length > 0 )
-		demo.options.fill = demo.options.fill.charAt( 0 );
 
 	//Force duration recomputation based on speed
 	demo.autoplay.duration = 0;
@@ -140,7 +134,7 @@ textform.add( demo.options, 'randomness', 0, 30 )
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
-player.add( demo, 'speed', 1, 30 )
+player.add( demo.autoplay, 'speed', 1, 30 )
 	.step( 1 )
 	.onChange( onGUIChange );
 player.add( demo, 'progress', 0, 1 )
@@ -152,9 +146,9 @@ player.add( demo, 'replay' )
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( options, 'align', Object.keys( KEDA.Textformer.aligns ).slice( 0, - 1 ) )
+advanced.add( demo, 'align', KEDA.Textformer.align )
 	.onChange( onGUIChange );
-advanced.add( demo.options, 'fill' )
+advanced.add( demo.options.align, 'fill' )
 	.onChange( onGUIChange );
 advanced.add( demo.options, 'charset', KEDA.Textformer.charsets )
 	.onChange( onGUIChange );
