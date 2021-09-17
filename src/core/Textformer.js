@@ -4,7 +4,8 @@ import { ReversedTextform } from '../modes/ReversedTextform';
 import { ExpandTextform } from '../modes/ExpandTextform';
 import { CollapseTextform } from '../modes/CollapseTextform';
 import { ShuffledTextform } from '../modes/ShuffledTextform';
-import { StringAligner } from '../utils/StringAligner';
+import { align } from '../utils/align';
+import { charsets } from '../utils/charsets';
 
 class Textformer {
 
@@ -94,10 +95,9 @@ class Textformer {
 
 			const { to, fill } = options.align;
 
-			const aligner = new StringAligner( [ options.from, options.to ], to, fill );
-			const output = aligner.output;
-			options.from = output[ 0 ];
-			options.to = output[ 1 ];
+			const alignedTexts = align.strings( [ options.from, options.to ], to, fill );
+			options.from = alignedTexts[ 0 ];
+			options.to = alignedTexts[ 1 ];
 
 		}
 
@@ -217,9 +217,9 @@ class Textformer {
 
 /-----------------------------------------------------------------------------*/
 
-Textformer.align = StringAligner.to;
+Textformer.align = align.to;
 
-Textformer.charsets = Textform.charsets;
+Textformer.charsets = charsets;
 
 Textformer.modes = {
 	BASIC: 		'basic',

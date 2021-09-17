@@ -1,3 +1,5 @@
+import { random } from '../utils/random';
+
 class Textform {
 
 	/**
@@ -73,15 +75,16 @@ class Textform {
 			if ( isFormatting( endChar ) )
 				return [ { frame: 0, char: endChar } ];
 
-			const steps = this.randomize( this.steps );
+			const steps = this.applyNoise( this.steps );
 			const startFrame = startFrames[ i ];
 			const endFrame = startFrame + steps;
 			const buildStep = ( step ) => {
 
 				const frame = startFrame + step;
-				const char = ( frame === startFrame ) ? startChar
+				const char = ( frame === startFrame )
+					? startChar
 					: ( frame === endFrame ) ? endChar
-						: this.generateRandomChar();
+						: random.char( this.charset );
 				return { frame, char };
 
 			};
@@ -120,29 +123,26 @@ class Textform {
 				? offset * stagger
 				: ( length + offset ) * stagger;
 
-			return this.randomize( offsetStartFrame );
+			return this.applyNoise( offsetStartFrame );
 
 		} );
 
 		return Array.from( { length }, ( _, i ) => {
 
 			const startFrame = i * stagger;
-			return this.randomize( startFrame );
+			return this.applyNoise( startFrame );
 
 		} );
 
 	}
 
-	randomize( value, minMultiplier = 0, maxMultiplier = 1 ) {
+	applyNoise( value ) {
 
 		const { noise } = this;
 
 		if ( ! noise ) return value;
 
-		const min = value - minMultiplier * noise;
-		const max = value + maxMultiplier * noise;
-
-		return Textform.generateRandomInt( min, max );
+		return random.int( value, value + noise );
 
 	}
 
@@ -151,14 +151,6 @@ class Textform {
 		Update
 
 	/-----------------------------------------------------------------------------*/
-
-	generateRandomChar() {
-
-		const { charset } = this;
-		const randomIndex = Textform.generateRandomInt( 0, charset.length - 1 );
-		return charset.charAt( randomIndex );
-
-	}
 
 	getCharAt( i, frame ) {
 
@@ -253,22 +245,5 @@ class Textform {
 	}
 
 }
-
-/*-----------------------------------------------------------------------------/
-
-	Static
-
-/-----------------------------------------------------------------------------*/
-
-Textform.generateRandomInt = ( min, max ) =>
-	Math.floor( Math.random() * ( max - min + 1 ) + min );
-
-Textform.charsets = {
-	UPPERCASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-	DIGITS: '0123456789',
-	SYMBOLS: '!@#$%&?',
-};
-Textform.charsets.LOWERCASE = Textform.charsets.UPPERCASE.toLowerCase();
-Textform.charsets.ALL = Object.values( Textform.charsets ).join( '' );
 
 export { Textform };

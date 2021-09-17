@@ -17,7 +17,7 @@ class CollapseTextform extends Textform {
 				? i
 				: length - 1 - i;
 
-			return this.randomize( diff * stagger );
+			return this.applyNoise( diff * stagger );
 
 		} );
 

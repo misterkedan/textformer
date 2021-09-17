@@ -21,7 +21,7 @@ class ExpandTextform extends Textform {
 				? center - i
 				: i - aboveCenter;
 
-			return this.randomize( diff * stagger );
+			return this.applyNoise( diff * stagger );
 
 		} );
 
