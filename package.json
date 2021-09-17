@@ -1,6 +1,6 @@
 {
     "name": "textformer",
-    "version": "0.16.2",
+    "version": "0.16.3",
     "description": "Text data transformation utility",
     "author": "Pierre Keda",
     "license": "MIT",

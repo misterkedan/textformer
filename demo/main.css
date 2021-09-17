@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@font-face {
+	font-family: 'Share Tech Mono';
+	src: url('vendor/ShareTechMono-Regular.ttf');
+}
 
 body, h1, p {
 	margin: 0;
