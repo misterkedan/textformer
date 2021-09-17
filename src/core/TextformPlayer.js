@@ -6,11 +6,12 @@ class TextformPlayer {
 	 * @param { Object }	options
 	 * @param { Textform }	options.textform	Textform to animate.
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
-	 * @param { Number } 	options.delay		Delay before playing the animation, in milliseconds.
-	 * @param { Function }	options.onBegin		Optional callback fired when the animation starts.
-	 * @param { Function }	options.onChange	Optional callback fired on each Textform character change.
-	 * @param { Function }	options.onComplet	Optional callback fired when the animation ends.
-	 */
+	 * @param { Number } 	options.delay		Delay before playing the animation,
+	 * 											in milliseconds..
+	 * @param { Function }	options.onBegin		Callback fired on animation start.
+	 * @param { Function }	options.onChange	Callback fired on each text change.
+	 * @param { Function }	options.onComplete	Callback fired on animation end.
+	*/
 	constructor( options = {} ) {
 
 		Object.assign( this, options );

@@ -10,35 +10,49 @@ class Textformer {
 
 	/**
 	 * Easy text tranform animation, based on random character changes.
+	 *
 	 * @constructor
 	 * @param { Object }	options
 	 * @param { Class }		options.mode		Animation mode, pick one from Textformer.modes.
-
+     *
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
-	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different
+	 * 											characters.
 	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
+	 * @param { String } 	options.charset		Concatenated character pool for random
+	 * 											character changes.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element } 	options.output		DOM element the text will be output to.
-	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
-
-	 * @param { Function } 	options.align		Function to align both texts by filling the shorter text to match the longer text's length. Can use a number to align both text at this index instead.
-	 * @param { String } 	options.fill		A single fill character used by the align function, will generate random characters if undefined.
-	 *
-	 * @param { Object } 	options.autoplay	Automatic animation settings. Set to false for no automatic animation
-	 * @param { Number } 	options.speed		Number of changes per second.
-	 * @param { Number } 	options.delay		Delay before playing the animation, in milliseconds.
-	 * @param { Number } 	options.duration	Animation duration, in milliseconds. Overrides options.speed.
-	 * @param { Function }	options.onBegin		Callback fired when the animation starts.
-	 * @param { Function }	options.onChange	Callback fired on each Textform character change.
-	 * @param { Function }	options.onComplet	Callback fired when the animation ends.
+	 * @param { Object }	options.align		Align texts options.
+	 * 											Set to false for no alignment.
+	 * @param { Function } 	options.align.to	Alignment mode, use one of Textformer.align.
+	 * @param { String } 	options.align.fill	String used to pad the shorter text.
+	 * @param { Object } 	options.autoplay 			Automatic animation settings.
+														Set to false for manual animation
+														( change textformer.progress
+														from 0 to 1 ).
+	 * @param { Number } 	options.autoplay.speed		Number of changes per second.
+	 * @param { Number } 	options.autoplay.delay		Delay before playing the animation,
+	 * 													in milliseconds.
+	 * @param { Number } 	options.autoplay.duration	Animation duration, in milliseconds.
+	 * 													Overrides options.speed.
+	 * @param { Function }	options.autoplay.onBegin	Callback fired on animation start.
+	 * @param { Function }	options.autoplay.onChange	Callback fired on each text change.
+	 * @param { Function }	options.autoplay.onComplete	Callback fired on animation end.
 	 */
 	constructor( {
-
 		mode = Textformer.modes.default,
-
-		//Textform settings
+		align = {
+			to: Textformer.align.NONE,
+			fill: '',
+		},
+		autoplay = {
+			speed: 15,
+			delay: 0,
+			// duration, onBegin, onChange, onComplete,
+		},
 		from = '',
 		to = '',
 		steps = 5,
@@ -47,20 +61,6 @@ class Textformer {
 		origin,
 		output,
 		charset = Textformer.charsets.ALL,
-
-		align = {
-			to: Textformer.align.NONE,
-			fill: ' ',
-		},
-
-		//TextformPlayer settings
-		autoplay = {
-			speed: 15,
-			delay: 0,
-			// duration, onBegin, onChange, onComplete,
-		}
-
-
 	} = {} ) {
 
 		Object.assign( this, {

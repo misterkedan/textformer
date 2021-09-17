@@ -5,24 +5,29 @@ class Textform {
 	 *
 	 * @constructor
 	 * @param { Object } 	options
+	 *
 	 * @param { String } 	options.from		Initial text.
 	 * @param { String } 	options.to			Final text.
+	 *
 	 * @param { Number } 	options.steps		Number of character changes between both texts.
-	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different characters.
+	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different
+	 * 											characters.
 	 * @param { Number } 	options.randomness	Steps and stagger maximum randomness.
 	 *
+	 * @param { String } 	options.charset		Concatenated character pool for random
+	 * 											character changes.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element }	options.output		DOM element the text will be output to.
-	 * @param { String } 	options.charset		Concatenated character pool for random character changes.
 	 */
-	constructor( {
-		from, to,
-		// steps, stagger, randomness, origin, output, charset,
-		// align, fill
-	} = {} ) {
+	constructor( options = {
+		// from, to,
+		// steps, stagger, randomness,
+		// origin, output, charset,
+	} ) {
 
-		Object.assign( this, arguments[ 0 ] );
+		Object.assign( this, options );
 
+		const { from, to } = this;
 		this.length = Math.max( from.length, to.length );
 
 		this.build();
