@@ -56,6 +56,8 @@ const align = {
 	 */
 	strings: ( strings, to, fill ) => {
 
+		if ( to === align.to.NONE ) return strings;
+
 		if ( ! fill ) fill = ' ';
 
 		const length = strings.reduce(

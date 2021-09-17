@@ -33,7 +33,7 @@ const options = {
 	output: document.querySelector( '#demo-title' ),
 
 	//Texts
-	from: 'KEDA',
+	from: '',
 	to: 'Textformer',
 
 	//Options
@@ -48,7 +48,7 @@ const options = {
 		duration: 0,
 	},
 	align: {
-		to: KEDA.Textformer.align.CENTER,
+		to: KEDA.Textformer.align.LEFT,
 		fill: '.',
 	},
 };
@@ -87,74 +87,44 @@ paragraph.textformer = title.clone( paragraph.getOverrides() );
 
 /-----------------------------------------------------------------------------*/
 
-function build() {
+function rebuild() {
 
 	title.build();
 	paragraph.build();
 
 }
 
-function onGUIChange() {
-
-	//Force duration recomputation based on speed
-	title.options.autoplay.duration = 0;
-
-	//Rebuild both KEDA.Textformers
-	build();
-
-	//To update the duration on the gui, if speed changed
-	gui.updateDisplay();
-
-}
-
 const gui = new dat.GUI();
 
 const textform = gui.addFolder( 'Textform' );
-textform.add( title.options, 'from' )
-	.onChange( onGUIChange );
-textform.add( title.options, 'to' )
-	.onChange( onGUIChange );
-textform.add( title.options, 'mode', KEDA.Textformer.modes )
-	.onChange( onGUIChange );
-textform.add( title.options, 'steps', 1, 60 )
-	.step( 1 )
-	.onChange( onGUIChange );
-textform.add( title.options, 'stagger', 0, 30 )
-	.step( 1 )
-	.onChange( onGUIChange );
-textform.add( title.options, 'noise', 0, 30 )
-	.step( 1 )
-	.onChange( onGUIChange );
+textform.add( title.options, 'from' ).onChange( rebuild );
+textform.add( title.options, 'to' ).onChange( rebuild );
+textform.add( title.options, 'mode', KEDA.Textformer.modes ).onChange( rebuild );
+textform.add( title.options, 'steps', 1, 60 ).step( 1 ).onChange( rebuild );
+textform.add( title.options, 'stagger', 0, 30 ).step( 1 ).onChange( rebuild );
+textform.add( title.options, 'noise', 0, 30 ).step( 1 ).onChange( rebuild );
 textform.open();
 
 const player = gui.addFolder( 'Animation' );
-player.add( title.options.autoplay, 'speed', 1, 30 )
-	.step( 1 )
-	.onChange( onGUIChange );
-player.add( title, 'progress', 0, 1 )
-	.step( 0.001 )
-	.listen()
-	.onChange( ()=> paragraph.textformer.progress = title.progress );
+player.add( title, 'speed', 1, 30 ).step( 1 )
+	.onChange( rebuild );
+player.add( title, 'progress', 0, 1 ).step( 0.001 )
+	.onChange( ()=> paragraph.textformer.progress = title.progress )
+	.listen();
 player.add( title, 'replay' )
 	.onFinishChange( () => paragraph.textformer.replay() );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( title, 'align', KEDA.Textformer.align )
-	.onChange( onGUIChange );
-advanced.add( title.options.align, 'fill' )
-	.onChange( onGUIChange );
+advanced.add( title, 'align', KEDA.Textformer.align ).onChange( rebuild );
+advanced.add( title.options.align, 'fill' ).onChange( rebuild );
 advanced.add( title.options, 'charset', KEDA.Textformer.charsets )
-	.onChange( onGUIChange );
-advanced.add( title.options.autoplay, 'duration', 150, 10000 )
-	.step( 50 )
-	.onChange( build );
-advanced.add( title.options.autoplay, 'delay', 0, 5000 )
-	.step( 50 )
-	.onChange( onGUIChange );
-advanced.add( title.options, 'origin', - 1, 10 )
-	.step( 1 )
-	.onChange( onGUIChange );
+	.onChange( rebuild );
+advanced.add( title.options.autoplay, 'duration', 150, 10000 ).step( 50 )
+	.onChange( rebuild ).listen();
+advanced.add( title.options.autoplay, 'delay', 0, 5000 ).step( 50 )
+	.onChange( rebuild );
+advanced.add( title.options, 'origin', - 1, 10 ).step( 1 ).onChange( rebuild );
 advanced.open();
 
 //Close GUI on mobile & small screens to avoid overlap

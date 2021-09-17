@@ -75,6 +75,8 @@ class Textformer {
 
 		this.options = options;
 
+		const computedOptions = { ... options };
+
 		//Clear current animations & event listeners
 		this.destroy();
 
@@ -83,8 +85,8 @@ class Textformer {
 
 			const { to, fill } = options.align;
 			const alignedTexts = align.strings( [ options.from, options.to ], to, fill );
-			options.from = alignedTexts[ 0 ];
-			options.to = alignedTexts[ 1 ];
+			computedOptions.from = alignedTexts[ 0 ];
+			computedOptions.to = alignedTexts[ 1 ];
 
 		}
 
@@ -99,22 +101,17 @@ class Textformer {
 			shuffle: 	ShuffledTextform,
 		};
 		const TextformClass = textformClasses[ mode ] || textformClasses.default;
-		const textform = new TextformClass( options );
+		const textform = new TextformClass( computedOptions );
 		this.textform = textform;
 
 		//Autoplay
 		const autoplay = options.autoplay;
 		if ( ! autoplay ) return;
 
-		const convertSpeedToDuration = () => {
 
-			const speed = Math.abs( autoplay.speed ) || 1;
-			return textform.finalFrame * ( 1000 / speed );
-
-		};
 
 		autoplay.textform = textform;
-		if ( ! autoplay.duration ) autoplay.duration = convertSpeedToDuration();
+		if ( ! autoplay.duration ) this.speed = autoplay.speed;
 
 		this.player = new TextformPlayer( autoplay );
 		this.play();
@@ -177,6 +174,23 @@ class Textformer {
 	set progress( progress ) {
 
 		this.textform.progress = progress;
+
+	}
+
+	get speed() {
+
+		return this.options.autoplay.speed;
+
+	}
+
+	set speed( speed ) {
+
+		if ( speed < 1 ) speed = 1;
+		this.options.autoplay.speed = speed;
+
+		if ( ! this.textform ) return;
+		const finalFrame = this.textform.finalFrame;
+		this.options.autoplay.duration = finalFrame * ( 1000 / speed );
 
 	}
 
