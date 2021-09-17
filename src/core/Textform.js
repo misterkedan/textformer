@@ -32,6 +32,8 @@ class Textform {
 		const { from, to } = this;
 		this.length = Math.max( from.length, to.length );
 
+		if ( this.output ) this.output.textform = this;
+
 		this.build();
 		this.reset();
 
@@ -179,7 +181,7 @@ class Textform {
 
 	update() {
 
-		const { frame, length } = this;
+		const { frame, length, output } = this;
 
 		this.chars = Array.from(
 			{ length },
@@ -188,12 +190,7 @@ class Textform {
 
 		this.text = this.chars.join( '' );
 
-		if ( this.output )
-			this.output.innerHTML = this.text
-				.replace( / /g, '&nbsp;' )
-				.replace( /\t/g, '&emsp;' )
-				.replace( /\n/g, '<br>' )
-				.replace( /\r/g, '<br>' );
+		if ( output ) output.update();
 
 	}
 

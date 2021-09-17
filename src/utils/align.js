@@ -67,7 +67,7 @@ const align = {
 
 		const fillLength = fill.length;
 		const ratio = Math.ceil( length / fillLength );
-		const computedFill = fill.repeat( ratio ).substring( 0, length - 1 );
+		const computedFill = fill.repeat( ratio ).substring( 0, length );
 
 		return strings.map(
 			string => align.pad( string, to, computedFill, length )

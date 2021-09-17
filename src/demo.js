@@ -8,8 +8,8 @@ using random character changes.
 Example usage :
 
 const textformer = new KEDA.Textformer( {
-	//Target HTML Element
-	output: "demo-title",
+	//Target
+	output: "#demo-title",
 
 	//Texts
 	from: '',
@@ -29,11 +29,13 @@ const textformer = new KEDA.Textformer( {
 `;
 
 const options = {
-	//Target HTML Element
-	output: document.querySelector( '#demo-title' ),
+	//Target to write the result into, can be:
+	//'#id', '.class', selected HTML element
+	//Writable object, window.console
+	output: '#demo-title',
 
 	//Texts
-	from: '',
+	// from: '',
 	to: 'Textformer',
 
 	//Options
@@ -48,7 +50,7 @@ const options = {
 		duration: 0,
 	},
 	align: {
-		to: KEDA.Textformer.align.LEFT,
+		to: KEDA.Textformer.align.CENTER,
 		fill: '.',
 	},
 };
@@ -67,14 +69,16 @@ const paragraph = {
 	},
 	getOverrides: () => {
 
-		const factor = DESCRIPTION.length / title.textform.length * 0.25 || 10;
-
+		const length = title.textform.length;
+		const factor = ( length > 0 ) ? DESCRIPTION.length / length * 0.25 : 10;
 		return {
 			output: paragraph.element,
 			from: '',
 			to: DESCRIPTION,
 			stagger: Math.ceil( title.options.stagger / factor ),
-			noise: ( title.options.noise === 0 ) ? 0 : title.options.noise * factor
+			noise: ( title.options.noise === 0 )
+				? 0
+				: title.options.noise * factor
 		};
 
 	}
@@ -97,8 +101,8 @@ function rebuild() {
 const gui = new dat.GUI();
 
 const textform = gui.addFolder( 'Textform' );
-textform.add( title.options, 'from' ).onChange( rebuild );
-textform.add( title.options, 'to' ).onChange( rebuild );
+// textform.add( title.options, 'from' ).onChange( rebuild );
+// textform.add( title.options, 'to' ).onChange( rebuild );
 textform.add( title.options, 'mode', KEDA.Textformer.modes ).onChange( rebuild );
 textform.add( title.options, 'steps', 1, 60 ).step( 1 ).onChange( rebuild );
 textform.add( title.options, 'stagger', 0, 30 ).step( 1 ).onChange( rebuild );

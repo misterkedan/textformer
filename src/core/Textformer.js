@@ -6,6 +6,7 @@ import { CollapseTextform } from '../modes/CollapseTextform';
 import { ShuffledTextform } from '../modes/ShuffledTextform';
 import { align } from '../utils/align';
 import { charsets } from '../utils/charsets';
+import { TextformOutput } from './TextformOutput';
 
 class Textformer {
 
@@ -50,12 +51,12 @@ class Textformer {
 			fill: '',
 		},
 		autoplay = {
-			speed: 15,
+			speed: Textformer.DEFAULT_SPEED,
 			delay: 0,
 			// duration, onBegin, onChange, onComplete,
 		},
-		from = '',
-		to = '',
+		from,
+		to,
 		steps = 5,
 		stagger = 3,
 		noise = 0,
@@ -73,25 +74,13 @@ class Textformer {
 
 	build( options = this.options ) {
 
+		const { mode, autoplay } = options;
 		this.options = options;
-
-		const computedOptions = { ... options };
 
 		//Clear current animations & event listeners
 		this.destroy();
 
-		//Align texts
-		if ( options.align ) {
-
-			const { to, fill } = options.align;
-			const alignedTexts = align.strings( [ options.from, options.to ], to, fill );
-			computedOptions.from = alignedTexts[ 0 ];
-			computedOptions.to = alignedTexts[ 1 ];
-
-		}
-
 		//Build textform
-		const mode = options.mode;
 		const textformClasses = {
 			default: 	Textform,
 			basic: 		Textform,
@@ -101,24 +90,66 @@ class Textformer {
 			shuffle: 	ShuffledTextform,
 		};
 		const TextformClass = textformClasses[ mode ] || textformClasses.default;
-		const textform = new TextformClass( computedOptions );
+		const textform = new TextformClass( this.computeOptions() );
 		this.textform = textform;
 
 		//Autoplay
-		const autoplay = options.autoplay;
-		if ( ! autoplay ) return;
+		if ( autoplay ) {
 
+			autoplay.textform = textform;
+			if ( ! autoplay.duration ) this.speed = autoplay.speed;
+			this.player = new TextformPlayer( autoplay );
+			this.play();
 
-
-		autoplay.textform = textform;
-		if ( ! autoplay.duration ) this.speed = autoplay.speed;
-
-		this.player = new TextformPlayer( autoplay );
-		this.play();
+		}
 
 	}
 
-	clone( overrides ) {
+	computeOptions() {
+
+		const options =  { ...this.options };
+		const { DEFAULT_TEXT } = Textformer;
+
+		//Output
+		const output = new TextformOutput( options.output );
+		if ( output.isValid ) {
+
+			options.output = output;
+			//If valid output, uses output's initial text as automatic to/from
+			const initialText =  ( output.elements && output.elements.length === 1 )
+				? output.elements[ 0 ].textContent
+				: ( output.object )
+					? output.object.textform
+					: DEFAULT_TEXT;
+			if ( options.to === undefined ) options.to = initialText;
+			else if ( options.from === undefined ) options.from = initialText;
+
+		} else delete options.output;
+
+		//Default text if necessary
+		if ( options.from === undefined )
+			options.from = DEFAULT_TEXT;
+		if ( options.to === undefined )
+			options.to = DEFAULT_TEXT;
+
+		//Align texts
+		if ( options.align ) {
+
+			const alignedTexts = align.strings(
+				[ options.from, options.to ],
+				options.align.to,
+				options.align.fill
+			);
+			options.from = alignedTexts[ 0 ];
+			options.to = alignedTexts[ 1 ];
+
+		}
+
+		return options;
+
+	}
+
+	clone( overrides = { output: undefined } ) {
 
 		const options = { ...this.options, ...overrides };
 		return new Textformer( options );
@@ -185,7 +216,7 @@ class Textformer {
 
 	set speed( speed ) {
 
-		if ( speed < 1 ) speed = 1;
+		if ( speed < 1 ) speed = Textformer.DEFAULT_SPEED;
 		this.options.autoplay.speed = speed;
 
 		if ( ! this.textform ) return;
@@ -237,5 +268,8 @@ Textformer.modes = {
 	COLLAPSE: 	'collapse',
 	SHUFFLE: 	'shuffle',
 };
+
+Textformer.DEFAULT_TEXT = '';
+Textformer.DEFAULT_SPEED = 15;
 
 export { Textformer };

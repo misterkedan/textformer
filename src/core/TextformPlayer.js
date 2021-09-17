@@ -33,6 +33,7 @@ class TextformPlayer {
 
 		}
 
+
 		const previousFrame = textform.frame;
 		textform.progress = elapsed / duration;
 

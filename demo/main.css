@@ -3,14 +3,14 @@
 	src: url('vendor/ShareTechMono-Regular.ttf');
 }
 
-body, h1, p {
+* {
 	margin: 0;
 	border: 0;
-	font-family: 'Share Tech Mono', monospace;
-	color: rgba(0,0,0,0.8);
 }
 
 body {
+	font-family: 'Share Tech Mono', monospace;
+	color: rgba(0,0,0,0.8);
 	background: rgb(212,225,230);
 	background: linear-gradient(
 		0deg, 
