@@ -35,7 +35,7 @@ const options = {
 	output: '#demo-title',
 
 	//Texts
-	// from: '',
+	from: '',
 	to: 'Textformer',
 
 	//Options
@@ -50,7 +50,7 @@ const options = {
 		duration: 0,
 	},
 	align: {
-		to: KEDA.Textformer.align.CENTER,
+		to: KEDA.Textformer.align.LEFT,
 		fill: '.',
 	},
 };
@@ -101,8 +101,8 @@ function rebuild() {
 const gui = new dat.GUI();
 
 const textform = gui.addFolder( 'Textform' );
-// textform.add( title.options, 'from' ).onChange( rebuild );
-// textform.add( title.options, 'to' ).onChange( rebuild );
+textform.add( title.options, 'from' ).onChange( rebuild );
+textform.add( title.options, 'to' ).onChange( rebuild );
 textform.add( title.options, 'mode', KEDA.Textformer.modes ).onChange( rebuild );
 textform.add( title.options, 'steps', 1, 60 ).step( 1 ).onChange( rebuild );
 textform.add( title.options, 'stagger', 0, 30 ).step( 1 ).onChange( rebuild );
