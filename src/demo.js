@@ -50,6 +50,8 @@ const options = {
 		duration: 0,
 		// onBegin: ()=> console.log( 'begin' ),
 		// onComplete: ()=> console.log( 'complete' ),
+		isReversed: false,
+		// isYoyo: true,
 	},
 	align: {
 		to: KEDA.Textformer.align.LEFT,
@@ -59,13 +61,13 @@ const options = {
 
 const title = new KEDA.Textformer( options );
 
-const paragraph = {
+const text = {
 	element: document.querySelector( '#demo-paragraph' ),
 	build: () => {
 
-		paragraph.textformer.build( {
+		text.textformer._build( {
 			...title.options,
-			...paragraph.getOverrides(),
+			...text.getOverrides(),
 		} );
 
 	},
@@ -74,7 +76,7 @@ const paragraph = {
 		const length = title.textform.length;
 		const factor = ( length > 0 ) ? DESCRIPTION.length / length * 0.25 : 10;
 		return {
-			output: paragraph.element,
+			output: text.element,
 			from: '',
 			to: DESCRIPTION,
 			stagger: Math.ceil( title.options.stagger / factor ),
@@ -85,7 +87,7 @@ const paragraph = {
 
 	}
 };
-paragraph.textformer = title.clone( paragraph.getOverrides() );
+text.textformer = title.clone( text.getOverrides() );
 
 /*-----------------------------------------------------------------------------/
 
@@ -95,12 +97,26 @@ paragraph.textformer = title.clone( paragraph.getOverrides() );
 
 function rebuild() {
 
-	title.build();
-	paragraph.build();
+	title._build();
+	text.build();
 
 }
 
 const gui = new dat.GUI();
+
+gui.controls = {
+
+	reversed: options.autoplay.isReversed,
+
+	play: () => {
+
+		const method = ( title.player.isPlaying ) ? 'pause' : 'play';
+		title[ method ]();
+		text.textformer[ method ]();
+
+	},
+
+};
 
 const textform = gui.addFolder( 'Textform' );
 textform.add( title.options, 'from' ).onChange( rebuild );
@@ -114,13 +130,25 @@ textform.open();
 const player = gui.addFolder( 'Animation' );
 player.add( title, 'speed', 1, 30 ).step( 1 )
 	.onChange( rebuild );
-player.add( title, 'progress', 0, 1 ).step( 0.001 )
-	.onChange( ()=> paragraph.textformer.progress = title.progress )
-	.listen();
-player.add( title, 'replay' )
-	.onFinishChange( () => paragraph.textformer.replay() );
-player.add( title, 'reverse' )
-	.onFinishChange( () => paragraph.textformer.reverse() );
+player.add( title, 'progress', 0, 1 ).step( 0.001 ).onChange( ()=> {
+
+	title.pause();
+	text.textformer.pause();
+
+	const progress = title.progress;
+	title.player.progress = progress;
+	text.textformer.player.progress = progress;
+
+} ).listen();
+player.add( gui.controls, 'play' );
+player.add( gui.controls, 'reversed' ).onChange( () => {
+
+	const reversed = gui.controls.reversed;
+	title.player.isReversed = reversed;
+	text.textformer.player.isReversed = reversed;
+	if ( ! title.player.isPlaying ) gui.controls.play();
+
+} );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );

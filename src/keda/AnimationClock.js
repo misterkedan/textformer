@@ -10,14 +10,17 @@ class AnimationClock {
 		this.callbacks = ( typeof callbacks === 'function' )
 			? [ callbacks ] : callbacks;
 		this.fps = fps;
+		this.elapsed = 0;
 
-		this._time = ( performance === undefined ) ? Date : performance;
-
-		this._elapsed = 0;
 		this._previous = 0;
 		this._delta = 0;
-
 		this._isPlaying = false;
+
+	}
+
+	reset() {
+
+		this.elapsed = 0;
 
 	}
 
@@ -36,12 +39,6 @@ class AnimationClock {
 
 	}
 
-	reset() {
-
-		this._elapsed = 0;
-
-	}
-
 	stop() {
 
 		this.pause();
@@ -57,8 +54,8 @@ class AnimationClock {
 		const delta = current - this._previous;
 
 		this._previous = current;
-		this._elapsed += delta;
 		this._delta += delta;
+		this.elapsed += delta;
 
 		const diff = this._frameDuration - this._delta;
 		if ( diff <= 0 ) {
@@ -103,12 +100,6 @@ class AnimationClock {
 
 	/-------------------------------------------------------------------------*/
 
-	get elapsed() {
-
-		return this._elapsed;
-
-	}
-
 	get isPlaying() {
 
 		return this._isPlaying;
@@ -117,10 +108,12 @@ class AnimationClock {
 
 	get now() {
 
-		return this._time.now();
+		return AnimationClock.time.now();
 
 	}
 
 }
+
+AnimationClock.time = ( performance === undefined ) ? Date : performance;
 
 export { AnimationClock };

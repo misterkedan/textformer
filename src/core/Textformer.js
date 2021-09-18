@@ -40,6 +40,9 @@ class Textformer {
 	 * 													in milliseconds.
 	 * @param { Number } 	options.autoplay.duration	Animation duration, in milliseconds.
 	 * 													Overrides options.speed.
+	 * @param { Boolean }	options.autoplay.isReversed	Play the animation backwards.
+	 * @param { Boolean }	options.autoplay.isYoyo		Toggle animation direction when
+	 * 													reaching either end.
 	 * @param { Function }	options.autoplay.onBegin	Callback fired on animation start.
 	 * @param { Function }	options.autoplay.onChange	Callback fired on each text change.
 	 * @param { Function }	options.autoplay.onComplete	Callback fired on animation end.
@@ -53,6 +56,8 @@ class Textformer {
 		autoplay = {
 			speed: Textformer.DEFAULT_SPEED,
 			delay: 0,
+			isReversed: false,
+			isYoyo: false,
 			// duration, onBegin, onChange, onComplete,
 		},
 		from,
@@ -65,22 +70,41 @@ class Textformer {
 		output,
 	} = {} ) {
 
-		this.build( {
+		this._build( {
 			mode, align, autoplay,
 			from, to, steps, stagger, noise, charset, origin, output
 		} );
 
 	}
 
-	build( options = this.options ) {
+	clone( overrides = { output: undefined } ) {
 
-		const { mode, autoplay } = options;
+		const options = { ...this.options, ...overrides };
+		return new Textformer( options );
+
+	}
+
+	destroy() {
+
+		this.stop();
+		delete this.player;
+		delete this.textform;
+		//Remove event listeners
+
+	}
+
+	/*-------------------------------------------------------------------------/
+
+		Private
+
+	/-------------------------------------------------------------------------*/
+
+	_build( options = this.options ) {
+
 		this.options = options;
 
-		//Clear current animations & event listeners
 		this.destroy();
 
-		//Build textform
 		const textformClasses = {
 			default: 	Textform,
 			basic: 		Textform,
@@ -89,28 +113,20 @@ class Textformer {
 			collapse: 	CollapseTextform,
 			shuffle: 	ShuffledTextform,
 		};
-		const TextformClass = textformClasses[ mode ] || textformClasses.default;
-		const textform = new TextformClass( this.computeOptions() );
+		const TextformClass = textformClasses[ options.mode ]
+			|| textformClasses.default;
+		const textform = new TextformClass( this._computeOptions() );
 		this.textform = textform;
 
-		//Autoplay
-		if ( autoplay ) {
-
-			autoplay.textform = textform;
-			if ( ! autoplay.duration ) this.speed = autoplay.speed;
-			this.player = new TextformPlayer( autoplay );
-			this.play();
-
-		}
+		this._autoplay( options.autoplay );
 
 	}
 
-	computeOptions() {
+	_computeOptions() {
 
 		const options =  { ...this.options };
 		const { DEFAULT_TEXT } = Textformer;
 
-		//Output
 		const output = new TextformOutput( options.output );
 		if ( output.isValid ) {
 
@@ -126,13 +142,9 @@ class Textformer {
 
 		} else delete options.output;
 
-		//Default text if necessary
-		if ( options.from === undefined )
-			options.from = DEFAULT_TEXT;
-		if ( options.to === undefined )
-			options.to = DEFAULT_TEXT;
+		if ( options.from === undefined ) options.from = DEFAULT_TEXT;
+		if ( options.to === undefined ) options.to = DEFAULT_TEXT;
 
-		//Align texts
 		if ( options.align ) {
 
 			const alignedTexts = align.strings(
@@ -149,25 +161,20 @@ class Textformer {
 
 	}
 
-	clone( overrides = { output: undefined } ) {
+	_autoplay( options ) {
 
-		const options = { ...this.options, ...overrides };
-		return new Textformer( options );
+		if ( ! options ) return;
 
-	}
-
-	destroy() {
-
-		delete this.textform;
-		this.stop();
-		delete this.player;
-		//Remove event listeners
+		options.textform = this.textform;
+		if ( ! options.duration ) this.speed = options.speed;
+		this.player = new TextformPlayer( options );
+		this.play();
 
 	}
 
 	/*-------------------------------------------------------------------------/
 
-		Playback
+		Player shorthands
 
 	/-------------------------------------------------------------------------*/
 
@@ -183,16 +190,9 @@ class Textformer {
 
 	}
 
-	replay() {
+	pause() {
 
-		this.stop();
-		this.play();
-
-	}
-
-	reverse() {
-
-		if ( this.player ) this.player.play( ! this.player.isReversed );
+		if ( this.player ) this.player.pause();
 
 	}
 
