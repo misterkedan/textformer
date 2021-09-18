@@ -48,6 +48,8 @@ const options = {
 		speed: 15,
 		delay: 500,
 		duration: 0,
+		// onBegin: ()=> console.log( 'begin' ),
+		// onComplete: ()=> console.log( 'complete' ),
 	},
 	align: {
 		to: KEDA.Textformer.align.LEFT,
@@ -117,6 +119,8 @@ player.add( title, 'progress', 0, 1 ).step( 0.001 )
 	.listen();
 player.add( title, 'replay' )
 	.onFinishChange( () => paragraph.textformer.replay() );
+player.add( title, 'reverse' )
+	.onFinishChange( () => paragraph.textformer.reverse() );
 player.open();
 
 const advanced = gui.addFolder( 'Advanced' );

@@ -190,6 +190,12 @@ class Textformer {
 
 	}
 
+	reverse() {
+
+		if ( this.player ) this.player.play( ! this.player.isReversed );
+
+	}
+
 	/*-------------------------------------------------------------------------/
 
 		Getters / Setters

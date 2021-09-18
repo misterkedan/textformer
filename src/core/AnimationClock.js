@@ -16,6 +16,7 @@ class AnimationClock {
 		this._elapsed = 0;
 		this._previous = 0;
 		this._delta = 0;
+
 		this._isPlaying = false;
 
 	}
