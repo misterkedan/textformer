@@ -1,3 +1,5 @@
+import { AnimationClock } from './AnimationClock';
+
 class TextformPlayer {
 
 	/**
@@ -16,16 +18,32 @@ class TextformPlayer {
 
 		Object.assign( this, options );
 
+		this.delayDuration = this.delay;
+
+		this.clock = new AnimationClock(
+			this.animate.bind( this ),
+			TextformPlayer.FPS_CAP
+		);
+
 	}
 
-	animate( animationTime = 0 ) {
+	animate() {
 
-		if ( ! this.time && animationTime ) this.time = animationTime;
-		const { textform, onChange, onComplete, duration, time } = this;
+		const {
+			textform, duration, clock, delay, delayDuration,
+			onChange, onComplete,
+		} = this;
 
-		const elapsed = animationTime - time;
+		if ( delay > 0 ) {
 
-		if ( elapsed > duration ) {
+			this.delay -= clock.elapsed;
+			return;
+
+		}
+
+		const elapsed = clock.elapsed - delayDuration + delay;
+
+		if ( elapsed >= duration ) {
 
 			textform.progress = 1;
 			if ( onComplete ) onComplete.call();
@@ -33,42 +51,31 @@ class TextformPlayer {
 
 		}
 
-
 		const previousFrame = textform.frame;
 		textform.progress = elapsed / duration;
-
 		if ( textform.frame !== previousFrame && onChange ) onChange.call();
-
-		this.requestAnimationFrame();
-
-	}
-
-	requestAnimationFrame() {
-
-		this.animationFrame = requestAnimationFrame( this.animate.bind( this ) );
 
 	}
 
 	play() {
 
-		const onBegin = this.onBegin;
-		if ( onBegin ) onBegin.call();
+		const { onBegin, textform } = this;
+		if ( onBegin && textform.progress === 0 ) onBegin.call();
 
-		this.time = 0;
-		this.textform.progress = 0;
+		this.delay = this.delayDuration;
 
-		const delay = ( this.delay > 0 ) ? this.delay : 0;
-		this.timeout = setTimeout( this.requestAnimationFrame.bind( this ), delay );
+		this.clock.start();
 
 	}
 
 	stop() {
 
-		clearTimeout( this.timeout );
-		cancelAnimationFrame( this.animationFrame );
+		this.clock.stop();
 
 	}
 
 }
+
+TextformPlayer.FPS_CAP = 60;
 
 export { TextformPlayer };

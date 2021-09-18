@@ -8,6 +8,7 @@ export { ExpandTextform } from './modes/ExpandTextform';
 export { CollapseTextform } from './modes/CollapseTextform';
 export { ShuffledTextform } from './modes/ShuffledTextform';
 
+export { AnimationClock } from './core/AnimationClock';
 export { TextformOutput } from './core/TextformOutput';
 export { TextformPlayer } from './core/TextformPlayer';
 

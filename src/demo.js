@@ -2,8 +2,8 @@ import * as KEDA from './main';
 import * as dat from 'dat.gui';
 
 const DESCRIPTION = `
-Easy text transition animations
-using random character changes.
+Easy text animations with
+random character changes.
 
 Example usage :
 

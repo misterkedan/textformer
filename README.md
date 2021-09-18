@@ -1,3 +1,3 @@
 # Textformer
 
-Easy text tranform animation, based on random character changes. WIP.
+Easy text animations with random character changes. WIP.
