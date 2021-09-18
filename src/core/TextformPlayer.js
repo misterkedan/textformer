@@ -1,4 +1,4 @@
-import { AnimationClock } from './AnimationClock';
+import * as KEDA from '../keda/keda';
 
 class TextformPlayer {
 
@@ -21,7 +21,7 @@ class TextformPlayer {
 		this.delayDuration = this.delay;
 		this.isReversed = false;
 
-		this.clock = new AnimationClock(
+		this.clock = new KEDA.AnimationClock(
 			this.animate.bind( this ),
 			TextformPlayer.FPS_CAP
 		);
