@@ -44,14 +44,16 @@ const options = {
 	stagger: 3,
 	noise: 2,
 	origin: - 1,
+
 	autoplay: {
 		speed: 15,
 		delay: 500,
 		duration: 0,
 		// onBegin: ()=> console.log( 'begin' ),
 		// onComplete: ()=> console.log( 'complete' ),
-		isReversed: false,
 		// isYoyo: true,
+		isReversed: false,
+		// reverse: 3,
 	},
 	align: {
 		to: KEDA.Textformer.align.LEFT,

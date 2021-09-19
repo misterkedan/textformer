@@ -43,6 +43,8 @@ class Textformer {
 	 * @param { Boolean }	options.autoplay.isReversed	Play the animation backwards.
 	 * @param { Boolean }	options.autoplay.isYoyo		Toggle animation direction when
 	 * 													reaching either end.
+	 * @param { Number } 	option.autoplay.reverse 	Speed multiplier for reversed
+	 * 													animation.
 	 * @param { Function }	options.autoplay.onBegin	Callback fired on animation start.
 	 * @param { Function }	options.autoplay.onChange	Callback fired on each text change.
 	 * @param { Function }	options.autoplay.onComplete	Callback fired on animation end.
@@ -56,6 +58,7 @@ class Textformer {
 		autoplay = {
 			speed: Textformer.DEFAULT_SPEED,
 			delay: 0,
+			reverseSpeed: 1,
 			isReversed: false,
 			isYoyo: false,
 			// duration, onBegin, onChange, onComplete,
@@ -166,7 +169,16 @@ class Textformer {
 		if ( ! options ) return;
 
 		options.textform = this.textform;
+
 		if ( ! options.duration ) this.speed = options.speed;
+
+		if ( options.reverse ) {
+
+			options.reverseSpeed = options.reverse;
+			delete options.reverse;
+
+		} else if ( ! options.reverseSpeed ) options.reverseSpeed = 1;
+
 		this.player = new TextformPlayer( options );
 		this.play();
 
