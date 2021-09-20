@@ -3,23 +3,21 @@ import { random } from '../utils/random';
 class Textform {
 
 	/**
-	 * Text transform between two texts, using multiple character changes to transition from one to the other.
+	 * Text transformation between two texts, using multiple character changes
+	 * to transition from one to the other.
 	 *
 	 * @constructor
-	 * @param { Object } 	options
-	 *
-	 * @param { String } 	options.from		Initial text.
-	 * @param { String } 	options.to			Final text.
-	 *
-	 * @param { Number } 	options.steps		Number of character changes between both texts.
-	 * @param { Number } 	options.stagger		Stagger ( in steps ) between different
-	 * 											characters.
-	 * @param { Number } 	options.noise		Maximum random noise for steps and staggers.
-	 *
-	 * @param { String } 	options.charset		Concatenated character pool for random
-	 * 											character changes.
-	 * @param { Number } 	options.origin		Character index the animation starts from.
-	 * @param { Element }	options.output		DOM element the text will be output to.
+	 * @param { Object }  options
+	 * @param { String }  options.from		Initial text.
+	 * @param { String }  options.to		Final text.
+	 * @param { Number }  options.steps		Number of character changes between both texts.
+	 * @param { Number }  options.stagger	Stagger ( in steps ) between different
+	 * 										characters.
+	 * @param { Number }  options.noise		Maximum random noise for steps and staggers.
+	 * @param { String }  options.charset	Concatenated character pool for random
+	 * 									 	character changes.
+	 * @param { Number }  options.origin	Character index the animation starts from.
+	 * @param { TextformOutput } options.output		Automatic text output
 	 */
 	constructor( {
 		from, to,

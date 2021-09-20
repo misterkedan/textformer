@@ -11,7 +11,7 @@ import { TextformOutput } from './TextformOutput';
 class Textformer {
 
 	/**
-	 * Easy text tranform animation, based on random character changes.
+	 * Easy text animations with random character changes.
 	 *
 	 * @constructor
 	 * @param { Object }	options
@@ -26,32 +26,38 @@ class Textformer {
 	 * @param { String } 	options.charset		Concatenated character pool for random
 	 * 											character changes.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
-	 * @param { Element } 	options.output		DOM element the text will be output to.
+	 * @param { TextformOutput } options.output	Automatic text output.
 
-	 * @param { Function } 	options.align		Alignment mode, use one of Textformer.align.
-	 * 											Set to false for no alignment.
-	 * @param { String } 	options.fill		String used to pad the shorter text.
+	 * @param { String | Number } options.align	A position to align both text at,
+												padding the shorter text to match
+												the longer's text's length.
+	 * 											Either pick one from Textformer.align,
+	 * 											or specify an index to align at.
+	 * 											Invalid values will default to 0.
+	 * @param { String } 	options.fill		String used for align padding.
 	 *
-	 * @param { Object } 	options.autoplay 	Automatic animation settings.
-														Set to false for manual animation
-														( change textformer.progress
-														from 0 to 1 ).
+	 * @param { Boolean } 	options.autoplay 	Automatic animation settings.
+												Set to false for manual animation
+												( change textformer.progress
+												from 0 to 1 ).
 	 * @param { Number } 	options.speed		Number of changes per second.
 	 * @param { Number } 	options.delay		Delay before playing the animation,
-	 * 													in milliseconds.
+	 * 											in milliseconds.
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
-	 * 													Overrides options.speed.
+	 * 											Overrides options.speed.
 	 * @param { Boolean }	options.reversed	Play the animation backwards.
 	 * @param { Boolean }	options.yoyo		Toggle animation direction when
-	 * 													reaching either end.
-	 * @param { Number } 	option.reverseSpeed 	Speed multiplier for reversed
-	 * 													animation.
-	 * @param { Function }	options.onBegin	Callback fired on animation start.
+	 * 											reaching either end.
+	 * @param { Number } 	option.reverseSpeed Speed multiplier for reversed
+	 * 											animation.
+	 * @param { Function }	options.onBegin		Callback fired on animation start.
 	 * @param { Function }	options.onChange	Callback fired on each text change.
 	 * @param { Function }	options.onComplete	Callback fired on animation end.
 	 */
 	constructor( {
+
 		mode = Textformer.modes.BASIC,
+
 		//Textform
 		from, to,
 		steps = 5,
@@ -59,29 +65,40 @@ class Textformer {
 		noise = 0,
 		charset = Textformer.charsets.ALL,
 		origin, output,
+
 		//Align
 		align = Textformer.align.NONE,
 		fill = ' ',
+
 		//Player
 		autoplay = true,
 		speed = Textformer.DEFAULT_SPEED,
 		delay = 0,
+		duration,
 		reverseSpeed = 1,
 		reversed = false,
 		yoyo = false,
-		duration, onBegin, onChange, onComplete,
+		onBegin,
+		onChange,
+		onComplete,
+
 	} = {} ) {
 
 		this.build( {
+
 			mode,
 
+			//Textform
 			from, to, steps, stagger, noise, charset, origin, output,
 
+			//Align
 			align, fill,
 
+			//Player
 			autoplay, speed, delay,
 			duration, reverseSpeed, reversed, yoyo,
 			onBegin, onChange, onComplete,
+
 		} );
 
 	}

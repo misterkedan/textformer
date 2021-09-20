@@ -1,5 +1,12 @@
 class TextformOutput {
 
+	/**
+	 * Creates an output to display a Textform's current text.
+	 *
+	 * @param { Console | String | HTMLElement | Object } input
+	 * Can be the console, an id or class identifier, a selected HTMLElement,
+	 * a writeable object ( text will be written in its property "textform" ).
+	 */
 	constructor( input ) {
 
 		this.input = input;

@@ -4,26 +4,25 @@ class TextformPlayer {
 
 	/**
 	 * Utility to animate a Textform.
+	 *
 	 * @constructor
 	 * @param { Object }	options
 	 * @param { Textform }	options.textform	Textform to animate.
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
 	 * @param { Number } 	options.delay		Delay before playing the animation,
 	 * 											in milliseconds.
-	 *
-	 * @param { Boolean }	options.isReversed	Play the animation backwards.
-	 * @param { Boolean }	options.isYoyo		Toggle animation direction when
+	 * @param { Boolean }	options.reversed	Play the animation backwards.
+	 * @param { Boolean }	options.yoyo		Toggle animation direction when
 	 * 											reaching either end.
 	 * @param { Number }	option.reverseSpeed Speed multiplier for reversed
 	 * 											animation.
-	 *
 	 * @param { Function }	options.onBegin		Callback fired on animation start.
 	 * @param { Function }	options.onChange	Callback fired on each text change.
 	 * @param { Function }	options.onComplete	Callback fired on animation end.
 	*/
 	constructor( {
 		textform, delay, duration,
-		reverseSpeed, isReversed, isYoyo,
+		reverseSpeed, reversed, yoyo,
 		onBegin, onChange, onComplete
 	} = {} ) {
 
@@ -34,11 +33,9 @@ class TextformPlayer {
 
 		Object.assign( this, {
 			textform, delay, duration,
-			reverseSpeed, isReversed, isYoyo,
+			reverseSpeed, isReversed: reversed, isYoyo: yoyo,
 			onBegin, onChange, onComplete
 		} );
-
-		return this;
 
 	}
 
