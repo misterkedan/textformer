@@ -21,18 +21,21 @@ class Textform {
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element }	options.output		DOM element the text will be output to.
 	 */
-	constructor( options = {
-		// from, to,
-		// steps, stagger, noise,
-		// charset, origin, output
-	} ) {
+	constructor( {
+		from, to,
+		steps, stagger, noise,
+		charset, origin, output
+	} = {} ) {
 
-		Object.assign( this, options );
+		Object.assign( this, {
+			from, to,
+			steps, stagger, noise,
+			charset, origin, output
+		} );
 
-		const { from, to } = this;
 		this.length = Math.max( from.length, to.length );
 
-		if ( this.output ) this.output.textform = this;
+		if ( output ) output.textform = this;
 
 		this.build();
 		this.reset();

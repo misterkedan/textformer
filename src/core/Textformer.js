@@ -4,7 +4,7 @@ import { ReversedTextform } from '../modes/ReversedTextform';
 import { ExpandTextform } from '../modes/ExpandTextform';
 import { CollapseTextform } from '../modes/CollapseTextform';
 import { ShuffledTextform } from '../modes/ShuffledTextform';
-import { align } from '../utils/align';
+import { stringAlign } from '../utils/stingAlign';
 import { charsets } from '../utils/charsets';
 import { TextformOutput } from './TextformOutput';
 
@@ -27,56 +27,87 @@ class Textformer {
 	 * 											character changes.
 	 * @param { Number } 	options.origin		Character index the animation starts from.
 	 * @param { Element } 	options.output		DOM element the text will be output to.
-	 * @param { Object }	options.align		Align texts options.
+
+	 * @param { Function } 	options.align		Alignment mode, use one of Textformer.align.
 	 * 											Set to false for no alignment.
-	 * @param { Function } 	options.align.to	Alignment mode, use one of Textformer.align.
-	 * @param { String } 	options.align.fill	String used to pad the shorter text.
-	 * @param { Object } 	options.autoplay 			Automatic animation settings.
+	 * @param { String } 	options.fill		String used to pad the shorter text.
+	 *
+	 * @param { Object } 	options.autoplay 	Automatic animation settings.
 														Set to false for manual animation
 														( change textformer.progress
 														from 0 to 1 ).
-	 * @param { Number } 	options.autoplay.speed		Number of changes per second.
-	 * @param { Number } 	options.autoplay.delay		Delay before playing the animation,
+	 * @param { Number } 	options.speed		Number of changes per second.
+	 * @param { Number } 	options.delay		Delay before playing the animation,
 	 * 													in milliseconds.
-	 * @param { Number } 	options.autoplay.duration	Animation duration, in milliseconds.
+	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
 	 * 													Overrides options.speed.
-	 * @param { Boolean }	options.autoplay.isReversed	Play the animation backwards.
-	 * @param { Boolean }	options.autoplay.isYoyo		Toggle animation direction when
+	 * @param { Boolean }	options.reversed	Play the animation backwards.
+	 * @param { Boolean }	options.yoyo		Toggle animation direction when
 	 * 													reaching either end.
-	 * @param { Number } 	option.autoplay.reverse 	Speed multiplier for reversed
+	 * @param { Number } 	option.reverseSpeed 	Speed multiplier for reversed
 	 * 													animation.
-	 * @param { Function }	options.autoplay.onBegin	Callback fired on animation start.
-	 * @param { Function }	options.autoplay.onChange	Callback fired on each text change.
-	 * @param { Function }	options.autoplay.onComplete	Callback fired on animation end.
+	 * @param { Function }	options.onBegin	Callback fired on animation start.
+	 * @param { Function }	options.onChange	Callback fired on each text change.
+	 * @param { Function }	options.onComplete	Callback fired on animation end.
 	 */
 	constructor( {
 		mode = Textformer.modes.BASIC,
-		align = {
-			to: Textformer.align.NONE,
-			fill: '',
-		},
-		autoplay = {
-			speed: Textformer.DEFAULT_SPEED,
-			delay: 0,
-			reverseSpeed: 1,
-			isReversed: false,
-			isYoyo: false,
-			// duration, onBegin, onChange, onComplete,
-		},
-		from,
-		to,
+		//Textform
+		from, to,
 		steps = 5,
 		stagger = 3,
 		noise = 0,
 		charset = Textformer.charsets.ALL,
-		origin,
-		output,
+		origin, output,
+		//Align
+		align = Textformer.align.NONE,
+		fill = ' ',
+		//Player
+		autoplay = true,
+		speed = Textformer.DEFAULT_SPEED,
+		delay = 0,
+		reverseSpeed = 1,
+		reversed = false,
+		yoyo = false,
+		duration, onBegin, onChange, onComplete,
 	} = {} ) {
 
-		this._build( {
-			mode, align, autoplay,
-			from, to, steps, stagger, noise, charset, origin, output
+		this.build( {
+			mode,
+
+			from, to, steps, stagger, noise, charset, origin, output,
+
+			align, fill,
+
+			autoplay, speed, delay,
+			duration, reverseSpeed, reversed, yoyo,
+			onBegin, onChange, onComplete,
 		} );
+
+	}
+
+	build( options = this.options ) {
+
+		this.options = options;
+
+		this.destroy();
+
+		const textformClasses = {
+			default: 	Textform,
+			basic: 		Textform,
+			reverse: 	ReversedTextform,
+			expand: 	ExpandTextform,
+			collapse: 	CollapseTextform,
+			shuffle: 	ShuffledTextform,
+		};
+		const TextformClass = textformClasses[ options.mode ]
+			|| textformClasses.default;
+		const textform = new TextformClass( this.textformOptions );
+		this.textform = textform;
+
+		if ( ! options.autoplay ) return;
+		this.player = new TextformPlayer( this.autoplayOptions );
+		this.play();
 
 	}
 
@@ -96,91 +127,11 @@ class Textformer {
 
 	}
 
-	/*-------------------------------------------------------------------------/
+	convertSpeedToDuration( speed ) {
 
-		Private
-
-	/-------------------------------------------------------------------------*/
-
-	_build( options = this.options ) {
-
-		this.options = options;
-
-		this.destroy();
-
-		const textformClasses = {
-			default: 	Textform,
-			basic: 		Textform,
-			reverse: 	ReversedTextform,
-			expand: 	ExpandTextform,
-			collapse: 	CollapseTextform,
-			shuffle: 	ShuffledTextform,
-		};
-		const TextformClass = textformClasses[ options.mode ]
-			|| textformClasses.default;
-		const textform = new TextformClass( this._computeOptions() );
-		this.textform = textform;
-
-		this._autoplay( options.autoplay );
-
-	}
-
-	_computeOptions() {
-
-		const options =  { ...this.options };
-		const { DEFAULT_TEXT } = Textformer;
-
-		const output = new TextformOutput( options.output );
-		if ( output.isValid ) {
-
-			options.output = output;
-			//If valid output, uses output's initial text as automatic to/from
-			const initialText =  ( output.elements && output.elements.length === 1 )
-				? output.elements[ 0 ].textContent
-				: ( output.object )
-					? output.object.textform
-					: DEFAULT_TEXT;
-			if ( options.to === undefined ) options.to = initialText;
-			else if ( options.from === undefined ) options.from = initialText;
-
-		} else delete options.output;
-
-		if ( options.from === undefined ) options.from = DEFAULT_TEXT;
-		if ( options.to === undefined ) options.to = DEFAULT_TEXT;
-
-		if ( options.align ) {
-
-			const alignedTexts = align.strings(
-				[ options.from, options.to ],
-				options.align.to,
-				options.align.fill
-			);
-			options.from = alignedTexts[ 0 ];
-			options.to = alignedTexts[ 1 ];
-
-		}
-
-		return options;
-
-	}
-
-	_autoplay( options ) {
-
-		if ( ! options ) return;
-
-		options.textform = this.textform;
-
-		if ( ! options.duration ) this.speed = options.speed;
-
-		if ( options.reverse ) {
-
-			options.reverseSpeed = options.reverse;
-			delete options.reverse;
-
-		} else if ( ! options.reverseSpeed ) options.reverseSpeed = 1;
-
-		this.player = new TextformPlayer( options );
-		this.play();
+		if ( ! this.textform ) return Textformer.DEFAULT_DURATION;
+		const finalFrame = this.textform.finalFrame;
+		return finalFrame * ( 1000 / speed );
 
 	}
 
@@ -196,15 +147,15 @@ class Textformer {
 
 	}
 
-	stop() {
-
-		if ( this.player ) this.player.stop();
-
-	}
-
 	pause() {
 
 		if ( this.player ) this.player.pause();
+
+	}
+
+	stop() {
+
+		if ( this.player ) this.player.stop();
 
 	}
 
@@ -228,30 +179,15 @@ class Textformer {
 
 	get speed() {
 
-		return this.options.autoplay.speed;
+		return this.options.speed;
 
 	}
 
 	set speed( speed ) {
 
 		if ( speed < 1 ) speed = Textformer.DEFAULT_SPEED;
-		this.options.autoplay.speed = speed;
-
-		if ( ! this.textform ) return;
-		const finalFrame = this.textform.finalFrame;
-		this.options.autoplay.duration = finalFrame * ( 1000 / speed );
-
-	}
-
-	get align() {
-
-		return this.options.align.to;
-
-	}
-
-	set align( align ) {
-
-		this.options.align.to = align;
+		this.options.speed = speed;
+		this.options.duration = this.convertSpeedToDuration( speed );
 
 	}
 
@@ -267,6 +203,56 @@ class Textformer {
 
 	}
 
+	get textformOptions() {
+
+		const { DEFAULT_TEXT } = Textformer;
+
+		const options =  { ...this.options };
+		const { from, to, align, fill } = options;
+
+		const output = new TextformOutput( options.output );
+		if ( output.isValid ) {
+
+			options.output = output;
+			//If valid output, uses output's initial text as automatic to/from
+			const initialText = output.inputText || DEFAULT_TEXT;
+			if ( from === undefined ) options.from = initialText;
+			if ( to === undefined ) options.to = initialText;
+
+		} else delete options.output;
+
+		if ( from === undefined ) options.from = DEFAULT_TEXT;
+		if ( to === undefined ) options.to = DEFAULT_TEXT;
+
+		if ( align ) {
+
+			const alignedTexts = stringAlign
+				.align( [ options.from, options.to ], align, fill );
+			options.from = alignedTexts[ 0 ];
+			options.to = alignedTexts[ 1 ];
+
+		}
+
+		return options;
+
+	}
+
+	get autoplayOptions() {
+
+		const { textform } = this;
+		const { autoplay } = this.options;
+
+		if ( ! autoplay ) return false;
+
+		const options = { ...this.options, textform };
+
+		if ( ! options.duration )
+			options.duration = this.convertSpeedToDuration( options.speed );
+
+		return options;
+
+	}
+
 }
 
 /*-----------------------------------------------------------------------------/
@@ -275,7 +261,7 @@ class Textformer {
 
 /-----------------------------------------------------------------------------*/
 
-Textformer.align = align.to;
+Textformer.align = stringAlign.to;
 
 Textformer.charsets = charsets;
 
@@ -289,5 +275,6 @@ Textformer.modes = {
 
 Textformer.DEFAULT_TEXT = '';
 Textformer.DEFAULT_SPEED = 15;
+Textformer.DEFAULT_DURATION = 1000;
 
 export { Textformer };

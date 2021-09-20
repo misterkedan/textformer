@@ -1,4 +1,4 @@
-import * as KEDA from '../keda/keda';
+import * as KEDA from '../keda';
 
 class TextformPlayer {
 
@@ -21,14 +21,22 @@ class TextformPlayer {
 	 * @param { Function }	options.onChange	Callback fired on each text change.
 	 * @param { Function }	options.onComplete	Callback fired on animation end.
 	*/
-	constructor( options = {} ) {
+	constructor( {
+		textform, delay, duration,
+		reverseSpeed, isReversed, isYoyo,
+		onBegin, onChange, onComplete
+	} = {} ) {
 
 		this.clock = new KEDA.AnimationClock(
 			this.animate.bind( this ),
 			TextformPlayer.FPS_CAP
 		);
 
-		Object.assign( this, options );
+		Object.assign( this, {
+			textform, delay, duration,
+			reverseSpeed, isReversed, isYoyo,
+			onBegin, onChange, onComplete
+		} );
 
 		return this;
 

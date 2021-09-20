@@ -26,13 +26,15 @@ class TextformOutput {
 
 	}
 
-	get isValid() {
+	/*-------------------------------------------------------------------------/
 
-		return  (
-			this.object !== undefined ||
-			this.console !== undefined ||
-			this.elements !== undefined
-		);
+		Getters / Setters
+
+	/-------------------------------------------------------------------------*/
+
+	get input() {
+
+		return this._input;
 
 	}
 
@@ -91,6 +93,32 @@ class TextformOutput {
 		}
 
 	}
+
+	/*-------------------------------------------------------------------------/
+
+		Read-only
+
+	/-------------------------------------------------------------------------*/
+
+	get isValid() {
+
+		return  (
+			this.object !== undefined ||
+			this.console !== undefined ||
+			this.elements !== undefined
+		);
+
+	}
+
+	get inputText() {
+
+		if ( this.object && this.object.textform ) return this.object.textform;
+		if ( this.elements ) return this.elements[ 0 ].textContent;
+		return undefined;
+
+	}
+
+
 
 }
 

@@ -1,4 +1,4 @@
-export { align } from './utils/align';
+export { stringAlign } from './utils/stingAlign';
 export { charsets } from './utils/charsets';
 export { random } from './utils/random';
 
