@@ -1,6 +1,6 @@
 {
     "name": "textformer",
-    "version": "0.20.6",
+    "version": "0.21.0",
     "description": "Easy text animations with random character changes.",
     "author": "Pierre Keda",
     "license": "MIT",

@@ -1,4 +1,5 @@
 import * as KEDA from '../keda';
+import { basicEasing } from '../main';
 
 class TextformPlayer {
 
@@ -17,13 +18,14 @@ class TextformPlayer {
 	 * @param { Number }	option.reverseSpeed Speed multiplier for reversed
 	 * 											animation.
 	 * @param { Function }	options.onBegin		Callback fired on animation start.
-	 * @param { Function }	options.onChange	Callback fired on each text change.
+	 * @param { Function }	options.onUpdate	Callback fired on every frame.
+	 * @param { Function }	options.onChange	Callback fired on text change.
 	 * @param { Function }	options.onComplete	Callback fired on animation end.
 	*/
 	constructor( {
-		textform, delay, duration,
+		textform, delay, duration, easing,
 		reverseSpeed, reversed, yoyo,
-		onBegin, onChange, onComplete
+		onBegin, onUpdate, onChange, onComplete
 	} = {} ) {
 
 		this.clock = new KEDA.AnimationClock(
@@ -31,23 +33,30 @@ class TextformPlayer {
 			TextformPlayer.FPS_CAP
 		);
 
+		this._isReversed = reversed;
+
 		Object.assign( this, {
 			textform, delay, duration,
-			reverseSpeed, isReversed: reversed, isYoyo: yoyo,
-			onBegin, onChange, onComplete
+			reverseSpeed, isYoyo: yoyo,
+			onBegin, onUpdate, onChange, onComplete
 		} );
+
+		this.ease = basicEasing[ easing ] || basicEasing.linear;
 
 	}
 
 	animate() {
 
 		const {
-			textform, clock, duration, delay, reverseSpeed,
-			isReversed, isYoyo, onBegin, onChange, onComplete,
+			textform, clock, duration, delay,
+			reverseSpeed, isReversed, isYoyo,
+			onBegin, onUpdate, onComplete,
 		} = this;
 
 		const speed = isReversed ? reverseSpeed : 1;
 		const elapsed = clock.elapsed * speed - delay;
+
+		if ( onUpdate ) onUpdate.call();
 
 		if ( elapsed < 0 ) return;
 		if ( elapsed >= duration ) {
@@ -63,14 +72,8 @@ class TextformPlayer {
 
 		}
 
-		const limit = ( x ) => x < 0 ? 0 : x > 1 ? 1 : x;
-		const newProgress = ( isReversed )
-			? limit( 1 - elapsed / duration )
-			: limit( elapsed / duration );
-
-		const previousFrame = textform.frame;
-		textform.progress = newProgress;
-		if ( textform.frame !== previousFrame && onChange ) onChange.call();
+		const progress = elapsed / duration;
+		this.progress = ( isReversed ) ? 1 - progress : progress;
 
 	}
 
@@ -105,7 +108,7 @@ class TextformPlayer {
 
 	/*-------------------------------------------------------------------------/
 
-		AnimationClock shortcuts
+		AnimationClock
 
 	/-------------------------------------------------------------------------*/
 
@@ -124,6 +127,16 @@ class TextformPlayer {
 	stop() {
 
 		this.clock.stop();
+
+	}
+
+	setClockFromProgress() {
+
+		const { clock, progress, duration, reverseSpeed, delay, isReversed } = this;
+
+		clock.elapsed = ( isReversed )
+			? ( delay + ( 1 - progress ) * duration ) / reverseSpeed
+			: delay + progress * duration;
 
 	}
 
@@ -147,15 +160,16 @@ class TextformPlayer {
 
 	set progress( progress ) {
 
-		this.textform.progress = progress;
+		const { textform, ease, onChange } = this;
 
-		if ( this.isComplete ) return;
+		if ( progress < 0 ) progress = 0;
+		else if ( progress > 1 ) progress = 1;
 
-		const { clock, duration, reverseSpeed, delay, isReversed } = this;
+		if ( ! this.isPlaying ) this.setClockFromProgress();
 
-		clock.elapsed = ( isReversed )
-			? ( delay + ( 1 - progress ) * duration ) / reverseSpeed
-			: delay + progress * duration;
+		const previousFrame = textform.frame;
+		textform.progress = ease( progress );
+		if ( textform.frame !== previousFrame && onChange ) onChange.call();
 
 	}
 
@@ -168,14 +182,8 @@ class TextformPlayer {
 	set isReversed( isReversed ) {
 
 		if ( isReversed === this._isReversed ) return;
-
 		this._isReversed = isReversed;
-
-		if ( ! this.isPlaying ) return;
-		const { clock, duration, progress, delay, reverseSpeed } = this;
-		clock.elapsed = ( isReversed )
-			? ( delay + ( 1 - progress ) * duration ) / reverseSpeed
-			: delay + progress * duration;
+		this.setClockFromProgress();
 
 	}
 
@@ -194,7 +202,7 @@ class TextformPlayer {
 	get isComplete() {
 
 		const { progress, isReversed } = this;
-		return ( isReversed ) ? progress === 0 : progress === 1;
+		return ( isReversed ) ? progress <= 0 : progress >= 1;
 
 	}
 

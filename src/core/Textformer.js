@@ -4,8 +4,9 @@ import { ReversedTextform } from '../modes/ReversedTextform';
 import { ExpandTextform } from '../modes/ExpandTextform';
 import { CollapseTextform } from '../modes/CollapseTextform';
 import { ShuffledTextform } from '../modes/ShuffledTextform';
-import { stringAlign } from '../utils/stingAlign';
 import { charsets } from '../utils/charsets';
+import { basicEasing } from '../utils/basicEasing';
+import { stringAlign } from '../utils/stingAlign';
 import { TextformOutput } from './TextformOutput';
 
 class Textformer {
@@ -41,6 +42,8 @@ class Textformer {
 												( change textformer.progress
 												from 0 to 1 ).
 	 * @param { Number } 	options.speed		Number of changes per second.
+	 * @param { String }	options.easing		Easing function name, pick one from
+	 * 											Textformer.ease.
 	 * @param { Number } 	options.delay		Delay before playing the animation,
 	 * 											in milliseconds.
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
@@ -51,7 +54,8 @@ class Textformer {
 	 * @param { Number } 	option.reverseSpeed Speed multiplier for reversed
 	 * 											animation.
 	 * @param { Function }	options.onBegin		Callback fired on animation start.
-	 * @param { Function }	options.onChange	Callback fired on each text change.
+	 * @param { Function }	options.onUpdate	Callback fired on every frame.
+	 * @param { Function }	options.onChange	Callback fired on text change.
 	 * @param { Function }	options.onComplete	Callback fired on animation end.
 	 */
 	constructor( {
@@ -73,14 +77,13 @@ class Textformer {
 		//Player
 		autoplay = true,
 		speed = Textformer.DEFAULT_SPEED,
+		easing = Textformer.DEFAULT_EASING,
 		delay = 0,
 		duration,
 		reverseSpeed = 1,
 		reversed = false,
 		yoyo = false,
-		onBegin,
-		onChange,
-		onComplete,
+		onBegin, onUpdate, onChange, onComplete,
 
 	} = {} ) {
 
@@ -95,9 +98,9 @@ class Textformer {
 			align, fill,
 
 			//Player
-			autoplay, speed, delay,
+			autoplay, speed, easing, delay,
 			duration, reverseSpeed, reversed, yoyo,
-			onBegin, onChange, onComplete,
+			onBegin, onUpdate, onChange, onComplete,
 
 		} );
 
@@ -282,6 +285,25 @@ Textformer.align = stringAlign.to;
 
 Textformer.charsets = charsets;
 
+Textformer.ease = {};
+Object.keys( basicEasing ).forEach( ( ease ) => {
+
+	let key = ease.toUpperCase();
+
+	const test = key.match( /(EASEINOUT|EASEOUT|EASEIN)(.*)/ );
+	if ( test ) {
+
+		const type = test[ 1 ].replace( 'EASE', '' ).replace( 'INOUT', 'IN_OUT' );
+		const fn = test[ 2 ];
+		key = `${fn}_${type}`;
+
+
+	}
+
+	Textformer.ease[ key ] = ease;
+
+} );
+
 Textformer.modes = {
 	BASIC: 		'basic',
 	REVERSE: 	'reverse',
@@ -293,5 +315,6 @@ Textformer.modes = {
 Textformer.DEFAULT_TEXT = '';
 Textformer.DEFAULT_SPEED = 15;
 Textformer.DEFAULT_DURATION = 1000;
+Textformer.DEFAULT_EASING = Textformer.ease.LINEAR;
 
 export { Textformer };

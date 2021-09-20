@@ -46,12 +46,14 @@ const options = {
 	origin: - 1,
 
 	speed: 15,
+	easing: KEDA.Textformer.ease.LINEAR,
 	delay: 500,
 	duration: 0,
 	// onBegin: ()=> console.log( 'begin' ),
-	// onComplete: ()=> console.log( 'complete' ),
-	// yoyo: true,
+	// onComplete: ()=> console.log( 'complete'),
 	// reverse: true,
+	// yoyo: true,
+	// reverseSpeed: 2,
 
 	align: KEDA.Textformer.align.LEFT,
 	fill: '.',
@@ -129,6 +131,13 @@ function updateReversed() {
 
 }
 
+function updateEasing() {
+
+	setPlayersProperty( 'ease', KEDA.basicEasing[ title.options.easing ] );
+	if ( ! title.player.isPlaying ) gui.controls.play();
+
+}
+
 const gui = new dat.GUI();
 
 gui.controls = {
@@ -154,6 +163,7 @@ textform.open();
 
 const player = gui.addFolder( 'Animation' );
 player.add( title, 'speed', 1, 30 ).step( 1 ).onChange( rebuild );
+player.add( title.options, 'easing', KEDA.Textformer.ease ).onChange( updateEasing );
 player.add( title, 'progress', 0, 1 ).step( 0.001 ).onChange( updateProgress ).listen();
 player.add( gui.controls, 'play' );
 player.add( title.options, 'reversed' ).onChange( updateReversed );

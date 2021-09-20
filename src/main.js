@@ -1,6 +1,7 @@
-export { stringAlign } from './utils/stingAlign';
 export { charsets } from './utils/charsets';
+export { basicEasing } from './utils/basicEasing';
 export { random } from './utils/random';
+export { stringAlign } from './utils/stingAlign';
 
 export { Textform } from './core/Textform';
 export { ReversedTextform } from './modes/ReversedTextform';
