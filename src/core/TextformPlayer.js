@@ -156,7 +156,6 @@ class TextformPlayer {
 	get progress() {
 
 		return this._progress;
-		// return this.textform.progress;
 
 	}
 

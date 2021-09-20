@@ -1,5 +1,5 @@
-export { charsets } from './utils/charsets';
 export { basicEasing } from './utils/basicEasing';
+export { charsets } from './utils/charsets';
 export { random } from './utils/random';
 export { stringAlign } from './utils/stingAlign';
 

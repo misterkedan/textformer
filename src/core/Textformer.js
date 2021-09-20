@@ -299,7 +299,6 @@ Object.keys( basicEasing ).forEach( ( ease ) => {
 		const fn = test[ 2 ];
 		key = `${fn}_${type}`;
 
-
 	}
 
 	Textformer.ease[ key ] = ease;

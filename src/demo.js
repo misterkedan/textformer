@@ -163,7 +163,7 @@ textform.open();
 
 const player = gui.addFolder( 'Animation' );
 player.add( title, 'speed', 1, 30 ).step( 1 ).onChange( rebuild );
-player.add( title.options, 'easing', KEDA.Textformer.ease ).onChange( updateEasing );
+player.add( title.options, 'easing', Object.values( KEDA.Textformer.ease ) ).onChange( updateEasing );
 player.add( title, 'progress', 0, 1 ).step( 0.001 ).onChange( updateProgress ).listen();
 player.add( gui.controls, 'play' );
 player.add( title.options, 'reversed' ).onChange( updateReversed );
