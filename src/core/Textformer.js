@@ -187,13 +187,15 @@ class Textformer {
 
 	get progress() {
 
-		return this.textform.progress;
+		if ( this.player ) return this.player.progress;
+		else return this.textform.progress;
 
 	}
 
 	set progress( progress ) {
 
-		this.textform.progress = progress;
+		if ( this.player ) this.player.progress = progress;
+		else this.textform.progress = progress;
 
 	}
 

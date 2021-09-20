@@ -33,6 +33,7 @@ class TextformPlayer {
 			TextformPlayer.FPS_CAP
 		);
 
+		this._progress = 0;
 		this._isReversed = reversed;
 
 		Object.assign( this, {
@@ -48,7 +49,7 @@ class TextformPlayer {
 	animate() {
 
 		const {
-			textform, clock, duration, delay,
+			clock, duration, delay,
 			reverseSpeed, isReversed, isYoyo,
 			onBegin, onUpdate, onComplete,
 		} = this;
@@ -61,7 +62,7 @@ class TextformPlayer {
 		if ( elapsed < 0 ) return;
 		if ( elapsed >= duration ) {
 
-			textform.progress = Math.round( textform.progress );
+			this.progress = Math.round( this.progress );
 			if ( isYoyo ) this.isReversed = ! isReversed;
 			this.stop();
 
@@ -154,7 +155,8 @@ class TextformPlayer {
 
 	get progress() {
 
-		return this.textform.progress;
+		return this._progress;
+		// return this.textform.progress;
 
 	}
 
@@ -164,6 +166,8 @@ class TextformPlayer {
 
 		if ( progress < 0 ) progress = 0;
 		else if ( progress > 1 ) progress = 1;
+
+		this._progress = progress;
 
 		if ( ! this.isPlaying ) this.setClockFromProgress();
 

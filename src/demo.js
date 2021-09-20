@@ -46,7 +46,7 @@ const options = {
 	origin: - 1,
 
 	speed: 15,
-	easing: KEDA.Textformer.ease.LINEAR,
+	easing: KEDA.Textformer.ease.CIRC_OUT,
 	delay: 500,
 	duration: 0,
 	// onBegin: ()=> console.log( 'begin' ),
