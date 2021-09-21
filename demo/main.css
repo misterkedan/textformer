@@ -23,7 +23,6 @@ body {
 #demo-title {
 	margin: 5rem 1.2rem 2rem;
 	font-size: 3rem;
-	/* display: inline-block; */
 	color: rgba(0,0,0,0.9);
 }
 
@@ -34,8 +33,6 @@ body {
 }
 
 .info {
-	/* font-family: sans-serif; */
-	/* margin: 4rem 1.5rem 1.5rem; */
 	font-size: 0.875rem;
 	position: fixed;
 	bottom: 0;
@@ -62,13 +59,6 @@ body {
 	#demo-paragraph {
 		margin-left: 6rem;
 		font-size: 1rem;
-	}
-
-	.info {
-
-		
-		/* margin: 6rem 6rem 1.5rem; */
-	
 	}
 
 }
