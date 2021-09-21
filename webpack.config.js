@@ -13,6 +13,11 @@ const config = {
 		externals: {
 			'dat.gui': 'dat.gui',
 		},
+		resolve: {
+			alias: {
+				'textformer': './main'
+			}
+		}
 	},
 
 	dev: {
@@ -80,7 +85,7 @@ module.exports = ( env, argv ) => {
 			...config.demo,
 			externals: {
 				...config.demo.externals,
-				'Textformer': 'Textformer'
+				'textformer': 'window'
 			},
 		},
 		{

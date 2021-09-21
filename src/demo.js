@@ -1,4 +1,4 @@
-import { Textformer } from './core/Textformer';
+import { Textformer } from 'textformer';
 import * as dat from 'dat.gui';
 
 /*-----------------------------------------------------------------------------/
@@ -150,7 +150,7 @@ gui.controls = {
 		setPlayersProperty( 'repeat', repeats );
 		setPlayersProperty( 'isReversed', title.options.reversed );
 		setPlayersProperty( 'isYoyo', title.options.yoyo );
-		setPlayersProperty( 'ease', basicEasing[ title.options.easing ] );
+		setPlayersProperty( 'ease', Textformer.easing[ title.options.easing ] );
 
 		if ( ! title.player.isPlaying ) play();
 

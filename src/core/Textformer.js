@@ -397,6 +397,7 @@ Textformer.align = stringAlign.to;
 
 Textformer.charsets = charsets;
 
+Textformer.easing = basicEasing;
 Textformer.ease = basicEasing.keys;
 
 Textformer.modes = {
