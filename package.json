@@ -1,6 +1,6 @@
 {
     "name": "textformer",
-    "version": "0.24.0",
+    "version": "1.0.0",
     "description": "Easy text animations with random character changes.",
     "author": "Pierre Keda",
     "license": "MIT",
@@ -20,6 +20,8 @@
         "build": "webpack --mode production",
         "start": "webpack serve --open --mode development"
     },
-    "main": "./src/main.js",
-    "private": true
+    "private": false,
+    "module": "src/main.js",
+	"homepage": "https://github.com/pierrekeda/textformer",
+	"repository": "github:pierrekeda/textformer"
 }
