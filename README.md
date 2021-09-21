@@ -3,7 +3,10 @@ Easy text animations with random character changes.
 
 ![Preview](img/preview.gif)
 
+<br>
+
 # Basic usage
+<br>
 
 ```javascript
 
@@ -77,6 +80,7 @@ Element to automatically write the text into.
 Using a DOM element will escape whitespaces to avoid whitespace collapsing.  
 If outputing straight to the DOM, I recommend using a monospace font, and in some cases the CSS setting *overflow-wrap: break-word;*  
 Weird visual behaviors can still occur if the text is wider than the screen, especially for long texts, because of word wrapping changing the text's structure.
+<br>
 <br>
 
 ## Autoplay
