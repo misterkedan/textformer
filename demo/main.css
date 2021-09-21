@@ -3,44 +3,72 @@
 	src: url('vendor/ShareTechMono-Regular.ttf');
 }
 
-body, .demo-text {
+body, .demo-text, .info {
 	margin: 0;
 	border: 0;
 }
 
 body {
 	font-family: 'Share Tech Mono', monospace;
-	color: rgba(0,0,0,0.8);
-	background: rgb(212,225,230);
+	color: rgba(0,0,0,0.6);
+	background: rgb(230,235,240);
 	background: linear-gradient(
 		0deg, 
-		rgba(210,210,210,1) 0%, 
+		rgb(230,235,240,1) 0%, 
 		rgba(255,255,255,1) 100%
 	);
+	overflow-wrap: break-word;
 }
 
 #demo-title {
-	margin: 4rem 1.2rem 1.2rem;
+	margin: 5rem 1.2rem 2rem;
 	font-size: 3rem;
-	display: inline-block;
-	
+	/* display: inline-block; */
+	color: rgba(0,0,0,0.9);
 }
 
 #demo-paragraph {
 	overflow-wrap: break-word;
-	margin: 1rem 1.5rem;
-	color: rgba(0,0,0,0.6);
+	margin: 0 1.5rem;
+	font-size: 0.875rem;
 }
 
-@media screen and (min-width: 30rem) {
+.info {
+	/* font-family: sans-serif; */
+	/* margin: 4rem 1.5rem 1.5rem; */
+	font-size: 0.875rem;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	margin: 1rem;
+	color: rgba(0,0,0,0.4);
+}
+
+.info a {
+	color: rgba(0, 170, 230);
+}
+
+.info a:hover{
+	color: rgb(100, 200, 255);
+}
+
+@media screen and (min-width: 36rem) {
 
 	#demo-title {
-		margin: 5rem 5rem 0.5rem;
+		margin: 5rem 5.5rem 2rem;
 		font-size: 4rem;
 	}
 
 	#demo-paragraph {
-		margin-left: 5.5rem;
+		margin-left: 6rem;
+		font-size: 1rem;
+	}
+
+	.info {
+
+		
+		/* margin: 6rem 6rem 1.5rem; */
+	
 	}
 
 }
