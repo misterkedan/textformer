@@ -1,4 +1,4 @@
-# KEDA.Textformer
+# Textformer
 Easy text animations with random character changes.  
 
 ![Preview](img/preview.gif)
@@ -10,9 +10,9 @@ Easy text animations with random character changes.
 
 ```javascript
 
-	const demo = new KEDA.Textformer({
+	const demo = new Textformer({
 
-		mode: KEDA.Textformer.modes.EXPAND,
+		mode: Textformer.modes.EXPAND,
 		from:   '', // Initial text
 		to: 'Demo', // Final text
 		steps:  20, // Number of character changes
@@ -32,11 +32,11 @@ Easy text animations with random character changes.
 ```javascript
 
 	// Possible modes
-	mode: KEDA.Textformer.modes.BASIC,
-	mode: KEDA.Textformer.modes.REVERSE,
-	mode: KEDA.Textformer.modes.EXPAND,
-	mode: KEDA.Textformer.modes.COLLAPSE,
-	mode: KEDA.Textformer.modes.SHUFFLE,
+	mode: Textformer.modes.BASIC,
+	mode: Textformer.modes.REVERSE,
+	mode: Textformer.modes.EXPAND,
+	mode: Textformer.modes.COLLAPSE,
+	mode: Textformer.modes.SHUFFLE,
 
 	// Concatenated character pool
 	// Used for random character draws
@@ -91,7 +91,7 @@ Note that doing so will invalidate all playback related options, such as speed, 
 
 ```javascript
 
-	const demo = new KEDA.Textformer({
+	const demo = new Textformer({
 		from: 'foo',
 		to: 'bar',
 		autoplay: false,
@@ -209,7 +209,7 @@ This is done by padding the shorter text to match the longer text's length, usin
 With default values.
 
 ```javascript
-	const demo = new KEDA.Textformer({
+	const demo = new Textformer({
 
 		// Core
 		mode: Textformer.modes.BASIC,

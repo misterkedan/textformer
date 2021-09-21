@@ -1,5 +1,5 @@
-import * as KEDA from '../keda';
-import { basicEasing } from '../main';
+import { AnimationClock } from './AnimationClock';
+import { basicEasing } from '../utils/basicEasing';
 
 class TextformPlayer {
 
@@ -32,7 +32,7 @@ class TextformPlayer {
 		onBegin, onUpdate, onChange, onComplete
 	} = {} ) {
 
-		this.clock = new KEDA.AnimationClock(
+		this.clock = new AnimationClock(
 			this.animate.bind( this ),
 			TextformPlayer.FPS_CAP
 		);

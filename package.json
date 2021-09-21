@@ -1,5 +1,5 @@
 {
-    "name": "keda.textformer",
+    "name": "textformer",
     "version": "1.0.0",
     "description": "Easy text animations with random character changes.",
     "author": "Pierre Keda",

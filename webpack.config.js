@@ -31,9 +31,9 @@ const config = {
 		entry: './src/build.js',
 		output: {
 			path: path.resolve( __dirname, 'build' ),
-			filename: 'keda.textformer.min.js',
+			filename: 'textformer.min.js',
 			library: {
-				name: [ 'KEDA', 'Textformer' ],
+				name: [ 'Textformer' ],
 				type: 'umd',
 				export: 'default'
 			}
@@ -80,7 +80,7 @@ module.exports = ( env, argv ) => {
 			...config.demo,
 			externals: {
 				...config.demo.externals,
-				'./main': 'KEDA'
+				'Textformer': 'Textformer'
 			},
 		},
 		{

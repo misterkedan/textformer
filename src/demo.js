@@ -1,4 +1,4 @@
-import * as KEDA from './main';
+import { Textformer } from './core/Textformer';
 import * as dat from 'dat.gui';
 
 /*-----------------------------------------------------------------------------/
@@ -7,7 +7,7 @@ import * as dat from 'dat.gui';
 
 /-----------------------------------------------------------------------------*/
 
-const title = new KEDA.Textformer( {
+const title = new Textformer( {
 
 	//Target to write the result into, can be:
 	//'#id', '.class', selected HTML element,
@@ -19,18 +19,18 @@ const title = new KEDA.Textformer( {
 	to: 'Textformer',
 
 	//Options
-	mode: KEDA.Textformer.modes.EXPAND,
+	mode: Textformer.modes.EXPAND,
 	steps: 20,
 	stagger: 3,
 	noise: 0,
 
 	//Autoplay
 	speed: 15,
-	easing: KEDA.Textformer.ease.CIRC_OUT,
+	easing: Textformer.ease.CIRC_OUT,
 	delay: 500,
 
 	//Align
-	align: KEDA.Textformer.align.LEFT,
+	align: Textformer.align.LEFT,
 	fill: '.',
 
 } );
@@ -47,7 +47,7 @@ random character changes.
 
 Example usage :
 
-const textformer = new KEDA.Textformer( {
+const textformer = new Textformer( {
 
 	//Target
 	output: "#demo-title",
@@ -57,13 +57,13 @@ const textformer = new KEDA.Textformer( {
 	to: 'Textformer',
 
 	//Options
-	mode: KEDA.Textformer.modes.EXPAND,
+	mode: Textformer.modes.EXPAND,
 	steps: 20,
 	stagger: 3,
 
 	//Autoplay
 	speed: 15,
-	easing: KEDA.Textformer.ease.CIRC_OUT,
+	easing: Textformer.ease.CIRC_OUT,
 	delay: 500,
 
 } );
@@ -150,7 +150,7 @@ gui.controls = {
 		setPlayersProperty( 'repeat', repeats );
 		setPlayersProperty( 'isReversed', title.options.reversed );
 		setPlayersProperty( 'isYoyo', title.options.yoyo );
-		setPlayersProperty( 'ease', KEDA.basicEasing[ title.options.easing ] );
+		setPlayersProperty( 'ease', basicEasing[ title.options.easing ] );
 
 		if ( ! title.player.isPlaying ) play();
 
@@ -170,7 +170,7 @@ const { rebuild, updatePlayers, updateProgress } = gui.controls;
 const textform = gui.addFolder( 'Textform' );
 textform.add( title.options, 'from' ).onChange( rebuild );
 textform.add( title.options, 'to' ).onChange( rebuild );
-textform.add( title.options, 'mode', KEDA.Textformer.modes ).onChange( rebuild );
+textform.add( title.options, 'mode', Textformer.modes ).onChange( rebuild );
 textform.add( title.options, 'steps', 1, 60 ).step( 1 ).onChange( rebuild );
 textform.add( title.options, 'stagger', 0, 30 ).step( 1 ).onChange( rebuild );
 textform.add( title.options, 'noise', 0, 30 ).step( 1 ).onChange( rebuild );
@@ -178,7 +178,7 @@ textform.open();
 
 const animation = gui.addFolder( 'Animation' );
 animation.add( title, 'speed', 1, 30 ).step( 1 ).onChange( rebuild );
-animation.add( title.options, 'easing', KEDA.Textformer.ease )
+animation.add( title.options, 'easing', Textformer.ease )
 	.onChange( updatePlayers );
 animation.add( title, 'progress', 0, 1 ).step( 0.001 ).onChange( updateProgress )
 	.listen();
@@ -186,9 +186,9 @@ animation.add( gui.controls, 'play' );
 animation.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( title.options, 'charset', KEDA.Textformer.charsets )
+advanced.add( title.options, 'charset', Textformer.charsets )
 	.onChange( rebuild );
-advanced.add( title.options, 'align', KEDA.Textformer.align ).onChange( rebuild );
+advanced.add( title.options, 'align', Textformer.align ).onChange( rebuild );
 advanced.add( title.options, 'fill' ).onChange( rebuild );
 advanced.add( title.options, 'origin', - 1, 10 ).step( 1 ).onChange( rebuild );
 // advanced.open();
