@@ -49,10 +49,16 @@ class Textformer {
 	 * @param { Number } 	options.duration	Animation duration, in milliseconds.
 	 * 											Overrides options.speed.
 	 * @param { Boolean }	options.reversed	Play the animation backwards.
+	 * @param { Number }  options.reverseSpeed  Speed multiplier for reversed
+	 * 											animation.
+	 * @param { Number }	options.repeat		Number of times to repeat
+	 * 											the animation after the first
+	 * 											iteration. Set to -1 for infinite
+	 * 											looping.
+	 * @param { Boolean }	options.loop		Loop the animation. Equivalent to
+	 * 											options.repeat = -1.
 	 * @param { Boolean }	options.yoyo		Toggle animation direction when
 	 * 											reaching either end.
-	 * @param { Number } 	option.reverseSpeed Speed multiplier for reversed
-	 * 											animation.
 	 * @param { Function }	options.onBegin		Callback fired on animation start.
 	 * @param { Function }	options.onUpdate	Callback fired on every frame.
 	 * @param { Function }	options.onChange	Callback fired on text change.
@@ -79,9 +85,11 @@ class Textformer {
 		speed = Textformer.DEFAULT_SPEED,
 		easing = Textformer.DEFAULT_EASING,
 		delay = 0,
-		duration,
-		reverseSpeed = 1,
+		duration = 0,
 		reversed = false,
+		reverseSpeed = 1,
+		repeat = 0,
+		loop = false,
 		yoyo = false,
 		onBegin, onUpdate, onChange, onComplete,
 
@@ -98,8 +106,8 @@ class Textformer {
 			align, fill,
 
 			//Player
-			autoplay, speed, easing, delay,
-			duration, reverseSpeed, reversed, yoyo,
+			autoplay, speed, easing, delay, duration,
+			reversed, reverseSpeed, repeat, loop, yoyo,
 			onBegin, onUpdate, onChange, onComplete,
 
 		} );
@@ -122,11 +130,11 @@ class Textformer {
 		};
 		const TextformClass = textformClasses[ options.mode ]
 			|| textformClasses.default;
-		const textform = new TextformClass( this.textformOptions );
+		const textform = new TextformClass( this._textformOptions );
 		this.textform = textform;
 
 		if ( ! options.autoplay ) return;
-		this.player = new TextformPlayer( this.autoplayOptions );
+		this.player = new TextformPlayer( this._autoplayOptions );
 		this.play();
 
 	}
@@ -147,7 +155,7 @@ class Textformer {
 
 	}
 
-	convertSpeedToDuration( speed ) {
+	convertSpeedToDuration( speed = this.options.speed ) {
 
 		if ( ! this.textform ) return Textformer.DEFAULT_DURATION;
 		const finalFrame = this.textform.finalFrame;
@@ -213,6 +221,19 @@ class Textformer {
 
 	}
 
+	get reversed() {
+
+		if ( ! this.player ) return false;
+		return this.player.isReversed;
+
+	}
+
+	set reversed( reversed ) {
+
+		if ( this.player ) this.player.isReversed = reversed;
+
+	}
+
 	/*-------------------------------------------------------------------------/
 
 		Read-only
@@ -225,7 +246,7 @@ class Textformer {
 
 	}
 
-	get textformOptions() {
+	get _textformOptions() {
 
 		const { DEFAULT_TEXT } = Textformer;
 
@@ -259,7 +280,7 @@ class Textformer {
 
 	}
 
-	get autoplayOptions() {
+	get _autoplayOptions() {
 
 		const { textform } = this;
 		const { autoplay } = this.options;
@@ -270,6 +291,8 @@ class Textformer {
 
 		if ( ! options.duration )
 			options.duration = this.convertSpeedToDuration( options.speed );
+
+		if ( options.loop ) options.repeat = - 1;
 
 		return options;
 

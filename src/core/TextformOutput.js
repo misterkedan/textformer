@@ -51,6 +51,8 @@ class TextformOutput {
 		delete this.elements;
 		delete this.object;
 
+		if ( input === undefined ) return;
+
 		if ( input === console ) {
 
 			this.console = input;
