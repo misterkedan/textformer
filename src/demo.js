@@ -1,37 +1,16 @@
 import * as KEDA from './main';
 import * as dat from 'dat.gui';
 
-const DESCRIPTION = `
-Easy text animations with
-random character changes.
+/*-----------------------------------------------------------------------------/
 
-Example usage :
+	Basic demo
 
-const textformer = new KEDA.Textformer( {
-	//Target
-	output: "#demo-title",
+/-----------------------------------------------------------------------------*/
 
-	//Texts
-	from: '',
-	to: 'Texformer',
-
-	//Core
-	mode: KEDA.Textformer.modes.expand,
-	steps: 10,
-	stagger: 3,
-	noise: 2,
-
-	//Autoplay
-	autoplay: true,
-	speed: 15,
-	delay: 500,
-} );
-`;
-
-const options = {
+const title = new KEDA.Textformer( {
 
 	//Target to write the result into, can be:
-	//'#id', '.class', selected HTML element
+	//'#id', '.class', selected HTML element,
 	//Writable object, window.console
 	output: '#demo-title',
 
@@ -44,32 +23,51 @@ const options = {
 	steps: 20,
 	stagger: 3,
 	noise: 0,
-	origin: - 1,
 
 	//Autoplay
-	// autoplay: false,
 	speed: 15,
 	easing: KEDA.Textformer.ease.CIRC_OUT,
 	delay: 500,
-	// duration: 0,
-	// repeat: - 1,
-	// onBegin: ()=> console.log( 'begin' ),
-	// onComplete: ()=> console.log( 'complete'),
-	// reverse: true,
-	yoyo: true,
-	loop: true,
-	// reverseSpeed: 2,
-
-	// hover: true,
-	// press: true,
 
 	//Align
 	align: KEDA.Textformer.align.LEFT,
 	fill: '.',
 
-};
+} );
 
-const title = new KEDA.Textformer( options );
+/*-----------------------------------------------------------------------------/
+
+	Advanced
+
+/-----------------------------------------------------------------------------*/
+
+const DESCRIPTION = `
+Easy text animations with
+random character changes.
+
+Example usage :
+
+const textformer = new KEDA.Textformer( {
+
+	//Target
+	output: "#demo-title",
+
+	//Texts
+	from: '',
+	to: 'Textformer',
+
+	//Options
+	mode: KEDA.Textformer.modes.EXPAND,
+	steps: 20,
+	stagger: 3,
+
+	//Autoplay
+	speed: 15,
+	easing: KEDA.Textformer.ease.CIRC_OUT,
+	delay: 500,
+
+} );
+`;
 
 const text = {
 	element: document.querySelector( '#demo-paragraph' ),
@@ -100,79 +98,25 @@ const text = {
 };
 text.textformer = title.clone( text.getOverrides() );
 
+if ( ! title.options.duration )
+	title.options.duration = title.convertSpeedToDuration();
+
+if ( title.options.origin === undefined ) title.options.origin = - 1;
+
+title.player.onBegin = title.player.onComplete = () => {
+
+	const { options, player } = title;
+	options.reversed = player.isReversed;
+
+};
+
 /*-----------------------------------------------------------------------------/
 
 	GUI
 
 /-----------------------------------------------------------------------------*/
 
-function rebuild() {
-
-	title.build();
-	text.build();
-
-}
-
-function pause() {
-
-	title.pause();
-	text.textformer.pause();
-
-}
-
-function setPlayersProperty( key, value ) {
-
-	title.player[ key ] = value;
-	text.textformer.player[ key ] = value;
-
-}
-
-function updateProgress() {
-
-	pause();
-	setPlayersProperty( 'progress', title.progress );
-
-}
-
-function replay() {
-
-	if ( ! title.player.isPlaying ) gui.controls.play();
-
-}
-
-function updateReversed() {
-
-	setPlayersProperty( 'isReversed', title.reversed );
-	replay();
-
-}
-
-function updateEasing() {
-
-	setPlayersProperty( 'ease', KEDA.basicEasing[ title.options.easing ] );
-	replay();
-
-}
-
-function updateLoop() {
-
-	const repeats = ( title.options.loop ) ? - 1 : 0;
-	setPlayersProperty( 'repeat', repeats );
-	replay();
-
-}
-
-function updateYoyo() {
-
-	setPlayersProperty( 'isYoyo', title.options.yoyo );
-	replay();
-
-}
-
-if ( ! title.options.duration ) title.options.duration = title.convertSpeedToDuration();
-
 const gui = new dat.GUI();
-
 gui.controls = {
 
 	play: () => {
@@ -183,7 +127,45 @@ gui.controls = {
 
 	},
 
+	rebuild: () => {
+
+		title.build();
+		text.build();
+
+	},
+
+	setPlayersProperty: ( key, value ) => {
+
+		title.player[ key ] = value;
+		text.textformer.player[ key ] = value;
+
+	},
+
+	updatePlayers: () => {
+
+		const { setPlayersProperty, play } = gui.controls;
+
+		const repeats = ( title.options.loop ) ? - 1 : 0;
+
+		setPlayersProperty( 'repeat', repeats );
+		setPlayersProperty( 'isReversed', title.options.reversed );
+		setPlayersProperty( 'isYoyo', title.options.yoyo );
+		setPlayersProperty( 'ease', KEDA.basicEasing[ title.options.easing ] );
+
+		if ( ! title.player.isPlaying ) play();
+
+	},
+
+	updateProgress: () => {
+
+		title.pause();
+		text.textformer.pause();
+		gui.controls.setPlayersProperty( 'progress', title.progress );
+
+	},
+
 };
+const { rebuild, updatePlayers, updateProgress } = gui.controls;
 
 const textform = gui.addFolder( 'Textform' );
 textform.add( title.options, 'from' ).onChange( rebuild );
@@ -196,24 +178,30 @@ textform.open();
 
 const animation = gui.addFolder( 'Animation' );
 animation.add( title, 'speed', 1, 30 ).step( 1 ).onChange( rebuild );
-animation.add( title.options, 'easing', Object.values( KEDA.Textformer.ease ) ).onChange( updateEasing );
-animation.add( title, 'progress', 0, 1 ).step( 0.001 ).onChange( updateProgress ).listen();
+animation.add( title.options, 'easing', KEDA.Textformer.ease )
+	.onChange( updatePlayers );
+animation.add( title, 'progress', 0, 1 ).step( 0.001 ).onChange( updateProgress )
+	.listen();
 animation.add( gui.controls, 'play' );
 animation.open();
 
 const advanced = gui.addFolder( 'Advanced' );
-advanced.add( title.options, 'charset', KEDA.Textformer.charsets ).onChange( rebuild );
+advanced.add( title.options, 'charset', KEDA.Textformer.charsets )
+	.onChange( rebuild );
 advanced.add( title.options, 'align', KEDA.Textformer.align ).onChange( rebuild );
 advanced.add( title.options, 'fill' ).onChange( rebuild );
 advanced.add( title.options, 'origin', - 1, 10 ).step( 1 ).onChange( rebuild );
 // advanced.open();
 
 const advancedAnimation = gui.addFolder( 'Advanced ( Animation )' );
-advancedAnimation.add( title, 'reversed' ).onChange( updateReversed ).listen();
-advancedAnimation.add( title.options, 'loop' ).onChange( updateLoop );
-advancedAnimation.add( title.options, 'yoyo' ).onChange( updateYoyo );
-advancedAnimation.add( title.options, 'delay', 0, 5000 ).step( 50 ).onChange( rebuild );
-advancedAnimation.add( title.options, 'duration', 150, 10000 ).step( 50 ).onChange( rebuild ).listen();
+advancedAnimation.add( title.options, 'reversed' ).onChange( updatePlayers )
+	.listen();
+advancedAnimation.add( title.options, 'loop' ).onChange( updatePlayers );
+advancedAnimation.add( title.options, 'yoyo' ).onChange( updatePlayers );
+advancedAnimation.add( title.options, 'delay', 0, 5000 ).step( 50 )
+	.onChange( rebuild );
+advancedAnimation.add( title.options, 'duration', 150, 10000 ).step( 50 )
+	.onChange( rebuild ).listen();
 advancedAnimation.open();
 
 //Close GUI on mobile & small screens to avoid overlap

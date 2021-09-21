@@ -87,13 +87,12 @@ class TextformPlayer {
 
 	reset() {
 
-		const { clock, textform, isReversed } = this;
-		// clock.reset();
+		const { textform, isReversed } = this;
 		textform.progress = ( isReversed ) ? 1 : 0;
 
 	}
 
-	play( reset = true ) {
+	play( fromRepeat = false ) {
 
 		const {
 			onBegin, onComplete,
@@ -103,7 +102,7 @@ class TextformPlayer {
 		if ( isPlaying || isComplete ) {
 
 			this.stop();
-			if ( reset ) this.reset();
+			if ( ! fromRepeat ) this.reset();
 
 			if ( isReversed && onComplete ) onComplete.call();
 			else if ( ! isReversed && onBegin ) onBegin.call();

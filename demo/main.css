@@ -3,7 +3,7 @@
 	src: url('vendor/ShareTechMono-Regular.ttf');
 }
 
-* {
+body, .demo-text {
 	margin: 0;
 	border: 0;
 }
@@ -17,13 +17,6 @@ body {
 		rgba(210,210,210,1) 0%, 
 		rgba(255,255,255,1) 100%
 	);
-}
-
-.demo-text {
-	cursor: pointer;
-	user-select: none;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
-	-webkit-tap-highlight-color: transparent;
 }
 
 #demo-title {

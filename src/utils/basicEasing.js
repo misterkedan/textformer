@@ -24,4 +24,25 @@ Object.keys( functions ).forEach( name => {
 
 } );
 
+//Quick and dirty way to have constant references to keys
+//Ex: Textformer.ease.QUAD_OUT
+const keys = {};
+Object.keys( basicEasing ).forEach( ( value ) => {
+
+	let key = value.toUpperCase();
+
+	const test = key.match( /(EASEINOUT|EASEOUT|EASEIN)(.*)/ );
+	if ( test ) {
+
+		const type = test[ 1 ].replace( 'EASE', '' ).replace( 'INOUT', 'IN_OUT' );
+		const fn = test[ 2 ];
+		key = `${fn}_${type}`;
+
+	}
+
+	keys[ key ] = value;
+
+} );
+basicEasing.keys = keys;
+
 export { basicEasing };

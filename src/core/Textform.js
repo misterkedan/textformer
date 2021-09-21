@@ -64,14 +64,14 @@ class Textform {
 	build() {
 
 		const { length, from, to } = this;
-		const startFrames = this.computeStartFrames();
+		const startFrames = this.compute();
 
 		const buildCharAt = ( i ) => {
 
 			const startChar = from.charAt( i );
 			const endChar = to.charAt( i );
 
-			// Avoid tabs and returns, looks very messy on multilines
+			//Avoid tabs and returns, looks very messy on multilines
 			const isFormatting = ( char ) => char.match( /\r|\n|\t/ );
 			if ( isFormatting( startChar ) )
 				return [ { frame: 0, char: startChar } ];
@@ -115,7 +115,7 @@ class Textform {
 	 *
 	 * @returns { Array } Array of staggered starting frames
 	 */
-	computeStartFrames() {
+	compute() {
 
 		const { length, stagger, origin } = this;
 
@@ -234,7 +234,7 @@ class Textform {
 
 	/-----------------------------------------------------------------------------*/
 
-	get hasValidOrigin() {
+	get hasOrigin() {
 
 		const { origin, length } = this;
 

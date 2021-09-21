@@ -2,17 +2,17 @@ import { Textform } from '../core/Textform.js';
 
 class ExpandTextform extends Textform {
 
-	//?// Override
-	computeStartFrames() {
+	//Override
+	compute() {
 
-		const { length, stagger, origin, hasValidOrigin } = this;
+		const { length, stagger, origin, hasOrigin } = this;
 
-		const center = ( hasValidOrigin )
+		const center = ( hasOrigin )
 			? origin
 			: Math.floor( ( length - 1 ) / 2 );
 
-		//?// To avoid asymetrical animations on auto center + even lengths
-		const aboveCenter = ( ! hasValidOrigin && length % 2 === 0 ) ?
+		//To avoid asymetrical animations on auto center + even lengths
+		const aboveCenter = ( ! hasOrigin && length % 2 === 0 ) ?
 			center + 1 : center;
 
 		return Array.from( { length }, ( _, i ) => {

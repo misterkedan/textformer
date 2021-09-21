@@ -104,6 +104,8 @@ class Textformer {
 
 	} = {} ) {
 
+		this.__init();
+
 		this.build( {
 
 			mode,
@@ -142,12 +144,12 @@ class Textformer {
 		};
 		const TextformClass = textformClasses[ options.mode ]
 			|| textformClasses.default;
-		const textform = new TextformClass( this._textformOptions );
+		const textform = new TextformClass( this.__.textformOptions() );
 		this.textform = textform;
 
 		if ( options.hover || options.press ) this.bind();
 		else if ( ! options.autoplay ) return;
-		this.player = new TextformPlayer( this._autoplayOptions );
+		this.player = new TextformPlayer( this.__.autoplayOptions() );
 		if ( options.autoplay ) this.play();
 
 	}
@@ -168,11 +170,103 @@ class Textformer {
 
 	}
 
-	bind() {
+	convertSpeedToDuration( speed = this.options.speed ) {
+
+		if ( ! this.textform ) return Textformer.DEFAULT_DURATION;
+		const finalFrame = this.textform.finalFrame;
+		return finalFrame * ( 1000 / speed );
+
+	}
+
+	/*-------------------------------------------------------------------------/
+
+		Private
+
+	/-------------------------------------------------------------------------*/
+
+	__init() {
+
+		const __ = {};
+
+		__.in = function () {
+
+			const { player } = this;
+			if ( player ) player.isReversed = false;
+			if ( ! player.isPlaying && player.progress < 1 ) player.play();
+
+		}.bind( this );
+
+		__.out = function () {
+
+			const { player } = this;
+			if ( player ) player.isReversed = true;
+			if ( ! player.isPlaying && player.progress > 0 ) player.play();
+
+		}.bind( this );
+
+		__.textformOptions = function () {
+
+			const { DEFAULT_TEXT } = Textformer;
+
+			const options =  { ...this.options };
+			const { from, to, align, fill } = options;
+
+			const output = new TextformOutput( options.output );
+			if ( output.isValid ) {
+
+				options.output = output;
+				//If valid output, uses output's initial text as automatic to/from
+				const initialText = output.inputText || DEFAULT_TEXT;
+				if ( from === undefined ) options.from = initialText;
+				if ( to === undefined ) options.to = initialText;
+
+			} else delete options.output;
+
+			if ( from === undefined ) options.from = DEFAULT_TEXT;
+			if ( to === undefined ) options.to = DEFAULT_TEXT;
+
+			if ( align ) {
+
+				const alignedTexts = stringAlign
+					.align( [ options.from, options.to ], align, fill );
+				options.from = alignedTexts[ 0 ];
+				options.to = alignedTexts[ 1 ];
+
+			}
+
+			return options;
+
+		}.bind( this );
+
+		__.autoplayOptions = function () {
+
+			const { textform } = this;
+			const options = { ...this.options, textform };
+
+			if ( ! options.duration )
+				options.duration = this.convertSpeedToDuration( options.speed );
+
+			if ( options.loop ) options.repeat = - 1;
+
+			return options;
+
+		}.bind( this );
+
+		this.__ = __;
+
+	}
+
+	/*-------------------------------------------------------------------------/
+
+		Event Handling
+
+	/-------------------------------------------------------------------------*/
+
+	bind( hover = this.options.hover, press = this.options.press ) {
 
 		const { textform, options } = this;
 
-		const { hover, press } = options;
+		Object.assign( options, { hover, press } );
 
 		if ( ! hover && ! press ) return;
 
@@ -185,15 +279,15 @@ class Textformer {
 
 			if ( hover ) {
 
-				element.addEventListener( 'pointerenter', this._in );
-				element.addEventListener( 'pointerleave', this._out );
+				element.addEventListener( 'pointerenter', this.__.in );
+				element.addEventListener( 'pointerleave', this.__.out );
 
 			}
 
 			if ( press ) {
 
-				element.addEventListener( 'pointerdown', this._in );
-				element.addEventListener( 'pointerup', this._out );
+				element.addEventListener( 'pointerdown', this.__.in );
+				element.addEventListener( 'pointerup', this.__.out );
 
 			}
 
@@ -209,22 +303,14 @@ class Textformer {
 
 		this.dispatchers.forEach( ( dispatcher ) => {
 
-			dispatcher.addEventListener( 'pointerenter', this._in );
-			dispatcher.addEventListener( 'pointerleave', this._out );
-			dispatcher.addEventListener( 'pointerdown', this._in );
-			dispatcher.addEventListener( 'pointerup', this._out );
+			dispatcher.addEventListener( 'pointerenter', this.__.in );
+			dispatcher.addEventListener( 'pointerleave', this.__.out );
+			dispatcher.addEventListener( 'pointerdown', this.__.in );
+			dispatcher.addEventListener( 'pointerup', this.__.out );
 
 		} );
 
 		delete this.dispatchers;
-
-	}
-
-	convertSpeedToDuration( speed = this.options.speed ) {
-
-		if ( ! this.textform ) return Textformer.DEFAULT_DURATION;
-		const finalFrame = this.textform.finalFrame;
-		return finalFrame * ( 1000 / speed );
 
 	}
 
@@ -280,22 +366,10 @@ class Textformer {
 
 	set speed( speed ) {
 
+		const { options } = this;
 		if ( speed < 1 ) speed = Textformer.DEFAULT_SPEED;
-		this.options.speed = speed;
-		this.options.duration = this.convertSpeedToDuration( speed );
-
-	}
-
-	get reversed() {
-
-		if ( ! this.player ) return false;
-		return this.player.isReversed;
-
-	}
-
-	set reversed( reversed ) {
-
-		if ( this.player ) this.player.isReversed = reversed;
+		options.speed = speed;
+		options.duration = this.convertSpeedToDuration( speed );
 
 	}
 
@@ -311,90 +385,6 @@ class Textformer {
 
 	}
 
-	get _in() {
-
-		if ( ! this.__in ) {
-
-			this.__in = function () {
-
-				const { player } = this;
-				if ( player ) player.isReversed = false;
-				if ( ! player.isPlaying && player.progress < 1 ) player.play();
-
-			}.bind( this );
-
-		}
-
-		return this.__in;
-
-	}
-
-	get _out() {
-
-		if ( ! this.__out ) {
-
-			this.__out = function () {
-
-				const { player } = this;
-				if ( player ) player.isReversed = true;
-				if ( ! player.isPlaying && player.progress > 0 ) player.play();
-
-			}.bind( this );
-
-		}
-
-		return this.__out;
-
-	}
-
-	get _textformOptions() {
-
-		const { DEFAULT_TEXT } = Textformer;
-
-		const options =  { ...this.options };
-		const { from, to, align, fill } = options;
-
-		const output = new TextformOutput( options.output );
-		if ( output.isValid ) {
-
-			options.output = output;
-			//If valid output, uses output's initial text as automatic to/from
-			const initialText = output.inputText || DEFAULT_TEXT;
-			if ( from === undefined ) options.from = initialText;
-			if ( to === undefined ) options.to = initialText;
-
-		} else delete options.output;
-
-		if ( from === undefined ) options.from = DEFAULT_TEXT;
-		if ( to === undefined ) options.to = DEFAULT_TEXT;
-
-		if ( align ) {
-
-			const alignedTexts = stringAlign
-				.align( [ options.from, options.to ], align, fill );
-			options.from = alignedTexts[ 0 ];
-			options.to = alignedTexts[ 1 ];
-
-		}
-
-		return options;
-
-	}
-
-	get _autoplayOptions() {
-
-		const { textform } = this;
-		const options = { ...this.options, textform };
-
-		if ( ! options.duration )
-			options.duration = this.convertSpeedToDuration( options.speed );
-
-		if ( options.loop ) options.repeat = - 1;
-
-		return options;
-
-	}
-
 }
 
 /*-----------------------------------------------------------------------------/
@@ -407,23 +397,7 @@ Textformer.align = stringAlign.to;
 
 Textformer.charsets = charsets;
 
-Textformer.ease = {};
-Object.keys( basicEasing ).forEach( ( ease ) => {
-
-	let key = ease.toUpperCase();
-
-	const test = key.match( /(EASEINOUT|EASEOUT|EASEIN)(.*)/ );
-	if ( test ) {
-
-		const type = test[ 1 ].replace( 'EASE', '' ).replace( 'INOUT', 'IN_OUT' );
-		const fn = test[ 2 ];
-		key = `${fn}_${type}`;
-
-	}
-
-	Textformer.ease[ key ] = ease;
-
-} );
+Textformer.ease = basicEasing.keys;
 
 Textformer.modes = {
 	BASIC: 		'basic',

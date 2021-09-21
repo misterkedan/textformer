@@ -2,15 +2,15 @@ import { Textform } from '../core/Textform.js';
 
 class ShuffledTextform extends Textform {
 
-	//?// Override
-	computeStartFrames() {
+	//Override
+	compute() {
 
 		const { origin, stagger } = this;
 		let startFrames = ShuffledTextform.shuffle(
-			super.computeStartFrames()
+			super.compute()
 		);
 
-		if ( this.hasValidOrigin && stagger > 0 ) {
+		if ( this.hasOrigin && stagger > 0 ) {
 
 			startFrames = startFrames.filter( x => x > 0 );
 			startFrames.splice( origin, 0, 0 );
@@ -28,7 +28,7 @@ ShuffledTextform.shuffle = ( array ) => {
 
 	let shuffled = [ ...array ];
 
-	//?// Durstenfeld shuffle
+	//Durstenfeld shuffle
 	for ( let i = array.length - 1; i > 0; i -- ) {
 
 		const j = Math.floor( Math.random() * ( i + 1 ) );

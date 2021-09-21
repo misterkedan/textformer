@@ -127,8 +127,6 @@ class TextformOutput {
 
 	}
 
-
-
 }
 
 export { TextformOutput };

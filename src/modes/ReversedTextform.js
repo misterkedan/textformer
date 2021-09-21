@@ -2,10 +2,10 @@ import { Textform } from '../core/Textform.js';
 
 class ReversedTextform extends Textform {
 
-	//?// Override
-	computeStartFrames() {
+	//Override
+	compute() {
 
-		return super.computeStartFrames().reverse();
+		return super.compute().reverse();
 
 	}
 

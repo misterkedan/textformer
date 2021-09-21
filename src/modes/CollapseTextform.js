@@ -2,12 +2,12 @@ import { Textform } from '../core/Textform.js';
 
 class CollapseTextform extends Textform {
 
-	//?// Override
-	computeStartFrames() {
+	//Override
+	compute() {
 
-		const { length, stagger, origin, hasValidOrigin } = this;
+		const { length, stagger, origin, hasOrigin } = this;
 
-		const center = ( hasValidOrigin )
+		const center = ( hasOrigin )
 			? origin
 			: Math.round( ( length - 1 ) / 2 );
 
