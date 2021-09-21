@@ -47,20 +47,20 @@ const options = {
 	origin: - 1,
 
 	//Autoplay
-	autoplay: false,
+	// autoplay: false,
 	speed: 15,
 	easing: KEDA.Textformer.ease.CIRC_OUT,
-	// delay: 500,
+	delay: 500,
 	// duration: 0,
 	// repeat: - 1,
 	// onBegin: ()=> console.log( 'begin' ),
 	// onComplete: ()=> console.log( 'complete'),
 	// reverse: true,
-	// yoyo: true,
-	// loop: true,
+	yoyo: true,
+	loop: true,
 	// reverseSpeed: 2,
 
-	hover: true,
+	// hover: true,
 	// press: true,
 
 	//Align
