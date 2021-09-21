@@ -29,6 +29,7 @@ const textformer = new KEDA.Textformer( {
 `;
 
 const options = {
+
 	//Target to write the result into, can be:
 	//'#id', '.class', selected HTML element
 	//Writable object, window.console
@@ -45,20 +46,27 @@ const options = {
 	noise: 0,
 	origin: - 1,
 
+	//Autoplay
+	autoplay: false,
 	speed: 15,
 	easing: KEDA.Textformer.ease.CIRC_OUT,
-	delay: 500,
+	// delay: 500,
 	// duration: 0,
 	// repeat: - 1,
 	// onBegin: ()=> console.log( 'begin' ),
 	// onComplete: ()=> console.log( 'complete'),
 	// reverse: true,
-	yoyo: true,
-	loop: true,
+	// yoyo: true,
+	// loop: true,
 	// reverseSpeed: 2,
 
+	hover: true,
+	// press: true,
+
+	//Align
 	align: KEDA.Textformer.align.LEFT,
 	fill: '.',
+
 };
 
 const title = new KEDA.Textformer( options );

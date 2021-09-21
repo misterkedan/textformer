@@ -63,6 +63,11 @@ class Textformer {
 	 * @param { Function }	options.onUpdate	Callback fired on every frame.
 	 * @param { Function }	options.onChange	Callback fired on text change.
 	 * @param { Function }	options.onComplete	Callback fired on animation end.
+	 *
+	 * @param { Boolean }	options.hover		Control the animation with
+	 * 											pointerenter & pointerleave.
+	 * @param { Boolean }	options.press		Control the animation with
+	 * 											pointerdown & pointerup.
 	 */
 	constructor( {
 
@@ -93,6 +98,10 @@ class Textformer {
 		yoyo = false,
 		onBegin, onUpdate, onChange, onComplete,
 
+		//Events
+		hover = false,
+		press = false,
+
 	} = {} ) {
 
 		this.build( {
@@ -109,6 +118,9 @@ class Textformer {
 			autoplay, speed, easing, delay, duration,
 			reversed, reverseSpeed, repeat, loop, yoyo,
 			onBegin, onUpdate, onChange, onComplete,
+
+			//Events
+			hover, press
 
 		} );
 
@@ -133,9 +145,10 @@ class Textformer {
 		const textform = new TextformClass( this._textformOptions );
 		this.textform = textform;
 
-		if ( ! options.autoplay ) return;
+		if ( options.hover || options.press ) this.bind();
+		else if ( ! options.autoplay ) return;
 		this.player = new TextformPlayer( this._autoplayOptions );
-		this.play();
+		if ( options.autoplay ) this.play();
 
 	}
 
@@ -151,7 +164,59 @@ class Textformer {
 		this.stop();
 		delete this.player;
 		delete this.textform;
-		//Remove event listeners
+		this.unbind();
+
+	}
+
+	bind() {
+
+		const { textform, options } = this;
+
+		const { hover, press } = options;
+
+		if ( ! hover && ! press ) return;
+
+		if ( ! textform || ! textform.output || ! textform.output.elements )
+			return;
+
+		const { elements } = textform.output;
+
+		elements.forEach( ( element ) => {
+
+			if ( hover ) {
+
+				element.addEventListener( 'pointerenter', this._in );
+				element.addEventListener( 'pointerleave', this._out );
+
+			}
+
+			if ( press ) {
+
+				element.addEventListener( 'pointerdown', this._in );
+				element.addEventListener( 'pointerup', this._out );
+
+			}
+
+		} );
+
+		this.dispatchers = elements;
+
+	}
+
+	unbind() {
+
+		if ( ! this.dispatchers ) return;
+
+		this.dispatchers.forEach( ( dispatcher ) => {
+
+			dispatcher.addEventListener( 'pointerenter', this._in );
+			dispatcher.addEventListener( 'pointerleave', this._out );
+			dispatcher.addEventListener( 'pointerdown', this._in );
+			dispatcher.addEventListener( 'pointerup', this._out );
+
+		} );
+
+		delete this.dispatchers;
 
 	}
 
@@ -246,6 +311,42 @@ class Textformer {
 
 	}
 
+	get _in() {
+
+		if ( ! this.__in ) {
+
+			this.__in = function () {
+
+				const { player } = this;
+				if ( player ) player.isReversed = false;
+				if ( ! player.isPlaying && player.progress < 1 ) player.play();
+
+			}.bind( this );
+
+		}
+
+		return this.__in;
+
+	}
+
+	get _out() {
+
+		if ( ! this.__out ) {
+
+			this.__out = function () {
+
+				const { player } = this;
+				if ( player ) player.isReversed = true;
+				if ( ! player.isPlaying && player.progress > 0 ) player.play();
+
+			}.bind( this );
+
+		}
+
+		return this.__out;
+
+	}
+
 	get _textformOptions() {
 
 		const { DEFAULT_TEXT } = Textformer;
@@ -283,10 +384,6 @@ class Textformer {
 	get _autoplayOptions() {
 
 		const { textform } = this;
-		const { autoplay } = this.options;
-
-		if ( ! autoplay ) return false;
-
 		const options = { ...this.options, textform };
 
 		if ( ! options.duration )
