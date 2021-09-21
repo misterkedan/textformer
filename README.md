@@ -5,8 +5,6 @@ Easy text animations with random character changes.
 
 [Demo](https://pierrekeda.github.io/textformer/)  
 
-<br>
-
 # Installation
 
 Via [npm](https://www.npmjs.com/package/textformer) 
@@ -17,16 +15,13 @@ Via [npm](https://www.npmjs.com/package/textformer)
 import { Textformer } from 'textformer';
 ```
 
-<br>
 Or manually import [the minified build](build/textformer.min.js).
 
 ```html
 <script src="textformer.min.js"></script>
 ```
-<br>
 
 # Basic usage
-<br>
 
 ```javascript
 
@@ -43,7 +38,6 @@ const demo = new Textformer({
 });
 
 ```
-<br>
 
 # Advanced options
 
@@ -70,7 +64,6 @@ charset: 'abc',
 // Depending on the mode
 origin: 0, 
 ```
-<br>
 
 ## Output
 
@@ -96,8 +89,6 @@ output: console,
 Using a DOM element will escape whitespaces to avoid whitespace collapsing.  
 If outputing straight to the DOM, I recommend using a monospace font, and in some cases the CSS setting *overflow-wrap: break-word;*  
 Weird visual behaviors can still occur if the text is wider than the screen, especially for long texts, because of word wrapping changing the text's structure.
-<br>
-<br>
 
 ## Autoplay
 
@@ -117,7 +108,6 @@ console.log( demo.progress ); // Outputs: 0
 demo.progress = 1;
 console.log( demo.text );     // Outputs: 'bar'
 ```
-<br>
 
 ## Animation
 
@@ -150,7 +140,6 @@ loop: true,
 // Toggles direction when reaching either end
 yoyo: false,
 ```
-<br>
 
 ## Easing
 
@@ -166,7 +155,6 @@ easing: Textformer.ease.SINE_IN_,
 // Functions available: 
 // SINE, CIRC, QUAD, CUBIC, QUART, QUINT, EXPO
 ```
-<br>
 
 ## Callbacks
 
@@ -178,7 +166,6 @@ onUpdate  : () => console.log( 'enter a new frame' ),
 onChange  : () => console.log( 'the text changed' ),
 onComplete: () => console.log( 'animation ends' ),
 ```
-<br>
 
 ## Events
 Those two options allows for easy mouse control of the animation, using the built-in player.  
@@ -191,7 +178,6 @@ hover: true,
 // For pointerdown + pointerup
 press: true,
 ```
-<br>
 
 ## Align
 
@@ -210,7 +196,6 @@ align: Textformer.align.RIGHT,
 fill: ' ',   // Uses whitespace by default
 fill: 'abc', // Will be repeated if too short (abcabc...)
 ```
-<br>
 
 # Summary
 
@@ -258,7 +243,6 @@ const demo = new Textformer({
 	
 )};
 ```
-<br>
 
 ***
 *Pierre Keda - 2021*
