@@ -206,7 +206,7 @@ This is done by padding the shorter text to match the longer text's length, usin
 
 # Summary
 
-*With default values.*
+With default values.
 
 ```javascript
 	const demo = new KEDA.Textformer({
