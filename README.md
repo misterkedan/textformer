@@ -10,7 +10,7 @@ Easy text animations with random character changes.
 	const demo = new KEDA.Textformer({
 
 		mode: KEDA.Textformer.modes.EXPAND,
-		from:   '',	// Initial text
+		from:   '', // Initial text
 		to: 'Demo', // Final text
 		steps:  20, // Number of character changes
 		stagger: 3, // Stagger (in steps) between characters
@@ -20,6 +20,7 @@ Easy text animations with random character changes.
 	});
 
 ```
+<br>
 
 # Advanced options
 
@@ -48,6 +49,7 @@ Easy text animations with random character changes.
 	origin: 0, 
 
 ```
+<br>
 
 ## Output
 
@@ -75,6 +77,7 @@ Element to automatically write the text into.
 Using a DOM element will escape whitespaces to avoid whitespace collapsing.  
 If outputing straight to the DOM, I recommend using a monospace font, and in some cases the CSS setting *overflow-wrap: break-word;*  
 Weird visual behaviors can still occur if the text is wider than the screen, especially for long texts, because of word wrapping changing the text's structure.
+<br>
 
 ## Autoplay
 
@@ -90,14 +93,15 @@ Note that doing so will invalidate all playback related options, such as speed, 
 		autoplay: false,
 	});
 
-	console.log( demo.text ); 		// Outputs: 'foo'
-	console.log( demo.progress ); 	// Outputs: 0
+	console.log( demo.text );     // Outputs: 'foo'
+	console.log( demo.progress ); // Outputs: 0
 	demo.progress = 1;
-	console.log( demo.text );		// Outputs: 'bar'
+	console.log( demo.text );     // Outputs: 'bar'
 
 ```
+<br>
 
-###
+## Animation
 
 ```javascript
 
@@ -130,6 +134,7 @@ Note that doing so will invalidate all playback related options, such as speed, 
 	yoyo: false,
 
 ```
+<br>
 
 ## Easing
 
@@ -147,6 +152,7 @@ The built-in player can add some basic easing to the animations.
 	// SINE, CIRC, QUAD, CUBIC, QUART, QUINT, EXPO
 
 ```
+<br>
 
 ## Callbacks
 
@@ -160,6 +166,7 @@ Callback functions can be fired on specific conditions.
 	onComplete	: () => console.log( 'animation ends' ),
 
 ```
+<br>
 
 ## Events
 Those two options allows for easy mouse control of the animation, using the built-in player.  
@@ -172,6 +179,7 @@ This provides an easy way to play the animation forward on pointerenter / pointe
 	// For pointerdown + pointerup
 	press = true,
 ```
+<br>
 
 ## Align
 
@@ -190,6 +198,7 @@ This is done by padding the shorter text to match the longer text's length, usin
 	fill: ' ',   // Uses whitespace by default
 	fill: 'abc', // Will be repeated if too short (abcabc...)
 ```
+<br>
 
 # Summary
 
@@ -237,6 +246,7 @@ This is done by padding the shorter text to match the longer text's length, usin
 		
 	)};
 ```
+<br>
 
 ***
 *Pierre Keda - 2021*
