@@ -1,12 +1,7 @@
 # KEDA.Textformer
 Easy text animations with random character changes.  
 
-<br>
-
 ![Preview](img/preview.gif)
-
-<br>
-<br>
 
 # Basic usage
 
@@ -26,10 +21,9 @@ Easy text animations with random character changes.
 
 ```
 
-<br>
-<br>
-
 # Advanced options
+
+## Core  
 
 ```javascript
 
@@ -54,8 +48,6 @@ Easy text animations with random character changes.
 	origin: 0, 
 
 ```
-
-<br>
 
 ## Output
 
@@ -84,8 +76,6 @@ Using a DOM element will escape whitespaces to avoid whitespace collapsing.
 If outputing straight to the DOM, I recommend using a monospace font, and in some cases the CSS setting *overflow-wrap: break-word;*  
 Weird visual behaviors can still occur if the text is wider than the screen, especially for long texts, because of word wrapping changing the text's structure.
 
-<br>
-
 ## Autoplay
 
 The animation is ran using a built-in basic player.  
@@ -106,8 +96,6 @@ Note that doing so will invalidate all playback related options, such as speed, 
 	console.log( demo.text );		// Outputs: 'bar'
 
 ```
-
-<br>
 
 ###
 
@@ -143,8 +131,6 @@ Note that doing so will invalidate all playback related options, such as speed, 
 
 ```
 
-<br>
-
 ## Easing
 
 The built-in player can add some basic easing to the animations.  
@@ -162,8 +148,6 @@ The built-in player can add some basic easing to the animations.
 
 ```
 
-<br>
-
 ## Callbacks
 
 Callback functions can be fired on specific conditions.
@@ -177,8 +161,6 @@ Callback functions can be fired on specific conditions.
 
 ```
 
-<br>
-
 ## Events
 Those two options allows for easy mouse control of the animation, using the built-in player.  
 This provides an easy way to play the animation forward on pointerenter / pointerdown, and reverse it on pointerleave / pointerup. 
@@ -190,8 +172,6 @@ This provides an easy way to play the animation forward on pointerenter / pointe
 	// For pointerdown + pointerup
 	press = true,
 ```
-
-<br>
 
 ## Align
 
@@ -210,9 +190,6 @@ This is done by padding the shorter text to match the longer text's length, usin
 	fill: ' ',   // Uses whitespace by default
 	fill: 'abc', // Will be repeated if too short (abcabc...)
 ```
-
-<br>
-<br>
 
 # Summary
 
@@ -260,9 +237,6 @@ This is done by padding the shorter text to match the longer text's length, usin
 		
 	)};
 ```
-
-<br>
-<br>
 
 ***
 *Pierre Keda - 2021*
