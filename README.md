@@ -164,10 +164,10 @@ Callback functions can be fired on specific conditions.
 
 ```javascript
 
-	onBegin		: () => console.log( 'animation starts' ),
-	onUpdate	: () => console.log( 'enter a new frame' ),
-	onChange	: () => console.log( 'the text changed' ),
-	onComplete	: () => console.log( 'animation ends' ),
+	onBegin	  : () => console.log( 'animation starts' ),
+	onUpdate  : () => console.log( 'enter a new frame' ),
+	onChange  : () => console.log( 'the text changed' ),
+	onComplete: () => console.log( 'animation ends' ),
 
 ```
 <br>
@@ -178,10 +178,10 @@ This provides an easy way to play the animation forward on pointerenter / pointe
 
 ```javascript
 	// For pointerenter + pointerleave
-	hover = true,
+	hover: true,
 
 	// For pointerdown + pointerup
-	press = true,
+	press: true,
 ```
 <br>
 
