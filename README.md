@@ -1,8 +1,23 @@
 # Textformer
+[![Preview](img/preview.gif)](https://pierrekeda.github.io/textformer/)
+
 Easy text animations with random character changes.  
 
-![Preview](img/preview.gif)
+[Demo](https://pierrekeda.github.io/textformer/)  
 
+<br>
+
+# Installation
+
+Via npm
+
+	npm install textformer --save
+
+Or manually import [the minified build](build/textformer.min.js).
+
+```html
+<script src="textformer.min.js"></script>
+```
 <br>
 
 # Basic usage
