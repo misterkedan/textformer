@@ -22,6 +22,6 @@
     },
     "private": false,
     "module": "src/main.js",
-	"homepage": "https://github.com/pierrekeda/textformer",
+	"homepage": "https://pierrekeda.github.io/textformer/",
 	"repository": "github:pierrekeda/textformer"
 }
