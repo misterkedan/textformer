@@ -3,13 +3,13 @@
 
 Easy text animations with random character changes.  
 
-[Demo](https://pierrekeda.github.io/textformer/)  
+[Demo](https://pierrekeda.github.io/textformer/)   
 
 <br>
 
 # Installation
 
-Via npm
+Via [npm](https://www.npmjs.com/package/textformer) 
 
 	npm install textformer --save
 
