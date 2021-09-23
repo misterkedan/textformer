@@ -33,14 +33,14 @@ const config = {
 
 	build: {
 		mode: 'production',
-		entry: './src/build.js',
+		entry: './src/main.js',
 		output: {
 			path: path.resolve( __dirname, 'build' ),
 			filename: 'textformer.min.js',
 			library: {
-				name: [ 'Textformer' ],
+				name: 'Textformer',
 				type: 'umd',
-				export: 'default'
+				export: 'Textformer'
 			}
 		},
 		module: {
@@ -85,7 +85,7 @@ module.exports = ( env, argv ) => {
 			...config.demo,
 			externals: {
 				...config.demo.externals,
-				'textformer': 'window'
+				textformer: 'window'
 			},
 		},
 		{
@@ -99,4 +99,3 @@ module.exports = ( env, argv ) => {
 	];
 
 };
-
