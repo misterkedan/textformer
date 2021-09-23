@@ -28,6 +28,8 @@ const title = new Textformer( {
 	speed: 15,
 	easing: Textformer.ease.CIRC_OUT,
 	delay: 500,
+	loop: true,
+	yoyo: true,
 
 	//Align
 	align: Textformer.align.LEFT,

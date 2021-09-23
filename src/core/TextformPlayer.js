@@ -73,7 +73,7 @@ class TextformPlayer {
 			if ( isReversed && onBegin ) onBegin.call();
 			else if ( onComplete ) onComplete.call();
 
-			if ( this.repeat !== 0 ) this.play( false );
+			if ( this.repeat !== 0 ) this.play( true );
 			if ( this.repeat > 0 ) this.repeat --;
 
 			return;
@@ -92,7 +92,7 @@ class TextformPlayer {
 
 	}
 
-	play( fromRepeat = false ) {
+	play( repeated = false ) {
 
 		const {
 			onBegin, onComplete,
@@ -102,7 +102,7 @@ class TextformPlayer {
 		if ( isPlaying || isComplete ) {
 
 			this.stop();
-			if ( ! fromRepeat ) this.reset();
+			if ( ! repeated ) this.reset();
 
 			if ( isReversed && onComplete ) onComplete.call();
 			else if ( ! isReversed && onBegin ) onBegin.call();
@@ -210,8 +210,10 @@ class TextformPlayer {
 
 	get isComplete() {
 
-		const { progress, isReversed } = this;
-		return ( isReversed ) ? progress <= 0 : progress >= 1;
+		const { progress, isReversed, isYoyo } = this;
+		return ( isYoyo )
+			? ( isReversed ) ? progress >= 1 : progress <= 0
+			: ( isReversed ) ? progress <= 0 : progress >= 1;
 
 	}
 
