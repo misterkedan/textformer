@@ -1,24 +1,24 @@
 {
     "name": "textformer",
-    "version": "1.1.0",
+    "version": "1.2.0-beta",
     "description": "Easy text animations with random character changes.",
     "author": "Pierre Keda",
     "license": "MIT",
     "devDependencies": {
-        "@babel/core": "^7.15.5",
-        "@babel/preset-env": "^7.15.4",
-        "babel-loader": "^8.2.2",
-        "dat.gui": "^0.7.7",
-        "eslint": "^7.32.0",
-        "eslint-config-mdcs": "^5.0.0",
-        "terser-webpack-plugin": "^5.2.4",
-        "webpack": "^5.52.0",
-        "webpack-cli": "^4.8.0",
-        "webpack-dev-server": "^3.11.2"
+		"@babel/core": "^7.16.0",
+		"@babel/preset-env": "^7.16.0",
+		"babel-loader": "^8.2.3",
+		"dat.gui": "^0.7.7",
+		"eslint": "^8.2.0",
+		"eslint-config-mdcs": "^5.0.0",
+		"terser-webpack-plugin": "^5.2.5",
+		"webpack": "^5.64.0",
+		"webpack-cli": "^4.9.1",
+		"webpack-dev-server": "^4.5.0"
     },
     "scripts": {
         "build": "webpack --mode production",
-        "start": "webpack serve --open --mode development"
+        "start": "webpack serve --mode development"
     },
 	"sideEffects": false,
     "private": false,

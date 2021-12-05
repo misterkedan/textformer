@@ -24,10 +24,14 @@ const config = {
 		mode: 'development',
 		devtool: 'inline-source-map',
 		devServer: {
-			contentBase: './demo/',
+			static: {
+				directory: path.resolve( __dirname, 'demo' ),
+			},
 			host: '192.168.1.10',
 			port: 8080,
-			disableHostCheck: true,
+		},
+		optimization: {
+			minimize: false,
 		},
 	},
 

@@ -27,7 +27,6 @@ body {
 }
 
 #demo-paragraph {
-	overflow-wrap: break-word;
 	margin: 0 1.5rem;
 	font-size: 0.875rem;
 }

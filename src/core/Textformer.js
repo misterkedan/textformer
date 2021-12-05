@@ -51,6 +51,8 @@ class Textformer {
 	 * @param { Boolean }	options.reversed	Play the animation backwards.
 	 * @param { Number }  options.reverseSpeed  Speed multiplier for reversed
 	 * 											animation.
+	 * @param { Number }  options.reverseDelay  Delay before playing the reverse animation.
+	 * 											Uses options.delay if unspecified.
 	 * @param { Number }	options.repeat		Number of times to repeat
 	 * 											the animation after the first
 	 * 											iteration. Set to -1 for infinite
@@ -74,7 +76,8 @@ class Textformer {
 		mode = Textformer.modes.BASIC,
 
 		//Textform
-		from, to,
+		from,
+		to,
 		steps = 5,
 		stagger = 3,
 		noise = 0,
@@ -93,6 +96,7 @@ class Textformer {
 		duration = 0,
 		reversed = false,
 		reverseSpeed = 1,
+		reverseDelay,
 		repeat = 0,
 		loop = false,
 		yoyo = false,
@@ -118,7 +122,7 @@ class Textformer {
 
 			//Player
 			autoplay, speed, easing, delay, duration,
-			reversed, reverseSpeed, repeat, loop, yoyo,
+			reversed, reverseSpeed, reverseDelay, repeat, loop, yoyo,
 			onBegin, onUpdate, onChange, onComplete,
 
 			//Events
@@ -132,7 +136,7 @@ class Textformer {
 
 		this.options = options;
 
-		this.destroy();
+		this.dispose();
 
 		const textformClasses = {
 			default: 	Textform,
@@ -161,11 +165,9 @@ class Textformer {
 
 	}
 
-	destroy() {
+	dispose() {
 
 		this.stop();
-		delete this.player;
-		delete this.textform;
 		this.unbind();
 
 	}
@@ -207,23 +209,32 @@ class Textformer {
 		__.textformOptions = function () {
 
 			const { DEFAULT_TEXT } = Textformer;
-
 			const options =  { ...this.options };
 			const { from, to, align, fill } = options;
 
 			const output = new TextformOutput( options.output );
 			if ( output.isValid ) {
 
-				options.output = output;
-				//If valid output, uses output's initial text as automatic to/from
+				//const fromText = ( from && from.length );
+				//const toText = ( to && to.length );
+				//const referenceText = ( fromText && ! toText )
+				//	? from
+				//	: to || output.inputText;
+				//output.referenceText = referenceText;
+				// Use output's initial text as automatic to/from
 				const initialText = output.inputText || DEFAULT_TEXT;
+
+				output.referenceText = to || from || initialText;
+
 				if ( from === undefined ) options.from = initialText;
 				if ( to === undefined ) options.to = initialText;
 
-			} else delete options.output;
+				options.output = output;
 
-			if ( from === undefined ) options.from = DEFAULT_TEXT;
-			if ( to === undefined ) options.to = DEFAULT_TEXT;
+			} else options.output = undefined;
+
+			if ( ! options.from ) options.from = DEFAULT_TEXT;
+			if ( ! options.to ) options.to = DEFAULT_TEXT;
 
 			if ( align ) {
 
@@ -310,7 +321,7 @@ class Textformer {
 
 		} );
 
-		delete this.dispatchers;
+		this.dispatchers = null;
 
 	}
 

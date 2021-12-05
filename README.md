@@ -86,9 +86,19 @@ output: {textform: 'demo'},
 // window.console, for debugging
 output: console,
 ```
-Using a DOM element will escape whitespaces to avoid whitespace collapsing.  
-If outputing straight to the DOM, I recommend using a monospace font, and in some cases the CSS setting *overflow-wrap: break-word;*  
-Weird visual behaviors can still occur if the text is wider than the screen, especially for long texts, because of word wrapping changing the text's structure.
+Using a DOM element will automatically escape the output for HTML.  
+If this is not the desired behavior, you can output to a JS object and manually
+update a DOM element instead.  
+
+If outputing straight to the DOM, monospace fonts are recommended.
+
+In some cases, the following CSS settings can help avoid word wrap / line break related visual bugs:  
+```css
+overflow-wrap: break-word;
+
+word-wrap: break-word;
+white-space: pre;
+```
 
 ## Autoplay
 
@@ -128,6 +138,11 @@ reversed: false,
 
 // Speed multiplier, useful for yoyo animations
 reverseSpeed: 1.5,
+
+// Milliseconds to wait before playing in reverse mode
+// Useful for yoyo animations
+// Uses regular delay if unspecified
+reverseDelay: 1500,
 
 // Times to repeat the animation
 // Set to -1 for infinite loop
@@ -227,6 +242,7 @@ const demo = new Textformer({
 	duration: 0,
 	reversed: false,
 	reverseSpeed: 1,
+	reverseDelay: undefined,
 	repeat: 0,
 	loop: false,
 	yoyo: false,

@@ -22,14 +22,38 @@ class TextformOutput {
 
 		if ( this.console ) return console.log( text );
 
-		const encodeWhitespaces = string => string.replace( / /g, '&nbsp;' )
-			.replace( /\t/g, '&emsp;' )
-			.replace( /\n/g, '<br>' );
-		const encodedText = encodeWhitespaces( text );
-
 		if ( ! this.elements ) return;
 
-		this.elements.forEach( element => element.innerHTML = encodedText );
+		const escapeHTML = ( string ) => string.replace( /&/g, '&amp;' )
+			.replace( /</g, '&lt;' )
+			.replace( />/g, '&gt;' )
+			.replace( /"/g, '&quot;' )
+			.replace( /'/g, '&#039;' );
+
+		const convertToHTML = ( string ) => {
+
+			const space = ' ';
+			const chars = [];
+
+			for ( let i = 0; i < string.length; i ++ ) {
+
+				// Attempt to keep the same breaking spaces structure,
+				// to prevent linebreak/whitespace related glitches.
+				if ( this?.referenceText.charAt( i ) === space ) chars.push( space );
+				else if ( text.charAt( i ) === space ) chars.push( '&numsp;' );
+				else chars.push( escapeHTML( text.charAt( i ) ) );
+
+			}
+
+			return chars.join( '' )
+				.replace( /\t/g, '&emsp;' )
+				.replace( /\n/g, '<br>' );
+
+		};
+
+		const innerHTML = convertToHTML( text );
+
+		this.elements.forEach( element => element.innerHTML = innerHTML );
 
 	}
 
@@ -47,9 +71,9 @@ class TextformOutput {
 
 	set input( input ) {
 
-		delete this.console;
-		delete this.elements;
-		delete this.object;
+		this.console = null;
+		this.elements = null;
+		this.object = null;
 
 		if ( input === undefined ) return;
 

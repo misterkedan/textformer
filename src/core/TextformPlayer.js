@@ -15,6 +15,8 @@ class TextformPlayer {
 	 * @param { Boolean }	options.reversed	Play the animation backwards.
 	 * @param { Number }  options.reverseSpeed  Speed multiplier for reversed
 	 * 											animation.
+	 * @param { Number }  options.reverseDelay  Delay before playing the reverse animation.
+	 * 											Uses options.delay if unspecified.
 	 * @param { Number }	options.repeat		Number of times to repeat
 	 * 											the animation after the first
 	 * 											iteration. Set to -1 for infinite
@@ -28,7 +30,7 @@ class TextformPlayer {
 	*/
 	constructor( {
 		textform, delay, duration, easing,
-		reversed, reverseSpeed, repeat, yoyo,
+		reversed, reverseSpeed, reverseDelay, repeat, yoyo,
 		onBegin, onUpdate, onChange, onComplete
 	} = {} ) {
 
@@ -40,9 +42,11 @@ class TextformPlayer {
 		this._progress = 0;
 		this._isReversed = reversed;
 
+		if ( ! reverseDelay ) reverseDelay = delay;
+
 		Object.assign( this, {
 			textform, delay, duration,
-			reverseSpeed, repeat, isYoyo: yoyo,
+			reverseSpeed, reverseDelay, repeat, isYoyo: yoyo,
 			onBegin, onUpdate, onChange, onComplete
 		} );
 
@@ -52,60 +56,54 @@ class TextformPlayer {
 
 	animate() {
 
-		const {
-			clock, duration, delay,
-			reverseSpeed, isReversed, isYoyo,
-			onBegin, onUpdate, onComplete,
-		} = this;
-
-		const speed = isReversed ? reverseSpeed : 1;
-		const elapsed = clock.elapsed * speed - delay;
-
-		if ( onUpdate ) onUpdate.call();
+		const speed = ( this.isReversed ) ? this.reverseSpeed : 1;
+		const delay = ( this.isReversed ) ? this.reverseDelay : this.delay;
+		const elapsed = this.clock.elapsed * speed - delay;
 
 		if ( elapsed < 0 ) return;
-		if ( elapsed >= duration ) {
+
+		if ( this.onUpdate ) this.onUpdate.call();
+
+		const progress = elapsed / this.duration;
+		this.progress = ( this.isReversed ) ? 1 - progress : progress;
+
+		if ( progress >= 1 ) {
 
 			this.progress = Math.round( this.progress );
-			if ( isYoyo ) this.isReversed = ! isReversed;
-			this.stop();
 
-			if ( isReversed && onBegin ) onBegin.call();
-			else if ( onComplete ) onComplete.call();
+			if ( this.isReversed && this.onBegin ) this.onBegin.call();
+			else if ( this.onComplete ) this.onComplete.call();
+
+			if ( this.isYoyo ) this.isReversed = ! this.isReversed;
+
+			this.stop();
 
 			if ( this.repeat !== 0 ) this.play( true );
 			if ( this.repeat > 0 ) this.repeat --;
 
-			return;
-
 		}
-
-		const progress = elapsed / duration;
-		this.progress = ( isReversed ) ? 1 - progress : progress;
 
 	}
 
 	reset() {
 
-		const { textform, isReversed } = this;
-		textform.progress = ( isReversed ) ? 1 : 0;
+		this.textform.progress = ( this.isReversed ) ? 1 : 0;
 
 	}
 
 	play( repeated = false ) {
 
-		const {
-			onBegin, onComplete,
-			isPlaying, isReversed, isComplete
-		} = this;
-
-		if ( isPlaying || isComplete ) {
+		if ( this.isPlaying || this.isComplete ) {
 
 			this.stop();
-			if ( ! repeated ) this.reset();
 
-			if ( isReversed && onComplete ) onComplete.call();
-			else if ( ! isReversed && onBegin ) onBegin.call();
+			if ( ! repeated ) {
+
+				this.reset();
+				if ( this.isReversed && this.onComplete ) this.onComplete.call();
+				else if ( ! this.isReversed && this.onBegin ) this.onBegin.call();
+
+			}
 
 		}
 
@@ -139,11 +137,10 @@ class TextformPlayer {
 
 	setClockFromProgress() {
 
-		const { clock, progress, duration, reverseSpeed, delay, isReversed } = this;
-
-		clock.elapsed = ( isReversed )
-			? ( delay + ( 1 - progress ) * duration ) / reverseSpeed
-			: delay + progress * duration;
+		this.clock.elapsed = ( this.isReversed )
+			? ( this.delay + ( 1 - this.progress ) * this.duration )
+				/ this.reverseSpeed
+			: this.delay + this.progress * this.duration;
 
 	}
 
@@ -167,8 +164,6 @@ class TextformPlayer {
 
 	set progress( progress ) {
 
-		const { textform, ease, onChange } = this;
-
 		if ( progress < 0 ) progress = 0;
 		else if ( progress > 1 ) progress = 1;
 
@@ -176,9 +171,10 @@ class TextformPlayer {
 
 		if ( ! this.isPlaying ) this.setClockFromProgress();
 
-		const previousFrame = textform.frame;
-		textform.progress = ease( progress );
-		if ( textform.frame !== previousFrame && onChange ) onChange.call();
+		const previousFrame = this.textform.frame;
+		this.textform.progress = this.ease( progress );
+		if ( this.textform.frame !== previousFrame && this.onChange )
+			this.onChange.call();
 
 	}
 
@@ -210,10 +206,9 @@ class TextformPlayer {
 
 	get isComplete() {
 
-		const { progress, isReversed, isYoyo } = this;
-		return ( isYoyo )
-			? ( isReversed ) ? progress >= 1 : progress <= 0
-			: ( isReversed ) ? progress <= 0 : progress >= 1;
+		return ( this.isYoyo )
+			? ( this.isReversed ) ? this.progress >= 1 : this.progress <= 0
+			: ( this.isReversed ) ? this.progress <= 0 : this.progress >= 1;
 
 	}
 
