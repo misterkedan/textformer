@@ -169,8 +169,8 @@ gui.controls = {
 const { rebuild, updatePlayers, updateProgress } = gui.controls;
 
 const textform = gui.addFolder( 'Textform' );
-//textform.add( title.options, 'from' ).onChange( rebuild );
-//textform.add( title.options, 'to' ).onChange( rebuild );
+textform.add( title.options, 'from' ).onChange( rebuild );
+textform.add( title.options, 'to' ).onChange( rebuild );
 textform.add( title.options, 'mode', Textformer.modes ).onChange( rebuild );
 textform.add( title.options, 'steps', 1, 60 ).step( 1 ).onChange( rebuild );
 textform.add( title.options, 'stagger', 0, 30 ).step( 1 ).onChange( rebuild );
