@@ -3,7 +3,7 @@
 
 Easy text animations with random character changes.  
 
-[Demo](https://pierrekeda.com/demos/textformer)  
+[Demo](https://pierrekeda.com/demo/textformer)  
 
 # Installation
 
