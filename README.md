@@ -1,9 +1,9 @@
 # Textformer
-![Preview](img/preview.gif)
+![Preview](preview.gif)
 
 Easy text animations with random character changes.  
 
-[Demo](https://pierrekeda.github.io/textformer/)  
+[Demo](https://pierrekeda.com/demos/textformer)  
 
 # Installation
 
