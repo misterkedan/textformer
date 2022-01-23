@@ -10,9 +10,6 @@ const config = {
 			filename: 'main.js',
 			path: path.resolve( __dirname, 'demo' ),
 		},
-		externals: {
-			'dat.gui': 'dat.gui',
-		},
 		resolve: {
 			alias: {
 				'textformer': './main'
@@ -70,7 +67,8 @@ const config = {
 							'TextformPlayer'
 						]
 					},
-				}
+				},
+				extractComments: false,
 			} ) ]
 		},
 	}

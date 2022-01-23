@@ -71,64 +71,11 @@ class Textformer {
 	 * @param { Boolean }	options.press		Control the animation with
 	 * 											pointerdown & pointerup.
 	 */
-	constructor( {
-
-		mode = Textformer.modes.BASIC,
-
-		//Textform
-		from,
-		to,
-		steps = 5,
-		stagger = 3,
-		noise = 0,
-		charset = Textformer.charsets.ALL,
-		origin, output,
-
-		//Align
-		align = Textformer.align.NONE,
-		fill = ' ',
-
-		//Player
-		autoplay = true,
-		speed = Textformer.DEFAULT_SPEED,
-		easing = Textformer.DEFAULT_EASING,
-		delay = 0,
-		duration = 0,
-		reversed = false,
-		reverseSpeed = 1,
-		reverseDelay,
-		repeat = 0,
-		loop = false,
-		yoyo = false,
-		onBegin, onUpdate, onChange, onComplete,
-
-		//Events
-		hover = false,
-		press = false,
-
-	} = {} ) {
+	constructor( options ) {
 
 		this.__init();
 
-		this.build( {
-
-			mode,
-
-			//Textform
-			from, to, steps, stagger, noise, charset, origin, output,
-
-			//Align
-			align, fill,
-
-			//Player
-			autoplay, speed, easing, delay, duration,
-			reversed, reverseSpeed, reverseDelay, repeat, loop, yoyo,
-			onBegin, onUpdate, onChange, onComplete,
-
-			//Events
-			hover, press
-
-		} );
+		this.build( { ...Textformer.defaults, ...options } );
 
 	}
 
@@ -150,6 +97,8 @@ class Textformer {
 			|| textformClasses.default;
 		const textform = new TextformClass( this.__.textformOptions() );
 		this.textform = textform;
+
+		if ( options.lite ) return;
 
 		if ( options.hover || options.press ) this.bind();
 		else if ( ! options.autoplay ) return;
@@ -174,7 +123,7 @@ class Textformer {
 
 	convertSpeedToDuration( speed = this.options.speed ) {
 
-		if ( ! this.textform ) return Textformer.DEFAULT_DURATION;
+		if ( ! this.textform ) return Textformer.defaults.duration;
 		const finalFrame = this.textform.finalFrame;
 		return finalFrame * ( 1000 / speed );
 
@@ -208,7 +157,7 @@ class Textformer {
 
 		__.textformOptions = function () {
 
-			const { DEFAULT_TEXT } = Textformer;
+			const { defaults } = Textformer;
 			const options =  { ...this.options };
 			const { from, to, align, fill } = options;
 
@@ -222,7 +171,7 @@ class Textformer {
 				//	: to || output.inputText;
 				//output.referenceText = referenceText;
 				// Use output's initial text as automatic to/from
-				const initialText = output.inputText || DEFAULT_TEXT;
+				const initialText = output.inputText || defaults.text;
 
 				output.referenceText = to || from || initialText;
 
@@ -233,8 +182,8 @@ class Textformer {
 
 			} else options.output = undefined;
 
-			if ( ! options.from ) options.from = DEFAULT_TEXT;
-			if ( ! options.to ) options.to = DEFAULT_TEXT;
+			if ( ! options.from ) options.from = defaults.text;
+			if ( ! options.to ) options.to = defaults.text;
 
 			if ( align ) {
 
@@ -378,7 +327,7 @@ class Textformer {
 	set speed( speed ) {
 
 		const { options } = this;
-		if ( speed < 1 ) speed = Textformer.DEFAULT_SPEED;
+		if ( speed < 1 ) speed = Textformer.defaults.speed;
 		options.speed = speed;
 		options.duration = this.convertSpeedToDuration( speed );
 
@@ -419,9 +368,35 @@ Textformer.modes = {
 	SHUFFLE: 	'shuffle',
 };
 
-Textformer.DEFAULT_TEXT = '';
-Textformer.DEFAULT_SPEED = 15;
-Textformer.DEFAULT_DURATION = 1000;
-Textformer.DEFAULT_EASING = Textformer.ease.LINEAR;
+Textformer.defaults = {
+	mode: Textformer.modes.BASIC,
+	steps: 5,
+	stagger: 3,
+	noise: 0,
+	charset: Textformer.charsets.ALL,
+	align: Textformer.align.NONE,
+	fill: ' ',
+
+	text: '',
+	speed: 15,
+	duration: 1000,
+	easing: Textformer.ease.LINEAR,
+
+	autoplay: true,
+	delay: 0,
+	reversed: false,
+	reverseSpeed: 1,
+	repeat: 0,
+	loop: false,
+	yoyo: false,
+};
+
+Textformer.build = ( options ) => {
+
+	options.lite = true;
+	return new Textformer( options ).textform;
+
+};
+
 
 export { Textformer };

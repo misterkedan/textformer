@@ -32,15 +32,15 @@ class TextformOutput {
 
 		const convertToHTML = ( string ) => {
 
-			const space = ' ';
+			const SPACE = ' ';
 			const chars = [];
 
 			for ( let i = 0; i < string.length; i ++ ) {
 
 				// Attempt to keep the same breaking spaces structure,
 				// to prevent linebreak/whitespace related glitches.
-				if ( this?.referenceText.charAt( i ) === space ) chars.push( space );
-				else if ( text.charAt( i ) === space ) chars.push( '&numsp;' );
+				if ( this?.referenceText.charAt( i ) === SPACE ) chars.push( SPACE );
+				else if ( text.charAt( i ) === SPACE ) chars.push( '&numsp;' );
 				else chars.push( escapeHTML( text.charAt( i ) ) );
 
 			}

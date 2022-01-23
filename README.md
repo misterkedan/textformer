@@ -212,6 +212,23 @@ fill: ' ',   // Uses whitespace by default
 fill: 'abc', // Will be repeated if too short (abcabc...)
 ```
 
+## Defaults
+
+If you need a specific option to default to a specific value for all your Textformer instances, you can set it via the static property Textformer.defaults.
+
+```javascript
+Textformer.defaults.steps = 15; // Steps will now default to 15
+```
+
+## Build
+
+If you only need a built textform to animate with another tween engine, you can use the static method Textformer.build( options ) instead of a regular constructor. It will invalidate any autoplay or event option, and return a basic Textform instance. You can then animate its progress property as you like.
+
+```javascript
+const textform = Textformer.build( options );
+textform.progress = 0.5;
+```
+
 # Summary
 
 With default values.

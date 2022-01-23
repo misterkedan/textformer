@@ -1,5 +1,5 @@
 import { Textformer } from 'textformer';
-import * as dat from 'dat.gui';
+import { GUI } from 'lil-gui';
 
 /*-----------------------------------------------------------------------------/
 
@@ -74,9 +74,9 @@ const text = {
 	element: document.querySelector( '#demo-paragraph' ),
 	build: () => {
 
-		text.textformer.build( {
+		text?.textformer.build( {
 			...title.options,
-			...text.getOverrides(),
+			...text?.getOverrides(),
 		} );
 
 	},
@@ -85,7 +85,7 @@ const text = {
 		const length = title.textform.length;
 		const factor = ( length > 0 ) ? DESCRIPTION.length / length * 0.25 : 10;
 		return {
-			output: text.element,
+			output: text?.element,
 			from: '',
 			to: DESCRIPTION,
 			stagger: Math.ceil( title.options.stagger / factor ),
@@ -97,7 +97,7 @@ const text = {
 
 	}
 };
-text.textformer = title.clone( text.getOverrides() );
+text.textformer = title.clone( text?.getOverrides() );
 
 if ( ! title.options.duration )
 	title.options.duration = title.convertSpeedToDuration();
@@ -117,28 +117,28 @@ title.player.onBegin = title.player.onComplete = () => {
 
 /-----------------------------------------------------------------------------*/
 
-const gui = new dat.GUI();
+const gui = new GUI();
 gui.controls = {
 
 	play: () => {
 
 		const method = ( title.player.isPlaying ) ? 'pause' : 'play';
 		title[ method ]();
-		text.textformer[ method ]();
+		if ( text ) text.textformer[ method ]();
 
 	},
 
 	rebuild: () => {
 
 		title.build();
-		text.build();
+		if ( text ) text.build();
 
 	},
 
 	setPlayersProperty: ( key, value ) => {
 
 		title.player[ key ] = value;
-		text.textformer.player[ key ] = value;
+		if ( text ) text.textformer.player[ key ] = value;
 
 	},
 
@@ -160,7 +160,7 @@ gui.controls = {
 	updateProgress: () => {
 
 		title.pause();
-		text.textformer.pause();
+		if ( text ) text.textformer.pause();
 		gui.controls.setPlayersProperty( 'progress', title.progress );
 
 	},

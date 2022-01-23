@@ -1,26 +1,26 @@
 {
     "name": "textformer",
-    "version": "1.3.0",
+    "version": "1.4.0-beta",
     "author": "Pierre Keda",
     "description": "Easy text animations with random character changes.",
-	"keywords": [
-		"javascript",
-		"text",
-		"animation",
-		"random"
-	],
+    "keywords": [
+        "javascript",
+        "text",
+        "animation",
+        "random"
+    ],
     "license": "MIT",
     "devDependencies": {
-		"@babel/core": "^7.16.0",
-		"@babel/preset-env": "^7.16.0",
-		"babel-loader": "^8.2.3",
-		"dat.gui": "^0.7.7",
-		"eslint": "^8.2.0",
-		"eslint-config-mdcs": "^5.0.0",
-		"terser-webpack-plugin": "^5.2.5",
-		"webpack": "^5.64.0",
-		"webpack-cli": "^4.9.1",
-		"webpack-dev-server": "^4.5.0"
+        "@babel/core": "^7.16.12",
+        "@babel/preset-env": "^7.16.11",
+        "babel-loader": "^8.2.3",
+        "eslint": "^8.7.0",
+        "eslint-config-mdcs": "^5.0.0",
+        "lil-gui": "^0.16.0",
+        "terser-webpack-plugin": "^5.3.0",
+        "webpack": "^5.67.0",
+        "webpack-cli": "^4.9.1",
+        "webpack-dev-server": "^4.7.3"
     },
     "scripts": {
         "build": "webpack --mode production",
@@ -28,10 +28,10 @@
     },
     "private": false,
     "module": "src/main.js",
-	"homepage": "https://github.com/pierrekeda/textformer",
-	"repository": {
-		"type": "git",
-		"url": "github:pierrekeda/textformer"
-	},
-	"sideEffects": false
+    "homepage": "https://github.com/pierrekeda/textformer",
+    "repository": {
+        "type": "git",
+        "url": "github:pierrekeda/textformer"
+    },
+    "sideEffects": false
 }
