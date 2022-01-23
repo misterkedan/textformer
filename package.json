@@ -1,6 +1,6 @@
 {
     "name": "textformer",
-    "version": "1.4.0-beta",
+    "version": "1.4.0",
     "author": "Pierre Keda",
     "description": "Easy text animations with random character changes.",
     "keywords": [
