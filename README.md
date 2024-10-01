@@ -3,7 +3,7 @@
 
 Easy text animations with random character changes.  
 
-[Demo](https://pierrekeda.com/demo/textformer)  
+[Demo](https://misterkedan.github.io/textformer)  
 
 # Installation
 
@@ -278,4 +278,4 @@ const demo = new Textformer({
 ```
 
 ***
-*Pierre Keda - 2021*
+*Kedan - 2021*
